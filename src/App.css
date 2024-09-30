@@ -36,3 +36,29 @@
     transform: rotate(360deg);
   }
 }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  /* Firefox */
+}
+
+.hide-scrollbar {
+  overflow-y: scroll; /* Enable scrolling */
+}
+
+/* For WebKit browsers (Chrome, Safari) */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Hide the scrollbar */
+}
+
+/* For Firefox */
+.hide-scrollbar {
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+}
+
