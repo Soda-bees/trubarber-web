@@ -1,9 +1,11 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Welcome from "../../Screens/Welcome";
-import Layout from "../../Screens/Layout";
-import Signin from "../../Screens/Signin";
-import Signup from "../../Screens/Signup";
+import Layout from "../../screens/Layout";
+import Signin from "../../screens/Signin";
+import Signup from "../../screens/Signup";
+import Welcome from "../../screens/Welcome";
+import CreateUserProfile from "../../screens/CreateUserProfile";
+
 
 const router = createBrowserRouter([
     {
@@ -13,7 +15,7 @@ const router = createBrowserRouter([
             { index: true, element: <Welcome /> },
             { path: '/signin', element: <Signin /> },
             { path: '/signup', element: <Signup /> },
-            { path: '/createuserprofile', element: <Signup /> },
+            { path: '/createuserprofile', element: <CreateUserProfile /> },
         ]
     }
 ])

@@ -10,11 +10,10 @@ type Props = {}
 const Welcome = (props: Props) => {
   return (
     <div>
+      <Slider />
+      <LandingDiscover />
+      <LogoLine />
       <BarberSection />
-        {/* <Header />
-        <Slider />
-        <LandingDiscover />
-        <LogoLine /> */}
     </div>
   )
 }
