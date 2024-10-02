@@ -3,7 +3,7 @@ import images from '../../services/config/images'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectRole, setRole } from '../../Store/Role'
 import Button from '../../components/Button'
-import BackButton from '../../components/BakcButton'
+import BackButton from '../../components/BackButton'
 
 type Props = {}
 

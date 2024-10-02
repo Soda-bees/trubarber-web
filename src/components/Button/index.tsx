@@ -13,7 +13,7 @@ const Button: React.FC<Props> = ({ title, onClick, mt, loader, light }) => {
     return (
         <div onClick={() => { if (!loader) onClick(); }}
             style={{ marginTop: mt }}
-            className={`w-full bg-black text-white font-medium flex flex-row items-center justify-between h-12 rounded-xl px-6 cursor-pointer shadow-md ${light && 'bg-transparent border border-black text-black'} ${!loader && "active:opacity-50"}`}
+            className={`w-full bg-black font-medium flex flex-row items-center justify-between h-12 rounded-xl px-6 cursor-pointer shadow-md ${light ? 'bg-transparent border border-black text-black' : 'text-white border-none '} ${!loader && "active:opacity-50"}`}
         >{title}
             {
                 loader ?

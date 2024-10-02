@@ -8,12 +8,14 @@ import { persistor, store } from './Store';
 import { PersistGate } from 'redux-persist/integration/react';
 import CreateUserProfile from './Screens/CreateUserProfile';
 import LogoLine from './components/LogoLine';
+import Welcome from './Screens/Welcome';
+import Routing from './services/config/router';
 
 function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <LogoLine />
+      <Routing />
       </PersistGate>
     </Provider>
   );

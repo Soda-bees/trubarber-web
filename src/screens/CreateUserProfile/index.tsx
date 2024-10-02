@@ -1,5 +1,5 @@
 import React from 'react'
-import BackButton from '../../components/BakcButton'
+import BackButton from '../../components/BackButton'
 import images from '../../services/config/images'
 
 type Props = {}

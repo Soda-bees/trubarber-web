@@ -25,6 +25,9 @@ import check from "../../assets/Images/check.png";
 import unCheck from "../../assets/Images/unCheck.png";
 import profileUpload from "../../assets/Images/profileUpload.png";
 import uploadBtn from "../../assets/Images/uploadBtn.png";
+import barberImg from "../../assets/Images/barberImg.png";
+import star from "../../assets/Images/star.png";
+import Location from "../../assets/Images/Location.png";
 
 const images = {
   uploadBtn,
@@ -54,6 +57,9 @@ const images = {
   buttonArrow,
   TRUBARBER,
   truLogoTwo,
+  barberImg,
+  star,
+  Location,
 };
 
 export default images;

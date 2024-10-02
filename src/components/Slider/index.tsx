@@ -68,12 +68,12 @@ const Slider = (props: Props) => {
         </div>
       </div>
       <div
-        className="flex flex-row -rotate-90 items-center justify-between absolute top-[35%] md:top-[50%] xl:left-[86%] lg:left-[82%] md:left-[77%] sm:left-[77%] left-[60%]"
+        className="flex flex-row -rotate-90 items-center justify-between absolute top-[50%] md:top-[50%] xl:left-[86%] lg:left-[82%] md:left-[77%] sm:left-[77%] left-[67%]"
       >
         <div className="text-white text-sm md:text-xl font-light cursor-pointer">
           Instagram
         </div>
-        <div className="text-white text-sm md:text-xl font-light cursor-pointer px-10">
+        <div className="text-white text-sm md:text-xl font-light cursor-pointer px-4 sm:px-10">
           Facebook
         </div>
         <div className="text-white text-sm md:text-xl font-light cursor-pointer">
