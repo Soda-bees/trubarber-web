@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import images from "../../services/config/images";
+import ScrollToTopLink from "../ScrollToTopLink";
 
 type Props = {};
 
@@ -51,9 +52,9 @@ const Header = (props: Props) => {
           />
           {/* <a href="/login" className="text-white hover:underline">Sign In / </a>
         <a href="/signup" className="text-white hover:underline">Sign Up</a> */}
-          <div className="text-white cursor-pointer">Sign In</div>
+          <ScrollToTopLink to="/signin" className="text-white cursor-pointer">Sign In</ScrollToTopLink>
           <div className="text-white mx-2">/</div>
-          <div className="text-white cursor-pointer">Sign Up</div>
+          <ScrollToTopLink to="/signup" className="text-white cursor-pointer">Sign Up</ScrollToTopLink>
         </div>
       </div>
       <div className="sm:hidden flex flex-row bg-white/30 backdrop-blur-lg border border-white-500 w-[100%] lg:w-[40%] items-center rounded-lg p-2 mt-4">

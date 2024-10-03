@@ -32,6 +32,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -49,16 +50,28 @@ input[type="number"] {
 }
 
 .hide-scrollbar {
-  overflow-y: scroll; /* Enable scrolling */
+  overflow-y: scroll;
+  /* Enable scrolling */
 }
 
 /* For WebKit browsers (Chrome, Safari) */
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Hide the scrollbar */
+  display: none;
+  /* Hide the scrollbar */
 }
 
 /* For Firefox */
 .hide-scrollbar {
-  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  scrollbar-width: none;
+  /* Hide scrollbar in Firefox */
 }
 
+body::-webkit-scrollbar {
+  width: 5px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #000000;
+  /* Change this to your preferred color */
+  border-radius: 10px;
+}

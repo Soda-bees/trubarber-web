@@ -52,11 +52,11 @@ const Signin = (props: Props) => {
                     <div className='mt-4 lg:mt-8'>
                         <div className='bg-inputGray flex flel-row items-center justify-start pl-4 rounded-lg'>
                             <img src={images.email} className='w-4' />
-                            <input placeholder='Email' className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setEmail(e.target.value)} />
+                            <input placeholder='Email' className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setEmail(e.target.value)} value={email} />
                         </div>
                         <div className='bg-inputGray flex flel-row items-center justify-start px-4 rounded-lg mt-2'>
                             <img src={images.password} className='w-4' />
-                            <input placeholder='Password' type={showPass ? 'text' : 'password'} className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setPassword(e.target.value)} />
+                            <input placeholder='Password' value={password}  type={showPass ? 'text' : 'password'} className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setPassword(e.target.value)} />
                             <img src={showPass ? images.eyeOff : images.eye} className='w-5 cursor-pointer' onClick={() => setShowPass(!showPass)} />
                         </div>
                     </div>

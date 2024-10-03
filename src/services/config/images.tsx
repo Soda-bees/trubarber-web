@@ -28,8 +28,14 @@ import uploadBtn from "../../assets/Images/uploadBtn.png";
 import barberImg from "../../assets/Images/barberImg.png";
 import star from "../../assets/Images/star.png";
 import Location from "../../assets/Images/Location.png";
+import congratulations from "../../assets/Images/congratulations.png";
+import instagram from "../../assets/Images/instagram.png";
+import clock from "../../assets/Images/clock.png";
 
 const images = {
+  clock,
+  instagram,
+  congratulations,
   uploadBtn,
   profileUpload,
   check,
