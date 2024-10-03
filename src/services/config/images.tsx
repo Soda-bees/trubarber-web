@@ -31,6 +31,7 @@ import Location from "../../assets/Images/Location.png";
 import congratulations from "../../assets/Images/congratulations.png";
 import instagram from "../../assets/Images/instagram.png";
 import clock from "../../assets/Images/clock.png";
+import greyArrow from "../../assets/Images/greyArrow.png";
 
 const images = {
   clock,
@@ -66,6 +67,7 @@ const images = {
   barberImg,
   star,
   Location,
+  greyArrow,
 };
 
 export default images;
