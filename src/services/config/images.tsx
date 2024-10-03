@@ -28,6 +28,7 @@ import uploadBtn from "../../assets/Images/uploadBtn.png";
 import barberImg from "../../assets/Images/barberImg.png";
 import star from "../../assets/Images/star.png";
 import Location from "../../assets/Images/Location.png";
+import greyArrow from "../../assets/Images/greyArrow.png";
 
 const images = {
   uploadBtn,
@@ -60,6 +61,7 @@ const images = {
   barberImg,
   star,
   Location,
+  greyArrow,
 };
 
 export default images;
