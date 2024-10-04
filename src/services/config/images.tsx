@@ -32,8 +32,16 @@ import congratulations from "../../assets/Images/congratulations.png";
 import instagram from "../../assets/Images/instagram.png";
 import clock from "../../assets/Images/clock.png";
 import greyArrow from "../../assets/Images/greyArrow.png";
+import cross from "../../assets/Images/cross.png";
+import uploadGray from "../../assets/Images/uploadGray.png";
+import deleteService from "../../assets/Images/deleteService.png";
+import addWhite from "../../assets/Images/addWhite.png";
 
 const images = {
+  addWhite,
+  deleteService,
+  uploadGray,
+  cross,
   clock,
   instagram,
   congratulations,

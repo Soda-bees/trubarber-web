@@ -6,10 +6,11 @@ type Props = {
     dark: boolean,
     onClick?: () => void;
     long?: boolean,
-    loader?: boolean
+    loader?: boolean,
+    smallImage?:boolean
 }
 
-const SmallButton: React.FC<Props> = ({ title, image, dark, onClick, long, loader }) => {
+const SmallButton: React.FC<Props> = ({ title, image, dark, onClick, long, loader , smallImage}) => {
     return (
         <div
             className={
@@ -19,7 +20,7 @@ const SmallButton: React.FC<Props> = ({ title, image, dark, onClick, long, loade
             }
             onClick={onClick}
         >
-            {image && <img src={image} className='w-6 mr-3' />}
+            {image && <img src={image} className={smallImage ? "w-2 mr-2" : 'w-4 mr-3'} />}
             {
                 loader ?
                     <div
