@@ -32,6 +32,14 @@ import congratulations from "../../assets/Images/congratulations.png";
 import instagram from "../../assets/Images/instagram.png";
 import clock from "../../assets/Images/clock.png";
 import greyArrow from "../../assets/Images/greyArrow.png";
+import beardDisplayPicture from "../../assets/Images/beardDisplayPicture.png";
+import haircutDisplayPicture from "../../assets/Images/haircutDisplayPicture.png";
+import reviewBarber from "../../assets/Images/reviewBarber.png";
+import google from "../../assets/Images/google.png";
+import apple from "../../assets/Images/apple.png";
+import facebook from "../../assets/Images/facebook.png";
+import twitter from "../../assets/Images/twitter.png";
+import insta from "../../assets/Images/insta.png";
 
 const images = {
   clock,
@@ -68,6 +76,14 @@ const images = {
   star,
   Location,
   greyArrow,
+  beardDisplayPicture,
+  haircutDisplayPicture,
+  reviewBarber,
+  google,
+  apple,
+  facebook,
+  twitter,
+  insta,
 };
 
 export default images;
