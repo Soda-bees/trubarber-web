@@ -36,8 +36,12 @@ import cross from "../../assets/Images/cross.png";
 import uploadGray from "../../assets/Images/uploadGray.png";
 import deleteService from "../../assets/Images/deleteService.png";
 import addWhite from "../../assets/Images/addWhite.png";
+import edit from "../../assets/Images/edit.png";
+import deleteIcon from "../../assets/Images/delete.png"
 
 const images = {
+  edit,
+  deleteIcon,
   addWhite,
   deleteService,
   uploadGray,

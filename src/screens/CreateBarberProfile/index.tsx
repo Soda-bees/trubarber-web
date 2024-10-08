@@ -11,7 +11,7 @@ const CreateBarberProfile = (props: Props) => {
     const [tagSelection, setTagSelection] = useState<string[]>(['#OfferedServices', '#HaircutStyles', '#Prices', '#ConvenientBooking',
         '#CustomerFeedback', '#BeardTrim', '#Stylists', '#CustomerService'])
     const [selectedTagSelection, setSelectedTagSelection] = useState<string[]>([])
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(true)
     const [loader, setLoader] = useState<boolean>(false)
     const [days, setDays] = useState<string[]>(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
     const [offDays, setOffDays] = useState<string[]>([])
@@ -85,27 +85,32 @@ const CreateBarberProfile = (props: Props) => {
         };
 
         setSelectedServices((prevSelecteditem) => {
-            // Find the index of the service by 'name'
             const index = prevSelecteditem.findIndex(
-                (item: any) => item.name === updatedService.name // Assuming 'name' is unique
+                (item: any) => item.name === updatedService.name
             );
 
             if (index !== -1) {
-                // Service is already added, log the index
-                console.log(`Service already selected at index: ${index}`);
                 setActiveServiceIndex(index)
                 setShowUpdateServiceModal(true)
-                return prevSelecteditem; // No change in state
+                return prevSelecteditem;
             } else {
-                // Service is not added yet, log the new index
-                const newIndex = prevSelecteditem.length; // New service will be added at the end
-                console.log(`Service added at index: ${newIndex}`);
+                const newIndex = prevSelecteditem.length;
                 setActiveServiceIndex(newIndex)
                 setShowUpdateServiceModal(true)
 
-                return [...prevSelecteditem, updatedService]; // Add the new service
+                return [...prevSelecteditem, updatedService];
             }
         });
+    }
+
+    const handleUpdateService = async (index: number) => {
+        setActiveServiceIndex(index)
+        setShowUpdateServiceModal(true)
+    }
+
+    const handleDeleteService = async (index: number) => {
+        const updatedService = selectedServices.filter((_, i) => i !== index)
+        setSelectedServices(updatedService)
     }
 
     const handleAddOptionInService = () => {
@@ -245,30 +250,37 @@ const CreateBarberProfile = (props: Props) => {
                         </div>
                     </div>
                 </div>
-                <div className='mt-10'>
-                    <div className='text-lg font-semibold'>Services Added</div>
-                    <div className='text-sm mt-1 text-textGray'>Your service have been added successfully</div>
-                    <div className='grid grid-cols-2 gap-2'>
-                        {
-                            selectedServices?.map((item: any, index: number) => {
-                                return (
-                                    <div key={index} className='border flex flex-row items-center justify-between border-inputGray rounded-3xl mt-2 p-4 shadow-sm'>
-                                        <div className='flex flex-row'>
-                                            <div className='bg-inputGray p-6 rounded-md'>
-                                                <img src={item?.icon} className="w-10" />
+                {
+                    selectedServices?.length > 0 &&
+                    <div className='mt-10'>
+                        <div className='text-lg font-semibold'>Services Added</div>
+                        <div className='text-sm mt-1 text-textGray'>Your service have been added successfully</div>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+                            {
+                                selectedServices?.map((item: any, index: number) => {
+                                    return (
+                                        <div key={index} className='border flex flex-row items-center justify-between border-inputGray rounded-3xl mt-2 p-4 shadow-sm'>
+                                            <div className='flex flex-row items-start flex-grow'>
+                                                <div className='bg-inputGray p-6 rounded-md w-24 h-24 flex-shrink-0'>
+                                                    <img src={item?.icon} className="w-10 h-10" />
+                                                </div>
+                                                <div className='ml-4 flex-grow'>
+                                                    <div className='text-lg font-bold'>{`${item?.name} (${item?.options?.length} style)`}</div>
+                                                    <div className='text-textGray break-words w-[90%] line-clamp-3 leading-5'>{item?.description}</div>
+                                                </div>
                                             </div>
-                                            <div className='ml-4'>
-                                                <div className='text-lg font-bold'>{item?.name}</div>
-                                                <div className='text-textGray bg-red-500 w-[90%] overflow-hidden break-words whitespace-normal'>{item?.description}</div>
+                                            <div className='flex flex-row flex-shrink-0 mt-2 h-full'>
+                                                <img src={images.edit} onClick={() => handleUpdateService(index)} className='w-4 h-5 active:opacity-50 cursor-pointer' />
+                                                <img src={images.deleteIcon} onClick={() => handleDeleteService(index)} className='w-4 h-5 active:opacity-50 cursor-pointer ml-4' />
                                             </div>
                                         </div>
-                                        <div>icon</div>
-                                    </div>
-                                )
-                            })
-                        }
+                                    )
+                                })
+                            }
+                        </div>
                     </div>
-                </div>
+                }
+
                 <div className='mt-10'>
                     <div className='text-lg font-semibold'>Outlet Tags</div>
                     <div className='text-sm mt-1 text-textGray'>Tailor Your Profile: Choose Tags That Represent Your Barbering Style!</div>
@@ -295,7 +307,7 @@ const CreateBarberProfile = (props: Props) => {
                         <div className='text-xl font-bold'>Enhance Your Experience</div>
                         <img src={images.congratulations} className='w-[20%] mt-10' />
                         <div className='text-xl font-bold mt-4'>Congratulations!</div>
-                        <div className='w-[50%] text-center text-sm text-textGray mt-2'>Your profile creation is now complete and ready to go.</div>
+                        <div className='w-[50%] text-center text-sm text-textGray mt-2'>Your Barber profile creation is now complete and ready to go.</div>
                         <div className='w-full mt-6'>
                             <SmallButton title='Get ready' dark={true} loader={loader} onClick={handleConfirm} />
                         </div>
