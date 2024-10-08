@@ -11,8 +11,8 @@ const SideBar = (props: Props) => {
   const [onClickToggle, setOnClickToggle] = useState<boolean>(false);
 
   return (
-    <div className="hidden sm:flex flex-col sticky top-0 max-h-screen relative bg-black w-[15%] py-10 md:w-[37%] lg:w-[25%] xl:w-[20%] 2xl:w-[17%]">
-      <div className="px-10 flex flex-col justify-between h-full">
+    <div className="hidden sm:flex flex-col items-start justify-start sticky top-0 max-h-screen relative bg-black w-[15%] py-10 md:w-[37%] lg:w-[25%] xl:w-[20%] 2xl:w-[17%]">
+      <div className="px-10 flex flex-col justify-between">
         <img src={images.truLogo} className="w-[50%] cursor-pointer" />
         <img src={images.reviewBarber} className="w-[50%] mt-20 mb-7" />
         <div>

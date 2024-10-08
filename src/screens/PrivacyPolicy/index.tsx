@@ -4,12 +4,13 @@ type Props = {}
 
 const PrivacyPolicy = (props: Props) => {
   return (
-    <div className="bg-black p-6 md:p-10 lg:p-20 text-gray-800 w-full">
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-6">Privacy Policy</h1>
+    <div className="p-6 md:p-10 lg:p-20 text-gray-800 w-full">
+      <h1 className="text-3xl md:text-4xl font-bold text-center mb-2">Privacy Policy</h1>
+      <h3 className="text-xl md:text24xl font-normal text-center mb-6">Your privacy matters to us. We are dedicated to safeguarding your personal information and ensuring transparency in our data practices.</h3>
       <div className="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-md shadow-md space-y-6">
         <section>
           <p>
-            This privacy policy applies to the Wincly app (hereby referred to as “Application”) for mobile devices that was created by Sodabees (hereby referred to as “Service Provider”) as a Free service. This service is intended for use “AS IS”.
+            This privacy policy applies to the TruBarber app (hereby referred to as “Application”) for mobile devices that was created by Sodabees (hereby referred to as “Service Provider”) as a Free service. This service is intended for use “AS IS”.
           </p>
         </section>
         
