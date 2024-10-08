@@ -13,13 +13,13 @@ const Layout = (props: Props) => {
   const shouldShowHeader = !noHeaderPaths.includes(location.pathname);
   return (
     <div>
-      {/* <SideBar /> */}
       {/* {
         shouldShowHeader &&
         <Header />
       } */}
       <div className="flex flex-row ">
-        <div className=" hidden sm:flex flex-col sticky top-0 max-h-screen relative bg-black w-[15%] py-10 md:w-[37%] lg:w-[25%] xl:w-[20%] 2xl:w-[17%]">sidebar</div>
+        {/* <div className=" hidden sm:flex flex-col sticky top-0 max-h-screen relative bg-black w-[15%] py-10 md:w-[37%] lg:w-[25%] xl:w-[20%] 2xl:w-[17%]">sidebar</div> */}
+        <SideBar />
 
         {/* <div className="w-full"> */}
 
