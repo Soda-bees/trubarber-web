@@ -43,6 +43,7 @@ import CreateUserProfile from "../../screens/CreateUserProfile";
 import CreateBarberProfile from "../../screens/CreateBarberProfile";
 import BarberDashboard from "../../screens/BarberDashboard";
 
+
 // Component to set up routing
 const Routing = () => {
     const role = useSelector(selectRole);

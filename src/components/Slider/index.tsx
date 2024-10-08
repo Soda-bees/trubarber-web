@@ -41,7 +41,7 @@ const Slider = (props: Props) => {
   }, [sliderImages.length]);
 
   return (
-    <div className="h-[50vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] xl:h-[95vh] 2xl:h-screen flex flex-col items-start justify-end relative bg-center">
+    <div className="h-[50vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] xl:h-[95vh] 2xl:h-screen flex flex-col items-start justify-end relative bg-center w-full">
       <img
         src={sliderImages[activeIndex]?.image}
         className="absolute h-full w-full z-[-1]"
@@ -68,7 +68,7 @@ const Slider = (props: Props) => {
         </div>
       </div>
       <div
-        className="flex flex-row -rotate-90 items-center justify-between absolute top-[50%] md:top-[50%] xl:left-[86%] lg:left-[82%] md:left-[77%] sm:left-[77%] left-[67%]"
+        className="flex flex-row -rotate-90 items-center justify-between absolute top-[50%] md:top-[50%] xl:left-[85%] lg:left-[80%] md:left-[70%] sm:left-[70%] left-[65%]"
       >
         <div className="text-white text-sm md:text-xl font-light cursor-pointer">
           Instagram

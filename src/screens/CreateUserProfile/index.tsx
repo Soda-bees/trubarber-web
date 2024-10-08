@@ -185,7 +185,7 @@ const CreateUserProfile = (props: Props) => {
     }
 
     return (
-        <div className='px-4 py-4'>
+        <div className='px-4 py-4 w-full'>
             <BackButton light={true} title='Create Your Account' />
             <div className=' max-w-6xl mx-auto max-h-[94vh] overflow-scroll hide-scrollbar'>
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-10'>

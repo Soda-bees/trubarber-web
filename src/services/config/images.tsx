@@ -46,6 +46,11 @@ import apple from "../../assets/Images/apple.png";
 import facebook from "../../assets/Images/facebook.png";
 import twitter from "../../assets/Images/twitter.png";
 import insta from "../../assets/Images/insta.png";
+import logout from "../../assets/Images/logout.png";
+import explore from "../../assets/Images/explore.png";
+import wallet from "../../assets/Images/wallet.png";
+import appointment from "../../assets/Images/appointment.png";
+import profile from "../../assets/Images/profile.png";
 
 const images = {
   edit,
@@ -96,6 +101,11 @@ const images = {
   facebook,
   twitter,
   insta,
+  logout,
+  explore,
+  wallet,
+  appointment,
+  profile,
 };
 
 export default images;

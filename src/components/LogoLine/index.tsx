@@ -18,9 +18,9 @@ const LogoLine = (props: Props) => {
   ]);
 
   return (
-    <div className="relative overflow-hidden bg-black">
+    <div className="relative overflow-hidden bg-black w-[40%]">
       <div className="flex w-[200%] animate-scroll my-5">
-        {sliderImages.map((item, index) => (
+        {/* {sliderImages.map((item, index) => (
           <div
             key={index}
             className="flex flex-row items-center justify-center px-40"
@@ -51,7 +51,7 @@ const LogoLine = (props: Props) => {
               {item.text}
             </div>
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
     // <div className="relative overflow-hidden bg-black">

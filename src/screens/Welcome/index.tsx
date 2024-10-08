@@ -12,15 +12,16 @@ type Props = {}
 
 const Welcome = (props: Props) => {
   return (
-    <div>
+    <div className='flex flex-col w-full' >
+      
       <Slider />
-      <LandingDiscover />
-      <LogoLine />
+      <LandingDiscover /> 
+      {/* <LogoLine /> */}
       <BarberSection />
-      <BarberServiceDisplay />
-      <LogoLine />
-      <CustomerReview />
-      <Footer />
+      {/* <BarberServiceDisplay /> */}
+      {/* <LogoLine /> */}
+      {/* <CustomerReview /> */}
+      {/* <Footer /> */}  
     </div>
   )
 }
