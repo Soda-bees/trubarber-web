@@ -14,12 +14,12 @@ const Layout = (props: Props) => {
   return (
     <div>
       <SideBar />
-      {/* {
+      {
         shouldShowHeader &&
         <Header />
       }
       <Outlet />
-      <ToastContainer /> */}
+      <ToastContainer />
     </div>
   );
 };

@@ -242,7 +242,6 @@ const BarberSection = (props: Props) => {
                 </div>
               </div>
             </div>
-
             <div className="mt-2 text-center flex flex-row bg-black text-white py-2 px-4 rounded-lg w-full items-center justify-between cursor-pointer active:opacity-50">
               <div className="text-white">Book Appointment</div>
               <img src={images.arrowBtn} className="w-[4%] h-full" />

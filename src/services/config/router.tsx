@@ -42,6 +42,7 @@ import Signup from "../../Screens/Signup";
 import CreateUserProfile from "../../Screens/CreateUserProfile";
 import CreateBarberProfile from "../../Screens/CreateBarberProfile";
 import BarberDashboard from "../../Screens/BarberDashboard";
+import PrivacyPolicy from "../../Screens/PrivacyPolicy";
 
 // Component to set up routing
 const Routing = () => {
@@ -66,6 +67,7 @@ const Routing = () => {
                 { path: '/signin', element: <Signin /> },
                 { path: '/signup', element: <Signup /> },
                 { path: '/create-user-profile', element: <CreateUserProfile /> },
+                { path: '/privacy-policy', element: <PrivacyPolicy /> },
                 { path: '/create-barber-profile', element: <CreateBarberProfile /> },
                 { path: '/barber-dashboard', element: <ProtectedRoute Component={BarberDashboard} /> },
             ]
