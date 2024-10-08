@@ -31,17 +31,17 @@
 
 import React from "react";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import Layout from "../../screens/Layout";
-import Signin from "../../screens/Signin";
-import Signup from "../../screens/Signup";
-import Welcome from "../../screens/Welcome"; // Import the Welcome screen
-import CreateUserProfile from "../../screens/CreateUserProfile";
-import BarberDashboard from "../../screens/BarberDashboard"; // Import BarberDashboard
 import { useSelector } from "react-redux";
 import { selectRole } from "../../Store/Role"; // Adjust the path according to your structure
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import ProtectedRoute from "./protectedRouting";
+import Layout from "../../screens/Layout";
+import Welcome from "../../screens/Welcome";
+import Signin from "../../screens/Signin";
+import Signup from "../../screens/Signup";
+import CreateUserProfile from "../../screens/CreateUserProfile";
 import CreateBarberProfile from "../../screens/CreateBarberProfile";
+import BarberDashboard from "../../screens/BarberDashboard";
 
 // Component to set up routing
 const Routing = () => {

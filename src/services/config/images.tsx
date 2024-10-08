@@ -38,6 +38,14 @@ import deleteService from "../../assets/Images/deleteService.png";
 import addWhite from "../../assets/Images/addWhite.png";
 import edit from "../../assets/Images/edit.png";
 import deleteIcon from "../../assets/Images/delete.png"
+import beardDisplayPicture from "../../assets/Images/beardDisplayPicture.png";
+import haircutDisplayPicture from "../../assets/Images/haircutDisplayPicture.png";
+import reviewBarber from "../../assets/Images/reviewBarber.png";
+import google from "../../assets/Images/google.png";
+import apple from "../../assets/Images/apple.png";
+import facebook from "../../assets/Images/facebook.png";
+import twitter from "../../assets/Images/twitter.png";
+import insta from "../../assets/Images/insta.png";
 
 const images = {
   edit,
@@ -80,6 +88,14 @@ const images = {
   star,
   Location,
   greyArrow,
+  beardDisplayPicture,
+  haircutDisplayPicture,
+  reviewBarber,
+  google,
+  apple,
+  facebook,
+  twitter,
+  insta,
 };
 
 export default images;
