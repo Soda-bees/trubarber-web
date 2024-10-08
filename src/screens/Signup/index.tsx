@@ -4,12 +4,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectRole, setRole } from '../../Store/Role'
 import Button from '../../components/Button'
 import BackButton from '../../components/BackButton'
+import useNavigate from '../../components/ScrollToTopNavigate'
+import { validateEmailAvailability } from '../../services/config/Api'
 
 type Props = {}
 
 const Signup = (props: Props) => {
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const role = useSelector(selectRole)
 
@@ -25,7 +28,13 @@ const Signup = (props: Props) => {
         dispatch(setRole(role))
     }
 
+    const handleNavigateToSignin = async () => {
+        navigate('/signin')
+    }
+
     const handleConfirm = async () => {
+        const response = await validateEmailAvailability()
+        console.log(response);
 
     }
 
@@ -84,7 +93,7 @@ const Signup = (props: Props) => {
                 </div>
                 <div className='w-full px-4 w-[100%] sm:w-[80%] md:w-[60%] lg:w-[90%] mt-16 md-mt-0'>
                     <div className='text-center font-semibold text-hoverGray '>Already have an account?</div>
-                    <Button title='Sign In' onClick={handleConfirm} mt={"50px"} loader={loader} light />
+                    <Button title='Sign In' onClick={handleNavigateToSignin} mt={"50px"} loader={loader} light />
                 </div>
             </div>
         </div>

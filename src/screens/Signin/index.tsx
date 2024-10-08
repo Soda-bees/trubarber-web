@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectRole, setRole } from '../../Store/Role'
 import Button from '../../components/Button'
 import BackButton from '../../components/BackButton'
+import useNavigate from '../../components/ScrollToTopNavigate'
 
 type Props = {}
 
 const Signin = (props: Props) => {
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const role = useSelector(selectRole)
 
@@ -23,7 +25,7 @@ const Signin = (props: Props) => {
     }
 
     const handleConfirm = async () => {
-
+            navigate('/signup')
     }
 
     return (
