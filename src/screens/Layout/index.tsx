@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "../../components/Header";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import SideBar from "../../components/SideBar";
 
 type Props = {};
 
@@ -12,12 +13,13 @@ const Layout = (props: Props) => {
   const shouldShowHeader = !noHeaderPaths.includes(location.pathname);
   return (
     <div>
-      {
+      <SideBar />
+      {/* {
         shouldShowHeader &&
         <Header />
       }
       <Outlet />
-      <ToastContainer />
+      <ToastContainer /> */}
     </div>
   );
 };

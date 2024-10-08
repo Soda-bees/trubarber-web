@@ -12,7 +12,7 @@ type Props = {}
 
 const Welcome = (props: Props) => {
   return (
-    <div>
+    <div >
       <Slider />
       <LandingDiscover />
       <LogoLine />

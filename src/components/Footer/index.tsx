@@ -5,7 +5,7 @@ type Props = {};
 
 const Footer = (props: Props) => {
   return (
-<div className="bg-black py-10 px-5 md:px-10">
+    <div className="bg-black py-10 px-5 md:px-10">
       <div className="flex flex-col md:flex-row justify-between w-full md:items-center space-y-4 md:space-y-0">
         <div className="flex flex-col md:flex-row md:w-[40%] justify-around text-white md:items-center text-lg font-light space-y-4 md:space-y-0 md:space-x-6">
           <div className="cursor-pointer">Book Appointment</div>
@@ -16,10 +16,10 @@ const Footer = (props: Props) => {
         </div>
 
         <div className="flex flex-row items-center md:justify-center md:space-x-4">
-          <div className="border flex items-center p-2 rounded-xl md:w-auto">
+          <div className="border flex items-center p-2 rounded-xl md:w-auto cursor-pointer">
             <img
               src={images.google}
-              className="w-8 md:w-10 cursor-pointer"
+              className="w-8 md:w-10"
               alt="Google Play"
             />
             <div className="ml-2">
@@ -27,10 +27,10 @@ const Footer = (props: Props) => {
               <div className="text-white font-bold">Google Play</div>
             </div>
           </div>
-          <div className="border flex items-center ml-2 p-2 rounded-xl md:w-auto">
+          <div className="border flex items-center ml-2 p-2 rounded-xl md:w-auto cursor-pointer">
             <img
               src={images.apple}
-              className="w-8 md:w-10 cursor-pointer"
+              className="w-8 md:w-10"
               alt="App Store"
             />
             <div className="ml-2">
@@ -56,26 +56,14 @@ const Footer = (props: Props) => {
         </div>
 
         <div className="flex flex-row space-x-4">
-          <div className="border rounded-full p-2">
-            <img
-              src={images.facebook}
-              className="w-5 md:w-6 cursor-pointer"
-              alt="Facebook"
-            />
+          <div className="border rounded-full p-2  cursor-pointer">
+            <img src={images.facebook} className="w-5 md:w-6" alt="Facebook" />
           </div>
-          <div className="border rounded-full p-2">
-            <img
-              src={images.twitter}
-              className="w-5 md:w-6 cursor-pointer"
-              alt="Twitter"
-            />
+          <div className="border rounded-full p-2  cursor-pointer">
+            <img src={images.twitter} className="w-5 md:w-6" alt="Twitter" />
           </div>
-          <div className="border rounded-full p-2">
-            <img
-              src={images.insta}
-              className="w-5 md:w-6 cursor-pointer"
-              alt="Instagram"
-            />
+          <div className="border rounded-full p-2  cursor-pointer">
+            <img src={images.insta} className="w-5 md:w-6" alt="Instagram" />
           </div>
         </div>
       </div>

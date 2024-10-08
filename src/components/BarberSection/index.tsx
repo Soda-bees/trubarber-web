@@ -243,7 +243,7 @@ const BarberSection = (props: Props) => {
               </div>
             </div>
 
-            <div className="mt-2 text-center flex flex-row bg-black text-white py-2 px-4 rounded-lg w-full items-center justify-between cursor-pointer">
+            <div className="mt-2 text-center flex flex-row bg-black text-white py-2 px-4 rounded-lg w-full items-center justify-between cursor-pointer active:opacity-50">
               <div className="text-white">Book Appointment</div>
               <img src={images.arrowBtn} className="w-[4%] h-full" />
             </div>
@@ -253,7 +253,6 @@ const BarberSection = (props: Props) => {
 
       <div className="flex flex-col mt-4 justify-between p-4 ">
         <div className="flex flex-row items-center justify-between">
-          {/* <div> */}
           <div className="text-3xl md:text-6xl md:w-[70%] lg:w-[60%] font-semibold">
             Discover Expert Barbers Online Effortlessly
           </div>
@@ -262,7 +261,10 @@ const BarberSection = (props: Props) => {
               onClick={() => scroll("left")}
               className="bg-white text-black rounded-full flex justify-center"
             >
-              <img src={images.greyArrow} className="w-[40%] h-full cursor-pointer" />
+              <img
+                src={images.greyArrow}
+                className="w-[40%] h-full cursor-pointer"
+              />
             </div>
 
             <div
@@ -275,7 +277,6 @@ const BarberSection = (props: Props) => {
               />
             </div>
           </div>
-          {/* </div> */}
         </div>
         <div className="flex flex-row items-center justify-between mt-7">
           <div className="text-sm w-full md:text-xl md: w-[70%] lg:w-[30%] font-light">
@@ -287,7 +288,7 @@ const BarberSection = (props: Props) => {
           </div>
         </div>
         <div className="md:hidden flex flex-row justify-between mt-4">
-        <div className="border border-black/50 p-2 px-5 rounded-xl flex justify-center cursor-pointer mr-2">
+          <div className="border border-black/50 p-2 px-5 rounded-xl flex justify-center cursor-pointer mr-2">
             View All
           </div>
           <div className="flex flex-row justify-between w-[15%] h-[15%] mt-3">
@@ -302,13 +303,9 @@ const BarberSection = (props: Props) => {
               onClick={() => scroll("right")}
               className="bg-white text-black rounded-full flex justify-center"
             >
-              <img
-                src={images.greyArrow}
-                className="rotate-180 w-3 h-5"
-              />
+              <img src={images.greyArrow} className="rotate-180 w-3 h-5" />
             </div>
           </div>
-          
         </div>
       </div>
     </div>

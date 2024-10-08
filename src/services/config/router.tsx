@@ -35,13 +35,13 @@ import { useSelector } from "react-redux";
 import { selectRole } from "../../Store/Role"; // Adjust the path according to your structure
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import ProtectedRoute from "./protectedRouting";
-import Layout from "../../screens/Layout";
-import Welcome from "../../screens/Welcome";
-import Signin from "../../screens/Signin";
-import Signup from "../../screens/Signup";
-import CreateUserProfile from "../../screens/CreateUserProfile";
-import CreateBarberProfile from "../../screens/CreateBarberProfile";
-import BarberDashboard from "../../screens/BarberDashboard";
+import Layout from "../../Screens/Layout";
+import Welcome from "../../Screens/Welcome";
+import Signin from "../../Screens/Signin";
+import Signup from "../../Screens/Signup";
+import CreateUserProfile from "../../Screens/CreateUserProfile";
+import CreateBarberProfile from "../../Screens/CreateBarberProfile";
+import BarberDashboard from "../../Screens/BarberDashboard";
 
 // Component to set up routing
 const Routing = () => {
