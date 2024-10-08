@@ -67,21 +67,19 @@ const CustomerReview = (props: Props) => {
 
   const handleRatingChange = (newRating: number, index: number) => {
     const updatedReviews = [...reviews];
-    updatedReviews[currentIndex + index].rating = newRating; // Update the correct review
+    updatedReviews[currentIndex + index].rating = newRating;
     setReviews(updatedReviews);
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const reviewsPerPage = 4;
 
-  // Function to go to the next set of reviews
   const nextReviews = () => {
     if (currentIndex + reviewsPerPage < reviews.length) {
       setCurrentIndex(currentIndex + reviewsPerPage);
     }
   };
 
-  // Function to go to the previous set of reviews
   const previousReviews = () => {
     if (currentIndex - reviewsPerPage >= 0) {
       setCurrentIndex(currentIndex - reviewsPerPage);
@@ -118,7 +116,7 @@ const CustomerReview = (props: Props) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+      <div className="grid grid-cols-1 h-[50%] sm:grid-cols-2 gap-4 w-full">
         {reviews
           .slice(currentIndex, currentIndex + reviewsPerPage)
           .map((review, index) => (
