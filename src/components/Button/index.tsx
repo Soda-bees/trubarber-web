@@ -5,7 +5,7 @@ type Props = {
     title: string,
     onClick: () => void;
     mt: string,
-    loader: boolean,
+    loader?: boolean,
     light: boolean
 }
 

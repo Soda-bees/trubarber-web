@@ -6,12 +6,12 @@ type Props = {};
 const BarberServiceDisplay = (props: Props) => {
   return (
     <div className="flex flex-col justify-center items-center bg-black w-full py-20">
-      <div className="text-3xl sm:text-4xl md:text-5xl text-white w-[80%] md:w-[50%] lg:w-[30%] text-center">
+      <div className="text-3xl sm:text-4xl md:text-5xl text-white w-[90%] md:w-[90%] lg:w-[60%] xl:w-[45%] text-center ">
         Effortlessly Book&nbsp;
         <span className="font-bold">Barber Services</span>&nbsp;Online
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between items-center w-full px-5 sm:px-[8%] md:px-[10%] lg:px-[13%] mt-10 space-y-10 md:space-y-0 md:space-x-5 lg:space-x-10">
+      <div className="flex flex-col md:flex-row justify-between items-center w-full px-5 sm:px-[8%] md:px-[3%] lg:px-[2%] mt-10 md:space-y-0 gap-4">
         <div className="relative w-full md:w-1/2 lg:w-[88%]">
           <img
             src={images.haircutDisplayPicture}

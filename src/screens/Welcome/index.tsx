@@ -18,9 +18,9 @@ const Welcome = (props: Props) => {
       <LandingDiscover /> 
       {/* <LogoLine /> */}
       <BarberSection />
-      {/* <BarberServiceDisplay /> */}
+      <BarberServiceDisplay />
       {/* <LogoLine /> */}
-      {/* <CustomerReview /> */}
+      <CustomerReview />
       {/* <Footer /> */}  
     </div>
   )

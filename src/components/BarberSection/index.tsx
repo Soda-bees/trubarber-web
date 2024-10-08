@@ -1,10 +1,10 @@
-import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import images from "../../services/config/images";
+import Button from "../Button";
 
 type Props = {};
 
 const BarberSection = (props: Props) => {
-
   const [sliderData] = useState([
     {
       image: images.barberImg,
@@ -14,67 +14,52 @@ const BarberSection = (props: Props) => {
       icon: images.Location,
     },
     {
-      image: images.TRUBARBER,
+      image: images.barberImg,
       name: "Jane Smith 2",
       location: "456 Oak St, City",
       rating: 4.7,
       icon: images.Location,
     },
     {
-      image: images.appointment,
+      image: images.barberImg,
       name: "Bob Johnson 3",
       location: "789 Pine St, City",
       rating: 4.8,
       icon: images.Location,
     },
     {
-      image: images.TRUBARBER,
-      name: "Jane Smith 4",
-      location: "456 Oak St, City",
-      rating: 4.7,
+      image: images.barberImg,
+      name: "Bob Johnson 4",
+      location: "789 Pine St, City",
+      rating: 4.8,
       icon: images.Location,
     },
     {
-      image: images.appointment,
+      image: images.barberImg,
       name: "Bob Johnson 5",
       location: "789 Pine St, City",
       rating: 4.8,
       icon: images.Location,
     },
     {
-      image: images.TRUBARBER,
-      name: "Jane Smith 6",
-      location: "456 Oak St, City",
-      rating: 4.7,
-      icon: images.Location,
-    },
-    {
-      image: images.appointment,
-      name: "Bob Johnson 7",
+      image: images.barberImg,
+      name: "Bob Johnson 6",
       location: "789 Pine St, City",
       rating: 4.8,
       icon: images.Location,
     },
     {
-      image: images.TRUBARBER,
-      name: "Jane Smith 8",
-      location: "456 Oak St, City",
-      rating: 4.7,
-      icon: images.Location,
-    },
-    {
-      image: images.appointment,
-      name: "Bob Johnson 9",
+      image: images.barberImg,
+      name: "Bob Johnson 6",
       location: "789 Pine St, City",
       rating: 4.8,
       icon: images.Location,
     },
-    // Add more items here
+    // Add more items here...
   ]);
 
   const [visibleImages, setVisibleImages] = useState(5);
   const [startIndex, setStartIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -90,7 +75,6 @@ const BarberSection = (props: Props) => {
         breakpoints.find(
           (breakpoint) => window.innerWidth >= breakpoint.width
         ) || breakpoints[breakpoints.length - 1];
-      console.log(newVisibleImages);
 
       setVisibleImages(newVisibleImages);
     };
@@ -105,7 +89,7 @@ const BarberSection = (props: Props) => {
     if (startIndex + visibleImages < sliderData.length) {
       setStartIndex(startIndex + 1);
     } else {
-      setStartIndex(0);
+      setStartIndex(0);  // Reset to the beginning if we've reached the end
     }
   };
 
@@ -113,13 +97,12 @@ const BarberSection = (props: Props) => {
     if (startIndex > 0) {
       setStartIndex(startIndex - 1);
     } else {
-      setStartIndex(sliderData.length - visibleImages);
+      setStartIndex(sliderData.length - visibleImages);  // Wrap around to the last set of visible items
     }
   };
 
-
   return (
-    <div className=" flex flex-col w-full p-4 bg-red-500">
+    <div className="flex flex-col w-full p-4 ">
       <div className="flex flex-col mt-4 justify-between p-4 w-full">
         <div className="flex flex-row items-center justify-between">
           <div className="text-3xl md:text-6xl md:w-[70%] lg:w-[60%] font-semibold">
@@ -148,7 +131,7 @@ const BarberSection = (props: Props) => {
           </div>
         </div>
         <div className="flex flex-row items-center justify-between mt-7">
-          <div className="text-sm w-full md:text-xl md: w-[70%] lg:w-[30%] font-light">
+          <div className="text-sm w-full md:text-xl md:w-[70%] lg:w-[30%] font-light">
             Effortlessly locate and connect with top-rated barbers in your area
             using our easy-to-use online platform.
           </div>
@@ -178,51 +161,50 @@ const BarberSection = (props: Props) => {
         </div>
       </div>
 
-      <div
-        className="bg-purplegray"
-      >
+      <div className="bg-purplegray">
         <div className="flex flex-row gap-2 overflow-hidden">
-          {sliderData
-            .slice(startIndex, startIndex + visibleImages)
-            .map((item, index) => (
-              <div
-                key={index}
-                className={`w-full ${visibleImages === 8
+          {sliderData.map((item, index) => (
+            <div
+              key={index}
+              className={`w-full ${index >= startIndex && index < startIndex + visibleImages
+                ? "block"
+                : "hidden"
+                } ${visibleImages === 8
                   ? "xl:w-1/8 relative"
                   : visibleImages === 6
                     ? "lg:w-1/6 relative"
                     : visibleImages === 4
                       ? "md:w-1/2 relative"
                       : "sm:w-1/2 relative"
-                  }`}
-              >
-                <div>
-                  <img
-                    src={item?.image}
-                    className="w-full h-auto "
-                    style={{ height: "420px", width: "100%" }}
-                  />
-                  <div className="absolute flex flex-row items-center top-3 right-3 bg-white/30 backdrop-blur-lg text-white font-bold px-2 py-1 rounded-lg">
-                    {item.rating}
-                    <img src={images.star} className="w-4 ml-2" />
-                  </div>
-                  <div className="absolute bottom-10 left-[5%] text-black bg-white/20 backdrop-blur-lg p-2 w-[90%] rounded-xl">
-                    <div className="font-bold text-lg">{item.name}</div>
-                    <div className="text-sm flex flex-row items-center">
-                      <img src={item.icon} className="w-[5%] h-full mr-1" />
-                      {item.location}
-                    </div>
-                  </div>
-                  <div onClick={() =>alert(index)}>{index}</div>
+                }`}
+            >
+              <div>
+                <img
+                  src={item?.image}
+                  className="w-full h-auto "
+                  style={{ height: "420px", width: "100%" }}
+                />
+                <div className="absolute flex flex-row items-center top-3 right-3 bg-white/30 backdrop-blur-lg text-white font-bold px-2 py-1 rounded-lg">
+                  {item.rating}
+                  <img src={images.star} className="w-4 ml-2" />
                 </div>
+                <div className="absolute bottom-20 left-[5%] text-black bg-white/20 backdrop-blur-lg p-2 w-[90%] rounded-xl">
+                  <div className="font-bold text-lg">{item.name}</div>
+                  <div className="text-sm flex flex-row items-center">
+                    <img src={item.icon} className="w-[5%] h-full mr-1" />
+                    {item.location}
+                  </div>
+                </div>
+                <Button light={false} title="Book Appointment" mt={'10px'} onClick={() => alert(index)} />
+                {/* <div onClick={() => alert(index)}>{index}</div> */}
               </div>
-            ))}
+            </div>
+          ))}
         </div>
-
       </div>
-
     </div>
   );
 };
 
 export default BarberSection;
+
