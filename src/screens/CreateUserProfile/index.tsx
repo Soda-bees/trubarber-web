@@ -1,12 +1,30 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import BackButton from '../../components/BackButton'
 import images from '../../services/config/images'
 import SmallButton from '../../components/SmallButton'
 import { Toast } from '../../components/Toast'
+import { useLocation } from 'react-router-dom'
+import { handleSignup, uploadProfile } from '../../services/config/Api'
 
 type Props = {}
 
 const CreateUserProfile = (props: Props) => {
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const location = useLocation();
+    interface LocationState {
+        userData: {
+            name: string;
+            email: string;
+            password: string;
+            role: string;
+            deviceToken: string
+        };
+    }
+    const { userData } = location.state as LocationState || {};
+    console.log("create user profile======>", userData);
+
     const [gender, setGender] = useState<string>('')
     const [survey, setSurvey] = useState([
         {
@@ -100,6 +118,8 @@ const CreateUserProfile = (props: Props) => {
     const [selectedSurvey, setSelectedSurvey] = useState<any>([])
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const [loader, setLoader] = useState<boolean>(false)
+    const [imgUri, setImgUri] = useState<string>('');
+    const [imageUploadLoader, setImageUploadLoader] = useState<boolean>(false)
 
     const handleSetGender = (selected: string) => {
         setGender(selected)
@@ -138,18 +158,14 @@ const CreateUserProfile = (props: Props) => {
     const validateSurvey = () => {
         let isValid = true;
 
-        // Loop through each question in the survey
         survey.forEach((item) => {
-            // Check if at least one answer is selected
             const isAnswerSelected = item.answers.some(answer => answer.selected);
 
-            // If no answer is selected, show an error message
             if (!isAnswerSelected) {
                 isValid = false;
             }
         });
 
-        // You can return the validation status if needed
         return isValid;
     }
 
@@ -177,11 +193,51 @@ const CreateUserProfile = (props: Props) => {
     }
 
     const handleConfirm = async () => {
-
-        setLoader(true)
-        setTimeout(() => {
+        try {
+            setLoader(true)
+            Object.assign(userData, {
+                profile: imgUri,
+                survey: selectedSurvey,
+                tagSelection: selectedTagSelection,
+                gender
+            })
+            console.log(userData);
+            const response = await handleSignup(userData)
+            if (response.status == 201) {
+                setLoader(false)
+                Toast('success', response?.data?.message)
+            } else {
+                setLoader(false)
+                Toast('error', response?.data?.message)
+            }
+        } catch (error) {
             setLoader(false)
-        }, 1500)
+            Toast('error', 'An error occurred')
+        }
+    }
+
+    const handleButtonClick = () => {
+        fileInputRef?.current?.click(); // Manually trigger file input click
+    };
+
+    const handleUploadProfile = async (e: any) => {
+        try {
+            setImageUploadLoader(true)
+            const selectedFile = e.target.files[0];
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            const response = await uploadProfile(formData)
+            if (response?.success) {
+                setImgUri(response?.url)
+                setImageUploadLoader(false)
+            } else {
+                Toast('error', response?.message)
+                setImageUploadLoader(false)
+            }
+        } catch (error) {
+            console.log(error);
+            setImageUploadLoader(false)
+        }
     }
 
     return (
@@ -192,8 +248,19 @@ const CreateUserProfile = (props: Props) => {
                     <div className='flex flex-col md:col-span-2'>
                         <div className='text-lg font-semibold'>Upload your profile picture</div>
                         <div className='flex flex-row items-center p-3 border border-inputGray rounded-3xl mt-2 shadow-sm'>
-                            <img src={images.profileUpload} className='w-20 mr-4 sm:mr-10' />
-                            <SmallButton title={'Upload Photo'} dark={true} image={images.uploadBtn} />
+                            {
+                                imgUri ? <img src={imgUri} className='w-20 h-18 rounded-3xl object-contain mr-4 sm:mr-10' /> :
+                                    <img src={images.profileUpload} className='w-20 mr-4 sm:mr-10' />
+                            }
+                            <SmallButton title={'Upload Photo'} dark={true} image={images.uploadBtn} onClick={handleButtonClick} imgLoader={imageUploadLoader} />
+                            <input
+                                id='fileInput'
+                                ref={fileInputRef}
+                                type='file'
+                                className='hidden'
+                                onChange={handleUploadProfile}
+                                accept='.png, .jpg, .jpeg'
+                            />
                         </div>
                     </div>
                     <div className='flex flex-col'>

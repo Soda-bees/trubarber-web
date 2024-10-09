@@ -35,8 +35,20 @@ const Signup = (props: Props) => {
 
     const handleConfirm = async () => {
         try {
-            if(!name){
-                return Toast('error' , 'Enter name')
+            if (!name) {
+                return Toast('error', 'Enter name')
+            }
+            if (!email) {
+                return Toast('error', 'Enter email')
+            }
+            if (!password) {
+                return Toast('error', 'Enter password')
+            }
+            if (password.length < 8) {
+                return Toast('error', 'Password must contain atleast 8 characters')
+            }
+            if (!check) {
+                return Toast('error', 'Please select the checkbox')
             }
             const body = {
                 email
@@ -45,7 +57,10 @@ const Signup = (props: Props) => {
             const response = await validateEmailAvailability(body) as { data: any, success: boolean, message: string }
             if (response?.data?.success) {
                 setLoader(false)
-                Toast('success', response?.data?.message)
+                const userData = {
+                    name, email, password, role, deviceToken: ''
+                }
+                navigate('/create-user-profile', { state: { userData } })
             } else {
                 setLoader(false)
                 Toast('error', response?.data?.message)
@@ -56,11 +71,15 @@ const Signup = (props: Props) => {
 
     }
 
+    const handleConfirmBarber = async () => {
+        alert('barber')
+    }
+
     return (
         <div className='w-full lg:h-screen flex flex-col lg:flex-row items-start justify-between max-h-screen'>
             <div
                 className="relative lg:h-full bg-white h-[40vh] md:h-[60vh] w-full lg:w-[85%] xl:w-[70%] flex flex-col items-start justify-between pl-4 py-4 lg:pl-10 lg:py-8 bg-cover md:bg-center lg:bg-contain xl:bg-cover bg-no-repeat">
-                <img src={images.signinBG} className='w-full h-full absolute top-0 left-0 p-2 rounded-3xl ' />
+                <img src={images.signinBG} className='w-full h-full absolute top-0 left-0 p-2 rounded-3xl' />
                 <BackButton light={false} />
                 <div className='z-10 '>
                     <img src={images.truLogo} className='w-1/6 ' />
@@ -107,7 +126,7 @@ const Signup = (props: Props) => {
                             className='w-[17px] mr-4 cursor-pointer' />
                         By selecting the checkbox, you are indicating your agreement to the Terms and Policies.
                     </div>
-                    <Button title='Sign Up' onClick={handleConfirm} mt={"50px"} loader={loader} light={false} />
+                    <Button title='Sign Up' onClick={() => role === 'user' ? handleConfirm() : handleConfirmBarber()} mt={"50px"} loader={loader} light={false} />
                 </div>
                 <div className='w-full px-4 w-[100%] sm:w-[80%] md:w-[60%] lg:w-[90%] mt-16 md-mt-0'>
                     <div className='text-center font-semibold text-hoverGray '>Already have an account?</div>
