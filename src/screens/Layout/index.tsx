@@ -16,7 +16,7 @@ const Layout = (props: Props) => {
   const [showSidebar, setShowSidebar] = useState<boolean>(false)
 
   const location = useLocation();
-  const noHeaderPaths = ['/signin', '/signup', '/create-user-profile', '/create-barber-profile'];
+  const noHeaderPaths = ['/signin', '/signup', '/create-user-profile', '/create-barber-profile', '/about', '/privacy-policy'];
   const noSidebarPaths = ['/signin', '/signup', '/create-user-profile', '/create-barber-profile']
   const shouldShowSidebar = !authToken && !noSidebarPaths.includes(location.pathname);
   const shouldShowHeader = !noHeaderPaths.includes(location.pathname);

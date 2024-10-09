@@ -1,34 +1,3 @@
-// import React from "react";
-// import { createBrowserRouter, RouterProvider } from "react-router-dom";
-// import Layout from "../../screens/Layout";
-// import Signin from "../../screens/Signin";
-// import Signup from "../../screens/Signup";
-// import Welcome from "../../screens/Welcome";
-// import CreateUserProfile from "../../screens/CreateUserProfile";
-
-
-// const router = createBrowserRouter([
-//     {
-//         path: '/',
-//         element: <Layout />,
-//         children: [
-//             { index: true, element: <Welcome /> },
-//             { path: '/signin', element: <Signin /> },
-//             { path: '/signup', element: <Signup /> },
-//             { path: '/createuserprofile', element: <CreateUserProfile /> },
-//         ]
-//     }
-// ])
-
-
-// type Props = {}
-
-// const Routing = (props: Props) => {
-//     return <RouterProvider router={router} />
-// }
-
-// export default Routing 
-
 import React from "react";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -42,9 +11,8 @@ import Signup from "../../screens/Signup";
 import CreateUserProfile from "../../screens/CreateUserProfile";
 import PrivacyPolicy from "../../screens/PrivacyPolicy";
 import About from "../../screens/About";
-import BarberDashboard from "../../screens/BarberDashboard";
 import CreateBarberProfile from "../../screens/CreateBarberProfile";
-
+import BarberDashboard from "../../screens/BarberDashboard";
 
 
 // Component to set up routing

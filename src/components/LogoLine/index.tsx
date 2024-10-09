@@ -1,46 +1,56 @@
-import React, { useState } from "react";
+import React from "react";
 import images from "../../services/config/images";
 
 type Props = {};
 
 const LogoLine = (props: Props) => {
-  const [sliderImages] = useState<{ image: string; text: string }[]>([
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-  ]);
-
   return (
-    <div className="relative overflow-hidden bg-blue-500 w-full">
+    <div className="relative overflow-hidden bg-black w-full h-20 flex items-center">
       <div
-        className="flex whitespace-nowrap"
+        className="flex items-center absolute"
         style={{
-          animation: "slide 15s linear infinite",
-          display: "flex", // Ensure flex display
+          animation: "slideHorizontal 30s linear infinite",
+          // width: "200%",
         }}
       >
-        {/* Duplicating the content to create a looping effect */}
-        {sliderImages.concat(sliderImages).map((item, index) => {
-          return (
-            <div key={index} className="flex items-center justify-center mx-2">
-              <img src={item?.image} className="w-36" />
-              {/* <div className="text-4xl font-bold mx-2">B</div>
-              <div className="text-4xl font-bold mx-2">A</div> */}
+        {/* Original Content */}
+        {[...Array(2)].map((_, i) => (
+          <div key={i} className="flex items-center">
+            <div className="flex items-center justify-center w-1/3">
+              <img src={images.truLogoTwo} className="w-24 h-auto" alt="logo" />
+              <div
+                className="text-white text-3xl px-60"
+                style={{ letterSpacing: "1em" }}
+              >
+                BARBER
+              </div>
             </div>
-          );
-        })}
+
+            <div className="flex items-center justify-center w-1/3">
+              <img src={images.truLogoTwo} className="w-24 h-auto" alt="logo" />
+              <div
+                className="text-white text-3xl px-60"
+                style={{ letterSpacing: "1em" }}
+              >
+                BARBER
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center w-1/3">
+              <img src={images.truLogoTwo} className="w-24 h-auto" alt="logo" />
+              <div
+                className="text-white text-3xl px-60"
+                style={{ letterSpacing: "1em" }}
+              >
+                BARBER
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Inline style for keyframes */}
       <style>{`
-        @keyframes slide {
+        @keyframes slideHorizontal {
           0% {
             transform: translateX(0);
           }
