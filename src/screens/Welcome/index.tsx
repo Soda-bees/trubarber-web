@@ -19,7 +19,7 @@ const Welcome = (props: Props) => {
       <LogoLine />
       <BarberSection />
       <BarberServiceDisplay />
-      {/* <LogoLine /> */}
+      <LogoLine />
       <CustomerReview />
       {/* <Footer /> */}  
     </div>
