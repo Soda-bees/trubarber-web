@@ -1,45 +1,3 @@
-// import React, { useState } from "react";
-// import images from "../../services/config/images";
-
-// type Props = {};
-
-// const LogoLine = (props: Props) => {
-//   const [sliderImages, setSliderImages] = useState<
-//     { image: string; text: string }[]
-//   >([
-//     { image: images.truLogoTwo, text: "BARBER" },
-//     { image: images.truLogoTwo, text: "BARBER" },
-//     { image: images.truLogoTwo, text: "BARBER" },
-//     { image: images.truLogoTwo, text: "BARBER" },
-//     { image: images.truLogoTwo, text: "BARBER" },
-//     { image: images.truLogoTwo, text: "BARBER" },
-//     { image: images.truLogoTwo, text: "BARBER" },
-//     { image: images.truLogoTwo, text: "BARBER" },
-//   ]);
-
-//   return (
-//     <div className="relative overflow-hidden bg-blue-500 w-full">
-//       <div className="flex">
-//         {
-//           sliderImages.map((item, index) => {
-//             return (
-//               <div className="flex flex-row items-center">
-//               <img src={item?.image} className="w-36" />
-//               <div className="text-4xl font-bold">B</div>
-//               <div className="text-4xl font-bold">A</div>
-//               </div>
-//             )
-//           })
-//         }
-        
-
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LogoLine;
-
 import React, { useState } from "react";
 import images from "../../services/config/images";
 
@@ -47,12 +5,6 @@ type Props = {};
 
 const LogoLine = (props: Props) => {
   const [sliderImages] = useState<{ image: string; text: string }[]>([
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
-    { image: images.truLogoTwo, text: "BARBER" },
     { image: images.truLogoTwo, text: "BARBER" },
     { image: images.truLogoTwo, text: "BARBER" },
     { image: images.truLogoTwo, text: "BARBER" },
