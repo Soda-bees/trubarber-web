@@ -6,6 +6,7 @@ import Button from '../../components/Button'
 import BackButton from '../../components/BackButton'
 import useNavigate from '../../components/ScrollToTopNavigate'
 import { validateEmailAvailability } from '../../services/config/Api'
+import { Toast } from '../../components/Toast'
 
 type Props = {}
 
@@ -33,8 +34,25 @@ const Signup = (props: Props) => {
     }
 
     const handleConfirm = async () => {
-        const response = await validateEmailAvailability()
-        console.log(response);
+        try {
+            if(!name){
+                return Toast('error' , 'Enter name')
+            }
+            const body = {
+                email
+            }
+            setLoader(true)
+            const response = await validateEmailAvailability(body) as { data: any, success: boolean, message: string }
+            if (response?.data?.success) {
+                setLoader(false)
+                Toast('success', response?.data?.message)
+            } else {
+                setLoader(false)
+                Toast('error', response?.data?.message)
+            }
+        } catch (error) {
+            Toast('error', 'An error occurred')
+        }
 
     }
 
@@ -42,7 +60,7 @@ const Signup = (props: Props) => {
         <div className='w-full lg:h-screen flex flex-col lg:flex-row items-start justify-between max-h-screen'>
             <div
                 className="relative lg:h-full bg-white h-[40vh] md:h-[60vh] w-full lg:w-[85%] xl:w-[70%] flex flex-col items-start justify-between pl-4 py-4 lg:pl-10 lg:py-8 bg-cover md:bg-center lg:bg-contain xl:bg-cover bg-no-repeat">
-                <img src={images.signinBG} className='w-full h-full absolute top-0 left-0 p-2 rounded-3xl shadow-xl' />
+                <img src={images.signinBG} className='w-full h-full absolute top-0 left-0 p-2 rounded-3xl ' />
                 <BackButton light={false} />
                 <div className='z-10 '>
                     <img src={images.truLogo} className='w-1/6 ' />
@@ -64,22 +82,22 @@ const Signup = (props: Props) => {
                     <div className='mt-4 lg:mt-8'>
                         <div className='bg-inputGray flex flel-row items-center justify-start pl-4 rounded-lg'>
                             <img src={images.user} className='w-4' />
-                            <input placeholder='Name' className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setName(e.target.value)} />
+                            <input placeholder='Name' className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setName(e.target.value)} value={name} />
                         </div>
                         <div className='bg-inputGray flex flel-row items-center justify-start pl-4 rounded-lg mt-2'>
                             <img src={images.email} className='w-4' />
-                            <input placeholder='Email' className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setEmail(e.target.value)} />
+                            <input placeholder='Email' className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setEmail(e.target.value)} value={email} />
                         </div>
                         {
                             role === 'barber' &&
                             <div className='bg-inputGray flex flel-row items-center justify-start pl-4 rounded-lg mt-2'>
                                 <img src={images.phone} className='w-4' />
-                                <input placeholder='Phone' type='number' className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setPhone(e.target.value)} />
+                                <input placeholder='Phone' type='number' className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setPhone(e.target.value)} value={phone} />
                             </div>
                         }
                         <div className='bg-inputGray flex flel-row items-center justify-start px-4 rounded-lg mt-2'>
                             <img src={images.password} className='w-4' />
-                            <input placeholder='Password' type={showPass ? 'text' : 'password'} className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setPassword(e.target.value)} />
+                            <input placeholder='Password' type={showPass ? 'text' : 'password'} className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setPassword(e.target.value)} value={password} />
                             <img src={showPass ? images.eyeOff : images.eye} className='w-5 cursor-pointer' onClick={() => setShowPass(!showPass)} />
                         </div>
                     </div>
@@ -93,7 +111,7 @@ const Signup = (props: Props) => {
                 </div>
                 <div className='w-full px-4 w-[100%] sm:w-[80%] md:w-[60%] lg:w-[90%] mt-16 md-mt-0'>
                     <div className='text-center font-semibold text-hoverGray '>Already have an account?</div>
-                    <Button title='Sign In' onClick={handleNavigateToSignin} mt={"50px"} loader={loader} light />
+                    <Button title='Sign In' onClick={handleNavigateToSignin} mt={"50px"} light />
                 </div>
             </div>
         </div>

@@ -3,15 +3,17 @@ import images from "../../services/config/images";
 import ScrollToTopLink from "../ScrollToTopLink";
 import { useLocation } from "react-router-dom";
 
-type Props = {};
+type Props = {
+  showSidebar: boolean
+};
 
-const SideBar = (props: Props) => {
+const SideBar = ({ showSidebar }: Props) => {
   const location = useLocation();
   const activePath = location.pathname;
   const [onClickToggle, setOnClickToggle] = useState<boolean>(false);
 
   return (
-    <div className="hidden sm:flex flex-col items-start justify-start sticky top-0 max-h-screen relative bg-black w-[15%] py-10 md:w-[37%] lg:w-[25%] xl:w-[20%] 2xl:w-[17%]">
+    <div className={`flex-col items-start justify-start sticky top-0 max-h-screen relative bg-black w-[15%] py-10 md:w-[37%] lg:w-[25%] xl:w-[20%] 2xl:w-[17%] ${showSidebar ? 'flex' : 'hidden'}`}>
       <div className="px-10 flex flex-col justify-between">
         <img src={images.truLogo} className="w-[50%] cursor-pointer" />
         <img src={images.reviewBarber} className="w-[50%] mt-20 mb-7" />
