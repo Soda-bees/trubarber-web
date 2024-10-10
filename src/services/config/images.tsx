@@ -37,7 +37,7 @@ import uploadGray from "../../assets/Images/uploadGray.png";
 import deleteService from "../../assets/Images/deleteService.png";
 import addWhite from "../../assets/Images/addWhite.png";
 import edit from "../../assets/Images/edit.png";
-import deleteIcon from "../../assets/Images/delete.png"
+import deleteIcon from "../../assets/Images/delete.png";
 import beardDisplayPicture from "../../assets/Images/beardDisplayPicture.png";
 import haircutDisplayPicture from "../../assets/Images/haircutDisplayPicture.png";
 import reviewBarber from "../../assets/Images/reviewBarber.png";
@@ -51,6 +51,14 @@ import explore from "../../assets/Images/explore.png";
 import wallet from "../../assets/Images/wallet.png";
 import appointment from "../../assets/Images/appointment.png";
 import profile from "../../assets/Images/profile.png";
+import editProfile from "../../assets/Images/editProfile.png";
+import privacy from "../../assets/Images/privacy.png";
+import security from "../../assets/Images/security.png";
+import editProfileWhite from "../../assets/Images/editProfileWhite.png";
+import securityWhite from "../../assets/Images/securityWhite.png";
+import notificationIcon from "../../assets/Images/notificationIcon.png";
+import bookmarkIcon from "../../assets/Images/bookmarkIcon.png";
+import chatIcon from "../../assets/Images/chatIcon.png";
 
 const images = {
   edit,
@@ -106,6 +114,14 @@ const images = {
   wallet,
   appointment,
   profile,
+  editProfile,
+  privacy,
+  security,
+  editProfileWhite,
+  securityWhite,
+  notificationIcon,
+  bookmarkIcon,
+  chatIcon,
 };
 
 export default images;

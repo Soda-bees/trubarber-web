@@ -12,7 +12,12 @@ import CreateUserProfile from "../../screens/CreateUserProfile";
 import PrivacyPolicy from "../../screens/PrivacyPolicy";
 import About from "../../screens/About";
 import CreateBarberProfile from "../../screens/CreateBarberProfile";
+import Appointment from "../../screens/Appointment";
+import Wallet from "../../screens/Wallet";
+import EditProfile from "../../screens/EditProfile";
+import Security from "../../screens/Security";
 import BarberDashboard from "../../screens/BarberDashboard";
+
 
 
 // Component to set up routing
@@ -41,6 +46,10 @@ const Routing = () => {
                 { path: '/privacy-policy', element: <PrivacyPolicy /> },
                 { path: '/about', element: <About /> },
                 { path: '/create-barber-profile', element: <CreateBarberProfile /> },
+                { path: '/appointment', element: <Appointment /> },
+                { path: '/wallet', element: <Wallet /> },
+                { path: '/edit-profile', element: <EditProfile /> },
+                { path: '/security', element: <Security /> },
                 { path: '/barber-dashboard', element: <ProtectedRoute Component={BarberDashboard} /> },
             ]
         }
