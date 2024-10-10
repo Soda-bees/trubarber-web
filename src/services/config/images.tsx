@@ -56,6 +56,9 @@ import privacy from "../../assets/Images/privacy.png";
 import security from "../../assets/Images/security.png";
 import editProfileWhite from "../../assets/Images/editProfileWhite.png";
 import securityWhite from "../../assets/Images/securityWhite.png";
+import notificationIcon from "../../assets/Images/notificationIcon.png";
+import bookmarkIcon from "../../assets/Images/bookmarkIcon.png";
+import chatIcon from "../../assets/Images/chatIcon.png";
 
 const images = {
   edit,
@@ -116,6 +119,9 @@ const images = {
   security,
   editProfileWhite,
   securityWhite,
+  notificationIcon,
+  bookmarkIcon,
+  chatIcon,
 };
 
 export default images;

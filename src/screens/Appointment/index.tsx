@@ -1,11 +1,19 @@
-import React from 'react'
+import React from "react";
 
-type Props = {}
+type Props = {};
 
 const Appointment = (props: Props) => {
   return (
-    <div>Appointment</div>
-  )
-}
+    <div>
+      <div>
+        <div>Appointments</div>
+        <div>
+          <div>Upcoming</div>
+          <div>Past</div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-export default Appointment
+export default Appointment;

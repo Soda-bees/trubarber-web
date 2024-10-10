@@ -13,8 +13,9 @@ type Props = {};
 const Layout = (props: Props) => {
   const authToken = useSelector(selectAuthToken);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
-
   const location = useLocation();
+  const activePath = location.pathname;
+
   const noHeaderPaths = [
     "/signin",
     "/signup",
@@ -74,9 +75,15 @@ const Layout = (props: Props) => {
         sidebar
       </div> */}
       <SideBar showSidebar={showSidebar} />
-      <div className="w-full">
+      <div className={
+        activePath === '/' ? "w-full" : "w-full pt-20"
+      }>
         {/* outlet */}
-        <Header showSidebar={showSidebar}/>
+        {/* <div 
+        className= { activePath === '/appointment' || activePath === '/wallet' ||  activePath === "/edit-profile" || activePath === "/security"  ? "h-[100px] bg-red-500" : ''}
+        > */}
+          <Header showSidebar={showSidebar} />
+        {/* </div> */}
         <Outlet />
       </div>
     </div>
