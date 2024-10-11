@@ -20,6 +20,9 @@ module.exports = {
       animation: {
         scroll: "scroll 20s linear infinite",
       },
+      screens: {
+        'xs':'500px'
+      }
     },
   },
   plugins: [],

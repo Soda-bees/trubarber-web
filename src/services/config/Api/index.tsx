@@ -34,3 +34,12 @@ export const handleSignup = async (body: any) => {
         return error
     }
 }
+
+export const handleSignin = async (body: any) => {
+    try {
+        const response = await axiosInstance.post('auth/signin' , body)        
+        return response
+    } catch (error:any) {
+        return error
+    }
+}

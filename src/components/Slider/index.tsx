@@ -68,7 +68,7 @@ const Slider = (props: Props) => {
         </div>
       </div>
       <div
-        className="flex flex-row -rotate-90 items-center justify-between absolute top-[50%] md:top-[50%] xl:left-[85%] lg:left-[80%] md:left-[70%] sm:left-[70%] left-[65%]"
+        className="hidden md:flex flex-row md:-rotate-90 items-center justify-between absolute md:top-[50%] md:top-[50%] 2xl:left-[87%] xl:left-[83%] lg:left-[79%] md:left-[70%] "
       >
         <div className="text-white text-sm md:text-xl font-light cursor-pointer">
           Instagram

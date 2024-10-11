@@ -5,37 +5,37 @@ type Props = {};
 
 const Footer = (props: Props) => {
   return (
-    <div className="bg-black py-10 px-5 md:px-10">
-      <div className="flex flex-col md:flex-row justify-between w-full md:items-center space-y-4 md:space-y-0">
-        <div className="flex flex-col md:flex-row md:w-[40%] justify-around text-white md:items-center text-lg font-light space-y-4 md:space-y-0 md:space-x-6">
-          <div className="cursor-pointer">Book Appointment</div>
+    <div className="bg-black py-10 px-5 ">
+      <div className="flex flex-row xs:flex-row justify-between w-full items-center xs:items-start gap-2  ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-3 xl:flex flex-row sm:gap-4  text-white text-lg font-light ">
+          <div className="cursor-pointer ">Book Appointment</div>
           <div className="cursor-pointer">Services</div>
-          <div className="cursor-pointer">Career</div>
           <div className="cursor-pointer">Customer Reviews</div>
           <div className="cursor-pointer">Terms & Policy</div>
+          <div className="cursor-pointer">Career</div>
         </div>
 
-        <div className="flex flex-row items-center md:justify-center md:space-x-4">
-          <div className="border flex items-center p-2 rounded-xl md:w-auto cursor-pointer">
+        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 gap-2 items-center md:justify-center ">
+          <div className="border flex items-center p-2 rounded-md md:w-auto cursor-pointer">
             <img
               src={images.google}
-              className="w-8 md:w-10"
+              className="w-6"
               alt="Google Play"
             />
             <div className="ml-2">
               <div className="text-white text-xs">GET IT ON</div>
-              <div className="text-white font-bold">Google Play</div>
+              <div className="text-white font-semibold text-sm">Google Play</div>
             </div>
           </div>
-          <div className="border flex items-center ml-2 p-2 rounded-xl md:w-auto cursor-pointer">
+          <div className="border flex items-center p-2 rounded-md md:w-auto cursor-pointer">
             <img
               src={images.apple}
-              className="w-8 md:w-10"
+              className="w-6 "
               alt="App Store"
             />
             <div className="ml-2">
               <div className="text-white text-xs">Download from</div>
-              <div className="text-white font-bold">App Store</div>
+              <div className="text-white font-semibold text-sm">App Store</div>
             </div>
           </div>
         </div>

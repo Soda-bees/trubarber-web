@@ -3,6 +3,7 @@ import images from "../../services/config/images";
 import ScrollToTopLink from "../ScrollToTopLink";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAuthToken, setAuthToken } from "../../Store/AuthTokenSlice";
+import useNavigate from "../ScrollToTopNavigate";
 
 type Props = {
   showSidebar: boolean;
@@ -12,6 +13,9 @@ type Props = {
 };
 
 const Header = ({ showSidebar, showHamburger, setShowSidebar, isSmallScreen }: Props) => {
+
+  const navigate = useNavigate()
+
   const [isVisible, setIsVisible] = useState(true);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const authToken = useSelector(selectAuthToken);
@@ -38,25 +42,16 @@ const Header = ({ showSidebar, showHamburger, setShowSidebar, isSmallScreen }: P
   }, [prevScrollPos]);
 
 
-  // const handleToken = () => {
-  //   dispatch(setAuthToken(token));
-  // }
-
-
-
-
-  // console.log(token);
-
-
   return (
     <div
-      className={`flex flex-col items-center px-3 lg:px-8 w-full fixed top-0 z-10 transition-transform duration-300 max-w-[2800px] 
+      className={`flex flex-col items-center px-3 lg:px-8 bg-gradient-to-b from-black to-transparent pb-2 w-full fixed top-0 z-10 transition-transform duration-300 max-w-[2800px] 
         ${showSidebar ? 'md:pr-[28%] lg:pr-[23%] xl:pr-[21%] 2xl:pr-[15%]' : ''} 
         ${isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
     >
       <div className="bg-transparent flex flex-row items-center h-20 justify-between w-full">
         <img
+        onClick={() => navigate('')}
           src={images.truLogo}
           className={`${showSidebar && !isSmallScreen && "hidden"
             } w-14 sm:w-16 lg:h-17 lg:w-20 cursor-pointer`}
@@ -71,7 +66,7 @@ const Header = ({ showSidebar, showHamburger, setShowSidebar, isSmallScreen }: P
         </div>
         <div className="flex flex-row items-center">
 
-          {!authToken ? (
+          {authToken ? (
             <div className="flex flex-row items-center items-center justify-center ">
               <div
                 className="border bg-black  rounded-lg ml-2 p-2 sm:p-[10px] flex items-center justify-center cursor-pointer"
@@ -121,9 +116,9 @@ const Header = ({ showSidebar, showHamburger, setShowSidebar, isSmallScreen }: P
           {
             showHamburger &&
             <svg
-              onClick={() => setShowSidebar(!showSidebar)}
+              onClick={() => setShowSidebar(true)}
               className={
-                "w-8 h-8 text-white ml-3"
+                "w-10 h-10 text-white  ml-3 "
               }
               fill="none"
               stroke="currentColor"
@@ -140,7 +135,7 @@ const Header = ({ showSidebar, showHamburger, setShowSidebar, isSmallScreen }: P
           }
         </div>
       </div>
-      <div className="sm:hidden flex flex-row bg-white/30 backdrop-blur-lg border border-white-500 w-[100%] lg:w-[40%] items-center rounded-lg p-2 mt-4">
+      <div className="sm:hidden flex flex-row bg-black/30 backdrop-blur-lg border border-white-500 w-[100%] lg:w-[40%] items-center rounded-lg p-2">
         <img src={images.searchBar} className="h-5 w-5" />
         <input
           type="text"

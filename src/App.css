@@ -83,3 +83,33 @@ body::-webkit-scrollbar-thumb {
   -webkit-line-clamp: 3;
   overflow: hidden;
 }
+
+@keyframes slideIn {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.4s forwards; /* Adjust duration as needed */
+}
+
+.animate-slideOut {
+  animation: slideOut 0.5s forwards; /* Adjust duration as needed */
+}

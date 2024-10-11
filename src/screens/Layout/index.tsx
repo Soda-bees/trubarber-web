@@ -7,11 +7,15 @@ import SideBar from "../../components/SideBar";
 import { useSelector } from "react-redux";
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import Footer from "../../components/Footer";
+import useNavigate from "../../components/ScrollToTopNavigate";
 
 type Props = {};
 
 const Layout = (props: Props) => {
+  
   const authToken = useSelector(selectAuthToken);
+  const navigate = useNavigate()
+  
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showHamburger, setShowHamburger] = useState<boolean>(false);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(window.innerWidth < 768);
@@ -83,60 +87,81 @@ const Layout = (props: Props) => {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
-  
+
     const handleScreenResize = (event: MediaQueryListEvent) => {
-      setIsSmallScreen(!mediaQuery.matches); // Update `isSmallScreen` based on screen size
-  
+      setIsSmallScreen(!mediaQuery.matches);
+
       if (mediaQuery.matches) {
-        // If screen width is >= 768px
-        const shouldShowSidebar = 
-        // !!authToken && 
-        !noSidebarPaths.includes(location.pathname);
+        const shouldShowSidebar =
+          !!authToken &&
+          !noSidebarPaths.includes(location.pathname);
         setShowSidebar(shouldShowSidebar);
-        setShowHamburger(false);  
+        setShowHamburger(false);
       } else {
-        // If screen width is < 768px
-        const shouldShowHamburger = 
-        // !!authToken && 
-        !noSidebarPaths.includes(location.pathname);
+        const shouldShowHamburger =
+          !!authToken &&
+          !noSidebarPaths.includes(location.pathname);
         setShowHamburger(shouldShowHamburger);
-        setShowSidebar(false); 
+        setShowSidebar(false);
       }
     };
-  
-    // Set initial values for sidebar and hamburger based on screen size and authToken
-    setIsSmallScreen(!mediaQuery.matches); // Set `isSmallScreen` for the initial load
-    const shouldShowSidebar = 
-    // !!authToken && 
-    !noSidebarPaths.includes(location.pathname) && mediaQuery.matches;
+
+    setIsSmallScreen(!mediaQuery.matches);
+    const shouldShowSidebar =
+      !!authToken &&
+      !noSidebarPaths.includes(location.pathname) && mediaQuery.matches;
     setShowSidebar(shouldShowSidebar);
-    setShowHamburger(!mediaQuery.matches && !!authToken && !noSidebarPaths.includes(location.pathname));
-  
-    // Add listener for screen resizing
+    setShowHamburger(!mediaQuery.matches &&
+      !!authToken &&
+      !noSidebarPaths.includes(location.pathname));
+
     mediaQuery.addEventListener("change", handleScreenResize);
-  
+
     return () => {
-      // Clean up the listener on component unmount
       mediaQuery.removeEventListener("change", handleScreenResize);
     };
   }, [authToken, location.pathname]);
 
+  useEffect(() => {
+    if (showSidebar && isSmallScreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [showSidebar, isSmallScreen]);
+
+  useEffect(() => {
+    if(authToken){
+      if(activePath === '/signin' || activePath === '/signup'){
+        navigate('/')
+      }
+    }
+  } , [authToken , navigate])
+
   return (
-    <div className="flex flex-row min-h-screen max-w-[2800px] mx-auto ">
+    <div className="flex flex-row min-h-screen max-w-[2800px] mx-auto relative">
 
       {
         showSidebar &&
         <SideBar showSidebar={showSidebar} isSmallScreen={isSmallScreen} />
+      }
+      {
+        isSmallScreen && showSidebar && <div className="fixed inset-0 bg-black bg-opacity-70 z-20 " onClick={() => setShowSidebar(false)} ></div>
       }
       <div className={
         activePath === '/' || activePath === '/signup' || activePath === '/signin' ? "w-full" : "w-full pt-20"
       }>
         {
           shouldShowHeader &&
-          <Header showSidebar={showSidebar} showHamburger={showHamburger} setShowSidebar={setShowSidebar} isSmallScreen={isSmallScreen}/>
+          <Header showSidebar={showSidebar} showHamburger={showHamburger} setShowSidebar={setShowSidebar} isSmallScreen={isSmallScreen} />
         }
         <Outlet />
-        {/* <Footer /> */}
+        <ToastContainer />
+        <Footer />
       </div>
     </div>
   );
