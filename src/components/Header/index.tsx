@@ -47,7 +47,7 @@ const Header = ({ showSidebar }: Props) => {
 
   return (
     <div
-      className={`flex flex-col items-center px-3 lg:px-8 w-full fixed top-0 z-10 transition-transform duration-300 max-w-[2800px] md:pr-[28%] lg:pr-[25%] xl:pr-[20%] 2xl:pr-[17%] ${
+      className={`flex flex-col items-center px-3 lg:px-8 w-full fixed top-0 z-10 transition-transform duration-300 max-w-[2800px] sm:pr-[15%] md:pr-[37%] lg:pr-[25%] xl:pr-[20%] 2xl:pr-[17%] ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
@@ -66,34 +66,34 @@ const Header = ({ showSidebar }: Props) => {
             className="focus:outline-none ml-[3%] border-none bg-transparent w-full text-inputGray"
           />
         </div>
-        {authToken ? (
-          <div className="flex flex-row items-center items-center justify-center ">
+        {!authToken ? (
+          <div className="flex flex-row items-center items-center justify-center">
             <div
-              className="border bg-black  rounded-lg ml-2 p-2 sm:p-[10px] flex items-center justify-center cursor-pointer"
+              className="border bg-black  rounded-2xl ml-2 px-5 h-12 flex items-center justify-center cursor-pointer"
               title="Bookmark"
             >
               <img
                 src={images.bookmarkIcon}
-                className="w-4 h-4 sm:w-5 sm:h-5 object-contain"
+                className="w-[16px] object-contain"
               />
             </div>
             <div
-              className="border bg-black  rounded-lg ml-2 p-2 sm:p-[10px] flex items-center justify-center cursor-pointer"
+              className="border bg-black  rounded-2xl ml-2 px-5 h-12 flex items-center justify-center cursor-pointer"
               title="Notification"
             >
               <img
                 src={images.notificationIcon}
-                className="w-4 h-4 sm:w-5 sm:h-5 object-contain"
+                className="w-[16px] object-contain"
               />
             </div>
             <div
-              className="border bg-black  rounded-lg ml-2 p-2 sm:p-[10px] flex items-center justify-center cursor-pointer"
+              className="border bg-black  rounded-2xl ml-2 px-5 h-12 flex items-center justify-center cursor-pointer"
               title="Chat"
             >
               <img
                 src={images.chatIcon}
                 alt="Chat"
-                className="w-4 h-4 sm:w-5 sm:h-5 object-contain"
+                className="w-[16px] object-contain"
               />
             </div>
           </div>

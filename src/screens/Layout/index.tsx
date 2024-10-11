@@ -31,7 +31,7 @@ const Layout = (props: Props) => {
     "/create-barber-profile",
   ];
   const shouldShowSidebar =
-    authToken && !noSidebarPaths.includes(location.pathname);
+    !authToken && !noSidebarPaths.includes(location.pathname);
   const shouldShowHeader = !noHeaderPaths.includes(location.pathname);
 
   useEffect(() => {
