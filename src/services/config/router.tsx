@@ -19,7 +19,6 @@ import Security from "../../screens/Security";
 import BarberDashboard from "../../screens/BarberDashboard";
 
 
-
 // Component to set up routing
 const Routing = () => {
     const role = useSelector(selectRole);

@@ -59,6 +59,8 @@ import securityWhite from "../../assets/Images/securityWhite.png";
 import notificationIcon from "../../assets/Images/notificationIcon.png";
 import bookmarkIcon from "../../assets/Images/bookmarkIcon.png";
 import chatIcon from "../../assets/Images/chatIcon.png";
+import barberAppointmentImg from "../../assets/Images/barberAppointmentImg.png";
+import walletBlack from "../../assets/Images/walletBlack.png";
 
 const images = {
   edit,
@@ -122,6 +124,8 @@ const images = {
   notificationIcon,
   bookmarkIcon,
   chatIcon,
+  barberAppointmentImg,
+  walletBlack,
 };
 
 export default images;

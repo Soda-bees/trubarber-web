@@ -39,52 +39,6 @@ const Layout = (props: Props) => {
   ];
   const shouldShowHeader = !noHeaderPaths.includes(location.pathname);
 
-
-
-  // useEffect(() => {
-  //   // Media Query for screen size
-  //   const mediaQuery = window.matchMedia("(min-width: 768px)");
-
-  //   const handleScreenResize = (event: MediaQueryListEvent) => {
-  //     // Check screen size and auth/path condition for sidebar and hamburger
-  //     if (mediaQuery.matches) {
-  //       // For screens larger than 768px
-  //       const shouldShowSidebar = 
-  //       // !!authToken && 
-  //       !noSidebarPaths.includes(location.pathname);
-  //       setShowSidebar(shouldShowSidebar);
-  //       setShowHamburger(false);  // No need for hamburger on larger screens
-  //     } else {
-  //       // For screens smaller than 768px
-  //       const shouldShowHamburger = !!authToken && !noSidebarPaths.includes(location.pathname);
-  //       setShowHamburger(shouldShowHamburger);
-  //       setShowSidebar(false); // Hide sidebar on smaller screens by default
-  //     }
-  //   };
-
-  //   // Initial check for sidebar and hamburger visibility
-  //   if (mediaQuery.matches) {
-  //     const shouldShowSidebar = 
-  //     // !!authToken && 
-  //     !noSidebarPaths.includes(location.pathname);
-  //     setShowSidebar(shouldShowSidebar);
-  //     setShowHamburger(false);
-  //   } else {
-  //     const shouldShowHamburger = !!authToken && !noSidebarPaths.includes(location.pathname);
-  //     setShowHamburger(shouldShowHamburger);
-  //     setShowSidebar(false);
-  //   }
-
-  //   // Add event listener to track changes in screen size
-  //   mediaQuery.addEventListener("change", handleScreenResize);
-
-  //   // Cleanup event listener on unmount
-  //   return () => {
-  //     mediaQuery.removeEventListener("change", handleScreenResize);
-  //   };
-  // }, [authToken, location.pathname]);
-
-
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
 
@@ -153,7 +107,7 @@ const Layout = (props: Props) => {
         isSmallScreen && showSidebar && <div className="fixed inset-0 bg-black bg-opacity-70 z-20 " onClick={() => setShowSidebar(false)} ></div>
       }
       <div className={
-        activePath === '/' || activePath === '/signup' || activePath === '/signin' ? "w-full" : "w-full pt-20"
+        activePath === '/' || activePath === '/signup' || activePath === '/signin' ? "w-full flex flex-col justify-between" : "w-full pt-20 flex flex-col justify-between"
       }>
         {
           shouldShowHeader &&
