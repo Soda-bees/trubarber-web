@@ -4,19 +4,19 @@ import { useSelector } from "react-redux";
 import { selectRole } from "../../Store/Role"; // Adjust the path according to your structure
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import ProtectedRoute from "./protectedRouting";
-import Layout from "../../screens/Layout";
-import Welcome from "../../screens/Welcome";
-import Signin from "../../screens/Signin";
-import Signup from "../../screens/Signup";
-import CreateUserProfile from "../../screens/CreateUserProfile";
-import PrivacyPolicy from "../../screens/PrivacyPolicy";
-import About from "../../screens/About";
-import CreateBarberProfile from "../../screens/CreateBarberProfile";
-import Appointment from "../../screens/Appointment";
-import Wallet from "../../screens/Wallet";
-import EditProfile from "../../screens/EditProfile";
-import Security from "../../screens/Security";
-import BarberDashboard from "../../screens/BarberDashboard";
+import Layout from "../../Screens/Layout";
+import Welcome from "../../Screens/Welcome";
+import Signin from "../../Screens/Signin";
+import Signup from "../../Screens/Signup";
+import CreateUserProfile from "../../Screens/CreateUserProfile";
+import PrivacyPolicy from "../../Screens/PrivacyPolicy";
+import About from "../../Screens/About";
+import CreateBarberProfile from "../../Screens/CreateBarberProfile";
+import Appointment from "../../Screens/Appointment";
+import Wallet from "../../Screens/Wallet";
+import EditProfile from "../../Screens/EditProfile";
+import Security from "../../Screens/Security";
+import BarberDashboard from "../../Screens/BarberDashboard";
 
 
 // Component to set up routing
@@ -45,10 +45,10 @@ const Routing = () => {
                 { path: '/privacy-policy', element: <PrivacyPolicy /> },
                 { path: '/about', element: <About /> },
                 { path: '/create-barber-profile', element: <CreateBarberProfile /> },
-                { path: '/appointment', element: <Appointment /> },
-                { path: '/wallet', element: <Wallet /> },
-                { path: '/edit-profile', element: <EditProfile /> },
-                { path: '/security', element: <Security /> },
+                { path: '/appointment', element: <ProtectedRoute Component={Appointment} /> },
+                { path: '/wallet', element: <ProtectedRoute Component={Wallet} /> },
+                { path: '/edit-profile', element: <ProtectedRoute Component={EditProfile} /> },
+                { path: '/security', element: <ProtectedRoute Component={Security} /> },
                 { path: '/barber-dashboard', element: <ProtectedRoute Component={BarberDashboard} /> },
             ]
         }

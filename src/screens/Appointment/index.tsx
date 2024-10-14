@@ -75,7 +75,7 @@ const Appointment = () => {
   };
 
   return (
-    <div className="px-4 md:px-10">
+    <div className="px-4 md:px-10 mb-5">
     <div className="flex flex-col md:flex-row justify-between border-b-2 pb-4">
       <div className="text-2xl flex justify-center font-bold mb-2">Appointments</div>
       <div className="flex flex-row justify-between md:w-[220px] mb-2">

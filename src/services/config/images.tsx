@@ -61,6 +61,9 @@ import bookmarkIcon from "../../assets/Images/bookmarkIcon.png";
 import chatIcon from "../../assets/Images/chatIcon.png";
 import barberAppointmentImg from "../../assets/Images/barberAppointmentImg.png";
 import walletBlack from "../../assets/Images/walletBlack.png";
+import uploadProfile from "../../assets/Images/uploadProfile.png";
+import checkbox from "../../assets/Images/checkbox.png";
+import checkboxMarked from "../../assets/Images/checkboxMarked.png";
 
 const images = {
   edit,
@@ -126,6 +129,9 @@ const images = {
   chatIcon,
   barberAppointmentImg,
   walletBlack,
+  uploadProfile,
+  checkboxMarked,
+  checkbox,
 };
 
 export default images;

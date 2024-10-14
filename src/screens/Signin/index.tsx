@@ -95,7 +95,7 @@ const Signin = (props: Props) => {
                         <div className='bg-inputGray flex flel-row items-center justify-start px-4 rounded-lg mt-2'>
                             <img src={images.password} className='w-4' />
                             <input placeholder='Password' value={password} type={showPass ? 'text' : 'password'} className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setPassword(e.target.value)} />
-                            <img src={showPass ? images.eyeOff : images.eye} className='w-5 cursor-pointer' onClick={() => setShowPass(!showPass)} />
+                            <img src={!showPass ? images.eyeOff : images.eye} className='w-5 cursor-pointer' onClick={() => setShowPass(!showPass)} />
                         </div>
                     </div>
                     <div className='text-sm font-bold mt-4 text-right cursor-pointer'>Forgot password?</div>
