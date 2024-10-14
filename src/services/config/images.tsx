@@ -61,8 +61,14 @@ import bookmarkIcon from "../../assets/Images/bookmarkIcon.png";
 import chatIcon from "../../assets/Images/chatIcon.png";
 import barberAppointmentImg from "../../assets/Images/barberAppointmentImg.png";
 import walletBlack from "../../assets/Images/walletBlack.png";
+import male from "../../assets/Images/male.png";
+import female from "../../assets/Images/female.png";
+import BG from "../../assets/Images/BG.png";
 
 const images = {
+  BG,
+  male,
+  female,
   edit,
   deleteIcon,
   addWhite,

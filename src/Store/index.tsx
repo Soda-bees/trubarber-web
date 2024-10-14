@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage";
 import roleReducer from "./Role"
 import authTokenReducer from "./AuthTokenSlice"
 import userReducer from "./userDataSlice"
+import barberReducer from "./BarbersSlice"
 
 const rolePersistConfig = {
     key: "role",
@@ -19,10 +20,16 @@ const userPersistConfig = {
     storage,
 };
 
+const barbersPersistConfig = {
+    key: "barber",
+    storage,
+};
+
 const rootReducer = combineReducers({
     role: persistReducer(rolePersistConfig, roleReducer),
     authToken: persistReducer(authTokenPersistConfig, authTokenReducer),
     user: persistReducer(userPersistConfig, userReducer),
+    barber: persistReducer(barbersPersistConfig, barberReducer),
 });
 
 export const store = configureStore({

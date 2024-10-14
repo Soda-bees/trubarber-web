@@ -4,8 +4,8 @@ import ScrollToTopLink from "../ScrollToTopLink";
 import { useLocation } from "react-router-dom";
 import SmallButton from "../SmallButton";
 import useNavigate from "../ScrollToTopNavigate";
-import { useDispatch } from "react-redux";
-import { clearUser } from "../../Store/userDataSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser, selectUser } from "../../Store/userDataSlice";
 import { clearAuthToken } from "../../Store/AuthTokenSlice";
 
 type Props = {
@@ -17,6 +17,7 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const user = useSelector(selectUser)
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -43,8 +44,8 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
           alt="Logo"
         />
         <img
-          src={images.reviewBarber}
-          className="w-[35%] mt-8 mb-5"
+          src={user?.profile ? user?.profile : user?.gender === 'male' ? images.male : images.female}
+          className="w-[35%] mt-8 mb-5 rounded-full"
           alt="Review"
         />
         <div>

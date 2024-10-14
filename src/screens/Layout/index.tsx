@@ -8,14 +8,15 @@ import { useSelector } from "react-redux";
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import Footer from "../../components/Footer";
 import useNavigate from "../../components/ScrollToTopNavigate";
+import ScrollTopButton from "../../components/ScrollTopButton";
 
 type Props = {};
 
 const Layout = (props: Props) => {
-  
+
   const authToken = useSelector(selectAuthToken);
   const navigate = useNavigate()
-  
+
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showHamburger, setShowHamburger] = useState<boolean>(false);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(window.innerWidth < 768);
@@ -38,6 +39,9 @@ const Layout = (props: Props) => {
     "/create-barber-profile",
   ];
   const shouldShowHeader = !noHeaderPaths.includes(location.pathname);
+
+  const noMTPaths = ['/' , '/barbers']
+  const shouldNoMT = noMTPaths.includes(location.pathname)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
@@ -89,12 +93,12 @@ const Layout = (props: Props) => {
   }, [showSidebar, isSmallScreen]);
 
   useEffect(() => {
-    if(authToken){
-      if(activePath === '/signin' || activePath === '/signup'){
+    if (authToken) {
+      if (activePath === '/signin' || activePath === '/signup') {
         navigate('/')
       }
     }
-  } , [authToken , navigate])
+  }, [authToken, navigate])
 
   return (
     <div className="flex flex-row min-h-screen max-w-[2800px] mx-auto relative">
@@ -106,9 +110,10 @@ const Layout = (props: Props) => {
       {
         isSmallScreen && showSidebar && <div className="fixed inset-0 bg-black bg-opacity-70 z-20 " onClick={() => setShowSidebar(false)} ></div>
       }
-      <div className={
-        activePath === '/' || activePath === '/signup' || activePath === '/signin' ? "w-full flex flex-col justify-between" : "w-full pt-20 flex flex-col justify-between"
-      }>
+      <div
+        className={
+          shouldNoMT ? "w-full flex flex-col justify-between" : isSmallScreen ? shouldShowHeader ? "w-full pt-36 flex flex-col justify-between"
+            : "w-full flex flex-col justify-between" : shouldShowHeader ? "w-full pt-20 flex flex-col justify-between" : "w-full flex flex-col justify-between"}>
         {
           shouldShowHeader &&
           <Header showSidebar={showSidebar} showHamburger={showHamburger} setShowSidebar={setShowSidebar} isSmallScreen={isSmallScreen} />
@@ -116,6 +121,7 @@ const Layout = (props: Props) => {
         <Outlet />
         <ToastContainer />
         <Footer />
+        <ScrollTopButton />
       </div>
     </div>
   );

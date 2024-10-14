@@ -17,6 +17,7 @@ import Wallet from "../../screens/Wallet";
 import EditProfile from "../../screens/EditProfile";
 import Security from "../../screens/Security";
 import BarberDashboard from "../../screens/BarberDashboard";
+import AllBarbers from "../../screens/AllBarbers";
 
 
 // Component to set up routing
@@ -28,7 +29,6 @@ const Routing = () => {
         return <div>Loading...</div>;
     }
 
-    // Set up the router
     const router = createBrowserRouter([
         {
             path: '/',
@@ -45,11 +45,12 @@ const Routing = () => {
                 { path: '/privacy-policy', element: <PrivacyPolicy /> },
                 { path: '/about', element: <About /> },
                 { path: '/create-barber-profile', element: <CreateBarberProfile /> },
-                { path: '/appointment', element: <Appointment /> },
-                { path: '/wallet', element: <Wallet /> },
-                { path: '/edit-profile', element: <EditProfile /> },
+                { path: '/appointment', element: <ProtectedRoute Component={Appointment} /> },
+                { path: '/wallet', element: <ProtectedRoute Component={Wallet} /> },
+                { path: '/edit-profile', element: <ProtectedRoute Component={EditProfile} /> },
                 { path: '/security', element: <Security /> },
                 { path: '/barber-dashboard', element: <ProtectedRoute Component={BarberDashboard} /> },
+                { path: '/barbers', element: <AllBarbers /> },
             ]
         }
     ]);

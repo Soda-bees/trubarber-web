@@ -87,8 +87,8 @@ const CustomerReview = (props: Props) => {
   };
 
   return (
-    <div className="p-4 md:p-10 lg:p-20 flex flex-col md:flex-row">
-      <div className="mb-10 flex flex-col justify-between w-full md:w-[70%]">
+    <div className="p-4 md:p-10 lg:p-20 flex flex-col lg:flex-row">
+      <div className="mb-10 flex flex-col justify-between w-full lg:w-[70%]">
         <div>
           <h2 className="text-3xl md:text-5xl font-semibold">
             Customer Reviews
@@ -100,7 +100,7 @@ const CustomerReview = (props: Props) => {
             lives.
           </p>
         </div>
-        <div className="flex space-x-10 mt-10 justify-end md:justify-start">
+        <div className="flex space-x-10 mt-10 justify-end lg:justify-start">
           <img
             src={images.greyArrow}
             className="cursor-pointer w-5 md:w-6"

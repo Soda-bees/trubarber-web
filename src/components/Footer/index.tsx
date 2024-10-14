@@ -1,18 +1,22 @@
 import React from "react";
 import images from "../../services/config/images";
+import ScrollToTopLink from "../ScrollToTopLink";
+import useNavigate from "../ScrollToTopNavigate";
 
 type Props = {};
 
 const Footer = (props: Props) => {
+  const navigate = useNavigate()
   return (
     <div className="bg-black py-10 px-5 ">
       <div className="flex flex-row xs:flex-row justify-between w-full items-center xs:items-start gap-2  ">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-3 xl:flex flex-row sm:gap-4  text-white text-lg font-light ">
-          <div className="cursor-pointer ">Book Appointment</div>
-          <div className="cursor-pointer">Services</div>
-          <div className="cursor-pointer">Customer Reviews</div>
-          <div className="cursor-pointer">Terms & Policy</div>
-          <div className="cursor-pointer">Career</div>
+          <div className="cursor-pointer  hover:underline">Book Appointment</div>
+          <div className="cursor-pointer hover:underline">Services</div>
+          <div className="cursor-pointer hover:underline">Customer Reviews</div>
+          <ScrollToTopLink to={'/privacy-policy'} className="cursor-pointer hover:underline">Terms & Policy</ScrollToTopLink>
+          <div className="cursor-pointer hover:underline">Career</div>
+          <ScrollToTopLink to={'/about'} className="cursor-pointer hover:underline">About-Us</ScrollToTopLink>
         </div>
 
         <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 gap-2 items-center md:justify-center ">
@@ -47,7 +51,8 @@ const Footer = (props: Props) => {
         <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0">
           <img
             src={images.truLogo}
-            className="w-20 md:w-24"
+            onClick={() => navigate('/')}
+            className="w-20 md:w-24 cursor-pointer"
             alt="TruBarber Logo"
           />
           <div className="text-white text-lg md:text-2xl font-light md:ml-4 md:text-center md:text-left">

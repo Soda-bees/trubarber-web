@@ -1,9 +1,12 @@
 import React from "react";
 import images from "../../services/config/images";
+import useNavigate from "../ScrollToTopNavigate";
 
 type Props = {};
 
 const LandingDiscover = (props: Props) => {
+  const navigate = useNavigate()
+  
   return (
     <div className="flex flex-col lg:flex-row w-full">
       <img src={images.landingDiscoverImg} className="lg:w-[40%] lg:h-full max-h-[70vh] w-[100%]" />
@@ -17,7 +20,9 @@ const LandingDiscover = (props: Props) => {
             just a few simple steps. Find your perfect barber and schedule your
             appointment hassle-free!
           </div>
-          <div className="border flex flex-row items-center justify-between w-[90%] ml-4 lg:w-[70%] bg-black py-1 lg:py-2 px-5 rounded-2xl cursor-pointer mt-5 active:opacity-50">
+          <div
+          onClick={() => navigate('/barbers')}
+          className="border flex flex-row items-center justify-between w-[90%] ml-4 lg:w-[70%] bg-black py-1 lg:py-2 px-5 rounded-2xl cursor-pointer mt-5 active:opacity-50">
             <div className=" text-xl py-2 lg:text-lg font-medium text-white ">
               Find your Barber
             </div>
