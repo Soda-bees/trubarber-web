@@ -15,10 +15,9 @@ import CreateBarberProfile from "../../screens/CreateBarberProfile";
 import Appointment from "../../screens/Appointment";
 import Wallet from "../../screens/Wallet";
 import EditProfile from "../../screens/EditProfile";
-import Security from "../../screens/Security";
 import BarberDashboard from "../../screens/BarberDashboard";
+import Security from "../../screens/Security";
 import AllBarbers from "../../screens/AllBarbers";
-
 
 // Component to set up routing
 const Routing = () => {
@@ -48,7 +47,7 @@ const Routing = () => {
                 { path: '/appointment', element: <ProtectedRoute Component={Appointment} /> },
                 { path: '/wallet', element: <ProtectedRoute Component={Wallet} /> },
                 { path: '/edit-profile', element: <ProtectedRoute Component={EditProfile} /> },
-                { path: '/security', element: <Security /> },
+                { path: '/security', element: <ProtectedRoute Component={Security} /> },
                 { path: '/barber-dashboard', element: <ProtectedRoute Component={BarberDashboard} /> },
                 { path: '/barbers', element: <AllBarbers /> },
             ]

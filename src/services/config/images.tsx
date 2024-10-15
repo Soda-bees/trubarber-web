@@ -64,6 +64,9 @@ import walletBlack from "../../assets/Images/walletBlack.png";
 import male from "../../assets/Images/male.png";
 import female from "../../assets/Images/female.png";
 import BG from "../../assets/Images/BG.png";
+import uploadProfile from "../../assets/Images/uploadProfile.png";
+import checkbox from "../../assets/Images/checkbox.png";
+import checkboxMarked from "../../assets/Images/checkboxMarked.png";
 
 const images = {
   BG,
@@ -132,6 +135,9 @@ const images = {
   chatIcon,
   barberAppointmentImg,
   walletBlack,
+  uploadProfile,
+  checkboxMarked,
+  checkbox,
 };
 
 export default images;
