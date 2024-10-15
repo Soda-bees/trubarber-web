@@ -8,13 +8,18 @@ import BarberServiceDisplay from '../../components/BarberServiceDisplay'
 import CustomerReview from '../../components/CustomerReview'
 import { useSelector } from 'react-redux'
 import { selectBarbers } from '../../Store/BarbersSlice'
+import { useOutletContext } from "react-router-dom";
 
 type Props = {}
 
 const Welcome = (props: Props) => {
+  const { showSidebar } = useOutletContext<{ showSidebar: boolean }>();
+  
   const barbers = useSelector(selectBarbers)
   return (
-    <div className='flex flex-col w-full' >
+    <div 
+    // className='flex flex-col w-full' 
+    >
       <Slider />
       <LandingDiscover />
       <LogoLine />

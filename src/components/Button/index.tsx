@@ -4,7 +4,7 @@ import images from '../../services/config/images';
 type Props = {
     title: string,
     onClick: () => void;
-    mt: string,
+    mt?: string,
     loader?: boolean,
     light: boolean
 }

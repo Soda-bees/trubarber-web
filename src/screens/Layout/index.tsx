@@ -118,7 +118,7 @@ const Layout = (props: Props) => {
           shouldShowHeader &&
           <Header showSidebar={showSidebar} showHamburger={showHamburger} setShowSidebar={setShowSidebar} isSmallScreen={isSmallScreen} />
         }
-        <Outlet />
+        <Outlet  context={{ showSidebar }} />
         <ToastContainer />
         <Footer />
         <ScrollTopButton />
