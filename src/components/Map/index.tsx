@@ -29,7 +29,6 @@ const Map = () => {
     setMap(null);
   }, []);
 
-  // Fetch user's current location
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -40,7 +39,6 @@ const Map = () => {
           };
           console.log("Current Position:", newPosition);
           setCurrentPosition(newPosition);
-
           map?.panTo(newPosition);
         },
         (error) => {

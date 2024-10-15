@@ -5,6 +5,7 @@ import roleReducer from "./Role"
 import authTokenReducer from "./AuthTokenSlice"
 import userReducer from "./userDataSlice"
 import barberReducer from "./BarbersSlice"
+import locationReducer from "./LocationSlice";
 
 const rolePersistConfig = {
     key: "role",
@@ -25,11 +26,17 @@ const barbersPersistConfig = {
     storage,
 };
 
+const locationPersistConfig = {
+    key: "location",
+    storage,
+};
+
 const rootReducer = combineReducers({
     role: persistReducer(rolePersistConfig, roleReducer),
     authToken: persistReducer(authTokenPersistConfig, authTokenReducer),
     user: persistReducer(userPersistConfig, userReducer),
     barber: persistReducer(barbersPersistConfig, barberReducer),
+    location: persistReducer(locationPersistConfig, locationReducer),
 });
 
 export const store = configureStore({

@@ -8,11 +8,13 @@ import BarberServiceDisplay from '../../components/BarberServiceDisplay'
 import CustomerReview from '../../components/CustomerReview'
 import { useSelector } from 'react-redux'
 import { selectBarbers } from '../../Store/BarbersSlice'
+import { selectUser } from '../../Store/userDataSlice'
 
 type Props = {}
 
 const Welcome = (props: Props) => {
   const barbers = useSelector(selectBarbers)
+  
   return (
     <div className='flex flex-col w-full' >
       <Slider />
