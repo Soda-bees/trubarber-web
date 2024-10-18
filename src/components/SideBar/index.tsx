@@ -10,23 +10,23 @@ import { clearAuthToken } from "../../Store/AuthTokenSlice";
 
 type Props = {
   showSidebar: boolean;
-  isSmallScreen: boolean
+  isSmallScreen: boolean;
 };
 
 const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
-
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const user = useSelector(selectUser)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  console.log("userlog", user);
 
   const location = useLocation();
   const activePath = location.pathname;
   const [profileDropDown, setProfileDropDown] = useState<boolean>(false);
 
   const handleLogout = async () => {
-    dispatch(clearUser())
-    dispatch(clearAuthToken())
-  }
+    dispatch(clearUser());
+    dispatch(clearAuthToken());
+  };
 
   const sidebarClass = isSmallScreen
     ? showSidebar
@@ -38,18 +38,24 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
     <div className={`${sidebarClass} flex flex-col z-50`}>
       <div className="pl-4 lg:pl-6 flex flex-col justify-between">
         <img
-          onClick={() => navigate('/')}
+          onClick={() => navigate("/")}
           src={images.truLogo}
           className="w-[40%] cursor-pointer"
           alt="Logo"
         />
         <img
-          src={user?.profile ? user?.profile : user?.gender === 'male' ? images.male : images.female}
+          src={
+            user?.profile
+              ? user?.profile
+              : user?.gender === "male"
+              ? images.male
+              : images.female
+          }
           className="w-[35%] mt-8 mb-5 rounded-full"
           alt="Review"
         />
         <div>
-          <div className="font-bold text-lg text-white">Cameron Williamson</div>
+          <div className="font-bold text-lg text-white">{user?.name}</div>
           <div className="text-sm flex flex-row items-center text-white my-2">
             <img
               src={images.Location}
@@ -61,97 +67,106 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
         </div>
         <div className="flex flex-row">
           <div className="text-hoverGray">Gender</div>
-          <div className="text-white ml-4">Male</div>
+          <div className="text-white ml-4">{user?.gender}</div>
         </div>
       </div>
       <div className="w-[94%] mx-auto h-px bg-hoverGray my-10" />
       <div className="overflow-y-scroll hide-scrollbar h-full">
-
         <ScrollToTopLink
           to="/"
-          className={`flex justify-between items-center p-3 mx-2 mb-4 rounded-lg ${activePath === "/"
-            ? "bg-white text-black"
-            : "text-white hover:bg-hoverGray hover:text-white"
-            }`}
+          className={`flex justify-between items-center p-3 mx-2 mb-4 rounded-lg ${
+            activePath === "/"
+              ? "bg-white text-black"
+              : "text-white hover:bg-hoverGray hover:text-white"
+          }`}
         >
           <div className="text-lg font-semibold flex items-center">
             <img
               src={images.explore}
-              className={`w-5 mr-5 ${activePath === "/" ? "filter invert dark-0" : ""
-                }`}
+              className={`w-5 mr-5 ${
+                activePath === "/" ? "filter invert dark-0" : ""
+              }`}
               alt="Explore"
             />
             Explore
           </div>
           <img
             src={images.arrowBtn}
-            className={`w-3 ${activePath === "/" ? "filter invert dark-0" : ""
-              }`}
+            className={`w-3 ${
+              activePath === "/" ? "filter invert dark-0" : ""
+            }`}
             alt="Arrow"
           />
         </ScrollToTopLink>
         <ScrollToTopLink
           to="/appointment"
-          className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/appointment"
-            ? "bg-white text-black"
-            : "text-white hover:bg-hoverGray hover:text-white"
-            }`}
+          className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${
+            activePath === "/appointment"
+              ? "bg-white text-black"
+              : "text-white hover:bg-hoverGray hover:text-white"
+          }`}
         >
           <div className="text-lg font-semibold flex items-center">
             <img
               src={images.appointment}
-              className={`w-5 mr-5 ${activePath === "/appointment" ? "filter invert dark-0" : ""
-                }`}
+              className={`w-5 mr-5 ${
+                activePath === "/appointment" ? "filter invert dark-0" : ""
+              }`}
               alt="Appointment"
             />
             Appointment
           </div>
           <img
             src={images.arrowBtn}
-            className={`w-3 ${activePath === "/appointment" ? "filter invert dark-0" : ""
-              }`}
+            className={`w-3 ${
+              activePath === "/appointment" ? "filter invert dark-0" : ""
+            }`}
             alt="Arrow"
           />
         </ScrollToTopLink>
         <ScrollToTopLink
           to="/wallet"
-          className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/wallet"
-            ? "bg-white text-black"
-            : "text-white hover:bg-hoverGray hover:text-white"
-            }`}
+          className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${
+            activePath === "/wallet"
+              ? "bg-white text-black"
+              : "text-white hover:bg-hoverGray hover:text-white"
+          }`}
         >
           <div className="text-lg font-semibold flex items-center">
             <img
               src={images.wallet}
-              className={`w-5 mr-5 ${activePath === "/wallet" ? "filter invert dark-0" : ""
-                }`}
+              className={`w-5 mr-5 ${
+                activePath === "/wallet" ? "filter invert dark-0" : ""
+              }`}
               alt="Wallet"
             />
             Wallet
           </div>
           <img
             src={images.arrowBtn}
-            className={`w-3 ${activePath === "/wallet" ? "filter invert dark-0" : ""
-              }`}
+            className={`w-3 ${
+              activePath === "/wallet" ? "filter invert dark-0" : ""
+            }`}
             alt="Arrow"
           />
         </ScrollToTopLink>
 
-
         <div
-          className={`flex justify-between items-center py-3 px-2 mx-2 mb-2 rounded-lg cursor-pointer ${activePath === "/edit-profile" || activePath === "/security"
-            ? "bg-white text-black"
-            : "text-white hover:bg-hoverGray hover:text-white"
-            }`}
+          className={`flex justify-between items-center py-3 px-2 mx-2 mb-2 rounded-lg cursor-pointer ${
+            activePath === "/edit-profile" || activePath === "/security"
+              ? "bg-white text-black"
+              : "text-white hover:bg-hoverGray hover:text-white"
+          }`}
           onClick={() => setProfileDropDown(!profileDropDown)}
         >
           <div className="text-lg font-semibold flex items-center">
             <img
               src={images.profile}
-              className={`w-5 mr-5 ${activePath === "/edit-profile" || activePath === "/security"
-                ? "filter invert dark-0"
-                : ""
-                }`}
+              className={`w-5 mr-5 ${
+                activePath === "/edit-profile" || activePath === "/security"
+                  ? "filter invert dark-0"
+                  : ""
+              }`}
               alt="Profile"
             />
             Profile
@@ -159,9 +174,19 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
           <img
             src={images.arrowBtn}
             className={`w-3 object-contain
-            ${profileDropDown ? 'rotate-90' : ''}
-            ${profileDropDown && (activePath === "/edit-profile" || activePath === "/security") ? 'filter invert dark-0' : ''}
-            ${!profileDropDown && (activePath === "/edit-profile" || activePath === "/security") ? 'filter invert dark-0' : ''}
+            ${profileDropDown ? "rotate-90" : ""}
+            ${
+              profileDropDown &&
+              (activePath === "/edit-profile" || activePath === "/security")
+                ? "filter invert dark-0"
+                : ""
+            }
+            ${
+              !profileDropDown &&
+              (activePath === "/edit-profile" || activePath === "/security")
+                ? "filter invert dark-0"
+                : ""
+            }
           `}
             alt="Arrow"
           />
@@ -171,10 +196,11 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
           <>
             <ScrollToTopLink
               to="/edit-profile"
-              className={`flex justify-between items-center px-2 mx-2 mb-2 w-[70%] self-center ${activePath === "/edit-profile"
-                ? "text-white font-bold"
-                : "text-hoverGray hover:text-white"
-                }`}
+              className={`flex justify-between items-center px-2 mx-2 mb-2 w-[70%] self-center ${
+                activePath === "/edit-profile"
+                  ? "text-white font-bold"
+                  : "text-hoverGray hover:text-white"
+              }`}
             >
               <div className="font-light flex items-center">
                 <img
@@ -191,10 +217,11 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
             </ScrollToTopLink>
             <ScrollToTopLink
               to="/security"
-              className={`flex items-center px-2 mx-2 mb-2 w-[70%] self-center ${activePath === "/security"
-                ? "text-white font-bold"
-                : "text-hoverGray hover:text-white"
-                }`}
+              className={`flex items-center px-2 mx-2 mb-2 w-[70%] self-center ${
+                activePath === "/security"
+                  ? "text-white font-bold"
+                  : "text-hoverGray hover:text-white"
+              }`}
             >
               <div className="font-light flex items-center">
                 <img
@@ -211,15 +238,17 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
             </ScrollToTopLink>
           </>
         )}
-
       </div>
       <div className="border border-white rounded-xl w-[90%] mx-auto">
-        <SmallButton dark={true} title="Logout" image={images.logout} onClick={handleLogout} />
+        <SmallButton
+          dark={true}
+          title="Logout"
+          image={images.logout}
+          onClick={handleLogout}
+        />
       </div>
-
     </div>
   );
 };
 
 export default SideBar;
-
