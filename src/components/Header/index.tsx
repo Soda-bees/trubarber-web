@@ -26,7 +26,7 @@ const Header = ({ showSidebar, showHamburger, setShowSidebar, isSmallScreen }: P
     const handleScroll = () => {
       const currentScrollPos = window.pageYOffset;
 
-      if (currentScrollPos > prevScrollPos && currentScrollPos > 200) {
+      if (currentScrollPos > prevScrollPos && currentScrollPos > 30) {
         setIsVisible(false);
       } else {
         setIsVisible(true);
