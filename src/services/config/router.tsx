@@ -18,6 +18,7 @@ import EditProfile from "../../screens/EditProfile";
 import Security from "../../screens/Security";
 import BarberDashboard from "../../screens/BarberDashboard";
 import AllBarbers from "../../screens/AllBarbers";
+import BarberDetails from "../../screens/BarberDetails";
 
 
 // Component to set up routing
@@ -51,6 +52,7 @@ const Routing = () => {
                 { path: '/security', element: <ProtectedRoute Component={Security} /> },
                 { path: '/barber-dashboard', element: <ProtectedRoute Component={BarberDashboard} /> },
                 { path: '/barbers', element: <AllBarbers /> },
+                { path: '/BarberDetails/:_id', element: <BarberDetails /> },
             ]
         }
     ]);

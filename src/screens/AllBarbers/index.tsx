@@ -5,13 +5,14 @@ import { selectBarbers } from '../../Store/BarbersSlice'
 import Button from '../../components/Button'
 import { useOutletContext } from "react-router-dom";
 import { getAddressFromCoordinates } from '../../services/config/Api'
+import useNavigate from '../../components/ScrollToTopNavigate'
 
 type Props = {}
 
 const AllBarbers = (props: Props) => {
   const { showSidebar } = useOutletContext<{ showSidebar: boolean }>();
   const barbers = useSelector(selectBarbers)
-  console.log(barbers);
+  const navigate = useNavigate()
 
   const [addresses, setAddresses] = useState<string[]>([]);
   const [selectedService, setSelectedService] = useState<string>('')
@@ -83,7 +84,7 @@ const AllBarbers = (props: Props) => {
           </div>
           <div className='w-full flex items-end justify-start md:justify-end'>
 
-            <div className='flex flex-row items-center bg-gearBlue border border-black rounded-lg p-1 mt-4 md:mt-0'>
+            <div className='flex flex-row items-center bg-appGray border border-black rounded-lg p-1 mt-4 md:mt-0'>
               <div className={`cursor-pointer px-8 py-1 ${selectedService === 'Haircut' && 'bg-black rounded-lg text-white'}`} onClick={() => handleToggleService('Haircut')}>Hair Cut</div>
               <div className={`cursor-pointer px-8 py-1 ${selectedService === 'Beard' && 'bg-black rounded-lg text-white'}`} onClick={() => handleToggleService('Beard')}>Beard</div>
             </div>
@@ -123,12 +124,13 @@ const AllBarbers = (props: Props) => {
                       </span>
                     </div>
                   </div>
-                  <Button light={false} title="Book Appointment" mt={'10px'} fontSize={isSmallScreen ? '10px' : undefined} px={isSmallScreen ? '10px' : undefined} onClick={() => alert(index)} />
+                  <Button light={false} title="Book Appointment" mt={'10px'} fontSize={isSmallScreen ? '14px' : undefined} px={isSmallScreen ? '10px' : undefined} 
+                  onClick={() => navigate(`/BarberDetails/${item?._id}`, { state: { item } })}
+                  />
                 </div>
               )
             })}
         </div>
-
       </div>
     </div>
   )

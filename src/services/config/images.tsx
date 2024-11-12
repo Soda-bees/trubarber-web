@@ -67,8 +67,18 @@ import BG from "../../assets/Images/BG.png";
 import uploadProfile from "../../assets/Images/uploadProfile.png";
 import checkbox from "../../assets/Images/checkbox.png";
 import checkboxMarked from "../../assets/Images/checkboxMarked.png";
+import truLogoForWhite from "../../assets/Images/truLogoForWhite.png";
+import bookmarkBlack from "../../assets/Images/bookmarkBlack.png";
+import bookmarkDissable from "../../assets/Images/bookmarkDissable.png";
+import direction from "../../assets/Images/direction.png";
+import message from "../../assets/Images/message.png";
 
 const images = {
+  direction,
+  message,
+  bookmarkBlack,
+  bookmarkDissable,
+  truLogoForWhite,
   BG,
   male,
   female,

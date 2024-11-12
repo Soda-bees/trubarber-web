@@ -10,6 +10,7 @@ module.exports = {
         grayBG: "#FAFAFA",
         lineBG: "#BFBFBF",
         gearBlue: "#F6F6F6",
+        appGray:'#DFDFDF'
       },
       keyframes: {
         scroll: {

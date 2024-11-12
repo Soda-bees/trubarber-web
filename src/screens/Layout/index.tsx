@@ -38,9 +38,14 @@ const Layout = (props: Props) => {
     "/create-user-profile",
     "/create-barber-profile",
   ];
+  const showWhiteHeaderPaths = ['/BarberDetails']
+  const shouldShowWhiteHeader = showWhiteHeaderPaths.some(
+    (path) => location.pathname === path || location.pathname.startsWith(path)
+  );
+
   const shouldShowHeader = !noHeaderPaths.includes(location.pathname);
 
-  const noMTPaths = ['/' , '/barbers']
+  const noMTPaths = ['/', '/barbers']
   const shouldNoMT = noMTPaths.includes(location.pathname)
 
   useEffect(() => {
@@ -116,9 +121,9 @@ const Layout = (props: Props) => {
             : "w-full flex flex-col justify-between" : shouldShowHeader ? "w-full pt-20 flex flex-col justify-between" : "w-full flex flex-col justify-between"}>
         {
           shouldShowHeader &&
-          <Header showSidebar={showSidebar} showHamburger={showHamburger} setShowSidebar={setShowSidebar} isSmallScreen={isSmallScreen} />
+          <Header showSidebar={showSidebar} showHamburger={showHamburger} setShowSidebar={setShowSidebar} isSmallScreen={isSmallScreen} shouldShowWhiteHeader={shouldShowWhiteHeader} />
         }
-        <Outlet  context={{ showSidebar }} />
+        <Outlet context={{ showSidebar }} />
         <ToastContainer />
         <Footer />
         <ScrollTopButton />

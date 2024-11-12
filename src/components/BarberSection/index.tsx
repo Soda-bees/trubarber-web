@@ -83,9 +83,11 @@ const BarberSection = (props: Props) => {
       setLoader(true)
       const response = await getAllBarbers() as { status: any, data: any }
       if (response?.status == 200) {
+        const allBarbers = response?.data?.barbers
+        const filteredBarbers = allBarbers?.filter((barber: any) => !barber?.isDeleted)
         setLoader(false)
-        setSliderData(response?.data?.barbers)
-        dispatch(setBarbers(response?.data?.barbers))
+        setSliderData(filteredBarbers)
+        dispatch(setBarbers(filteredBarbers))
       } else {
         setLoader(false)
       }
@@ -253,7 +255,7 @@ const BarberSection = (props: Props) => {
           })}
         </div>
       </div> */}
-      
+
       <div className="bg-purplegray">
         <div className="flex flex-row gap-2 overflow-hidden">
           {barbers?.length > 0 && barbers.map((item, index) => {
