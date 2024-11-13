@@ -25,7 +25,7 @@ const Welcome = (props: Props) => {
       <Slider />
       <LandingDiscover />
       <LogoLine />
-      <BarberSection />
+      <BarberSection showDes showBtn/>
       <BarberServiceDisplay />
       <LogoLine />
       <CustomerReview />

@@ -7,8 +7,7 @@ import ScrollToTopLink from "../ScrollToTopLink";
 import { useDispatch, useSelector } from "react-redux";
 import { selectBarbers, setBarbers } from "../../Store/BarbersSlice";
 import { useOutletContext } from "react-router-dom";
-
-type Props = {};
+import useNavigate from "../ScrollToTopNavigate";
 
 interface Barber {
   appoinment: any;
@@ -36,10 +35,17 @@ interface Barber {
   _id: string;
 }
 
-const BarberSection = (props: Props) => {
+type Props = {
+  title?: string,
+  showDes?: boolean
+  showBtn?: boolean
+}
+
+const BarberSection = ({ title, showDes, showBtn }: Props) => {
   const { showSidebar } = useOutletContext<{ showSidebar: boolean }>();
   const dispatch = useDispatch()
   const barbers = useSelector(selectBarbers)
+  const navigate = useNavigate()
 
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -159,7 +165,10 @@ const BarberSection = (props: Props) => {
       <div className="flex flex-col mt-4 justify-between p-4 w-full">
         <div className="flex flex-row items-center justify-between">
           <div className="text-3xl md:text-6xl md:w-[70%] lg:w-[60%] font-semibold">
-            Discover Expert Barbers Online Effortlessly
+            {
+              title ? title : 'Discover Expert Barbers Online Effortlessly'
+            }
+            {/* Discover Expert Barbers Online Effortlessly */}
           </div>
           <div className="hidden md:flex flex-row w-[7%] justify-between mr-1">
             <div
@@ -184,13 +193,19 @@ const BarberSection = (props: Props) => {
           </div>
         </div>
         <div className="flex flex-row items-center justify-between mt-7">
-          <div className="text-sm w-full md:text-xl md:w-[70%] lg:w-[30%] font-light">
-            Effortlessly locate and connect with top-rated barbers in your area
-            using our easy-to-use online platform.
-          </div>
-          <ScrollToTopLink to="/barbers" className="hidden border border-black/50 p-2 rounded-xl md:flex justify-center cursor-pointer lg:w-[8%]">
-            View All
-          </ScrollToTopLink>
+          {
+            showDes &&
+            <div className="text-sm w-full md:text-xl md:w-[70%] lg:w-[30%] font-light">
+              Effortlessly locate and connect with top-rated barbers in your area
+              using our easy-to-use online platform.
+            </div>
+          }
+          {
+            showBtn &&
+            <ScrollToTopLink to="/barbers" className="hidden border border-black/50 p-2 rounded-xl md:flex justify-center cursor-pointer lg:w-[8%]">
+              View All
+            </ScrollToTopLink>
+          }
         </div>
         <div className="md:hidden flex flex-row justify-between mt-4">
           <ScrollToTopLink to="/barbers" className="border border-black/50 p-2 px-5 rounded-xl flex justify-center cursor-pointer mr-2">
@@ -301,7 +316,7 @@ const BarberSection = (props: Props) => {
                         </span>
                       </div>
                     </div>
-                    <Button light={false} title="Book Appointment" mt={'10px'} onClick={() => alert(index)} />
+                    <Button light={false} title="Book Appointment" mt={'10px'} onClick={() => navigate(`/BarberDetails/${item?._id}`, { state: { item } })} />
                   </div>
                 }
               </div>
