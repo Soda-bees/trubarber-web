@@ -19,8 +19,6 @@ const BarberDetails = (props: Props) => {
     const descriptionRef = useRef<HTMLParagraphElement | null>(null);
     const locationRef = useRef<HTMLParagraphElement | null>(null);
 
-    console.log(item);
-
     const [addressLodaer, setAddressLodaer] = useState<boolean>(false)
     const [address, setAddress] = useState<string>('')
     const [isShowDescription, setIsShowDescription] = useState<boolean>(false)
@@ -32,6 +30,9 @@ const BarberDetails = (props: Props) => {
     const [reviewsPerPage, setReviewsPerPage] = useState(1)
     const [showServiceDetailsModal, setShowServiceDetailsModal] = useState<boolean>(false)
     const [selectedService, setSelectedService] = useState<any>(null)
+    const [styleMenu, setStyleMenu] = useState<[]>([])
+    const [selectedStyleIndex, setSelectedStyleIndex] = useState<number | null>(null);
+    const [totalPrice, setTotalPrice] = useState<number>(20)
 
     useEffect(() => {
         if (item) {
@@ -133,6 +134,24 @@ const BarberDetails = (props: Props) => {
         }
     };
 
+    const handleSelectStyle = (index: number, price: any) => {
+        const parsedPrice = parseFloat(price);
+        console.log(parsedPrice);
+        
+        setSelectedStyleIndex(prevIndex => {
+            if (prevIndex === index) {  
+                setTotalPrice(prevPrice => prevPrice - parsedPrice)         
+                // setTotalPrice(0)     
+                return null 
+            } else {
+                // setTotalPrice(parsedPrice)
+                setTotalPrice(prevPrice => prevPrice - prevPrice)
+                setTotalPrice(prevPrice => prevPrice + parsedPrice)
+                return index
+            }
+        })
+    }
+
 
     return (
         <div className='px-4 mt-10'>
@@ -217,11 +236,7 @@ const BarberDetails = (props: Props) => {
                             return (
                                 <div key={index}
                                     className='border border-hoverGray rounded-lg p-2 flex flex-row items-start justify-between'
-                                    // onClick={() => setShowServiceDetailsModal(true)}
-                                    onClick={() => {
-                                        setSelectedService(item)
-                                        setShowServiceDetailsModal(true)
-                                    }}
+                                // onClick={() => setShowServiceDetailsModal(true)}
                                 >
                                     <div className='flex flex-row items-start'>
                                         <div className='bg-inputGray w-20 h-20 flex items-center justify-center rounded-xl'>
@@ -232,7 +247,13 @@ const BarberDetails = (props: Props) => {
                                             <div className='text-hoverGray text-sm'>{item?.description}</div>
                                         </div>
                                     </div>
-                                    <div className='bg-black px-5 py-1 rounded-xl text-white active:opacity-70 cursor-pointer'>
+                                    <div className='bg-black px-5 py-1 rounded-xl text-white active:opacity-70 cursor-pointer'
+                                        onClick={() => {
+                                            setStyleMenu(item?.options)
+                                            setSelectedService(item)
+                                            setShowServiceDetailsModal(true)
+                                        }}
+                                    >
                                         Book
                                     </div>
                                 </div>
@@ -320,12 +341,67 @@ const BarberDetails = (props: Props) => {
             <BarberSection title='Recommended Barber' />
             {
                 showServiceDetailsModal &&
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white rounded-lg p-6 w-[90%] sm:w-[70%] md:w-[70%] lg:w-[50%] xl:w-[35%] xl:w-[25%] max-h-[80vh] overflow-y-scroll hide-scrollbar md:w-[25%] relative">
-                        <div>
-                            <div className='bg-inputGray w-20 h-20 flex items-center justify-center rounded-xl'>
-                                <img src={selectedService?.icon} className='w-10 h-10' />
+                <div
+                    onClick={() => setShowServiceDetailsModal(false)}
+                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white rounded-lg p-6 w-[90%] sm:w-[70%] md:w-[70%] lg:w-[50%] xl:w-[35%] xl:w-[25%] max-h-[80vh] overflow-y-scroll hide-scrollbar md:w-[25%] relative">
+                        <div className='flex flex-row items-start justify-between'>
+                            <div className='flex flex-row items-center'>
+                                <div className='bg-inputGray sm:w-20 w-16 h-16 sm:h-20 flex items-center justify-center rounded-xl'>
+                                    <img src={selectedService?.icon} className='sm:w-10 sm:h-10 w-8 h-8' />
+                                </div>
+                                <div className='text-lg font-semibold ml-4'>{selectedService?.name}</div>
                             </div>
+                            <div className='bg-black p-2 cursor-pointer rounded-lg active:opacity-70' onClick={() => setShowServiceDetailsModal(false)}>
+                                <img src={images.cross} className='filter invert brightness-0 sm:w-5 sm:h-5 w-3 h-3' />
+                            </div>
+                        </div>
+                        <div className='mt-4 text-sm text-textGray pr-2'>{selectedService?.description}</div>
+                        <div className='text-black font-semibold mt-4'>{`Select ${selectedService?.name} style`}</div>
+                        <div className='grid grid-cols-1 xs:grid-cols-2 gap-2 mt-2'>
+                            {styleMenu?.map((item: any, index: number) => {
+                                return (
+                                    <div key={index} className={
+                                        selectedStyleIndex === index ?
+                                            'bg-black px-3 text-white py-1 rounded-lg flex flex-row items-center justify-between cursor-pointer' :
+                                            'bg-appGray px-3 py-1 rounded-lg flex flex-row items-center justify-between cursor-pointer'
+                                    } onClick={() => handleSelectStyle(index, item?.price)}>
+                                        <div className='flex flex-col'>
+                                            <div className='font-medium leading-5'>
+                                                {item?.name}
+                                            </div>
+                                            <div className={
+                                                selectedStyleIndex === index ?
+                                                    'text-xs text-white font-medium' :
+                                                    'text-xs text-textGray font-medium'
+                                            }>
+                                                {`(${item?.time} min)`}
+                                            </div>
+                                        </div>
+                                        <div className='font-medium'>{`$${parseFloat(item?.price)?.toFixed(2)}`}</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div className='text-black font-semibold mt-4'>Images</div>
+                        <div className='flex flex-row overflow-x-auto whitespace-nowrap gap-2 mt-2 hide-scrollbar'>
+                            {selectedService?.pictures?.map((picture: any, index: number) => {
+                                return (
+                                    <div key={index} className='w-[180px] flex-shrink-0'>
+                                        <img src={picture} className='w-full h-[170px] object-cover rounded-lg' />
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div className='flex flx-row items-center justify-between mt-4'>
+                            <div>
+                                <div className='text-textGray text-sm font-semibold'>Total Amount</div>
+                                <div className='font-semibold text-lg'>{`$${totalPrice?.toFixed(2)}`}</div>
+                            </div>
+                            <div className='w-[2px] self-stretch bg-appGray'></div>
+                            <SmallButton dark title='Book Appointment' onClick={() => alert('hello')} disable/>
                         </div>
                     </div>
                 </div>
