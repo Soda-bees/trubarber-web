@@ -6,6 +6,8 @@ import { getAddressFromCoordinates } from '../../services/config/Api';
 import StarRatings from 'react-star-ratings';
 import Map from '../../components/Map';
 import BarberSection from '../../components/BarberSection';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPendingAppointment, setPendingAppointment } from '../../Store/PendingAppointment';
 const moment = require('moment');
 
 type Props = {}
@@ -13,6 +15,9 @@ type Props = {}
 const BarberDetails = (props: Props) => {
 
     const { showSidebar } = useOutletContext<{ showSidebar: boolean }>();
+    const pendingAppointment = useSelector(selectPendingAppointment)
+
+    const dispatch = useDispatch()
 
     const location = useLocation();
     const item = location.state?.item;
@@ -30,9 +35,9 @@ const BarberDetails = (props: Props) => {
     const [reviewsPerPage, setReviewsPerPage] = useState(1)
     const [showServiceDetailsModal, setShowServiceDetailsModal] = useState<boolean>(false)
     const [selectedService, setSelectedService] = useState<any>(null)
-    const [styleMenu, setStyleMenu] = useState<[]>([])
+    const [styleMenu, setStyleMenu] = useState<any>([])
     const [selectedStyleIndex, setSelectedStyleIndex] = useState<number | null>(null);
-    const [totalPrice, setTotalPrice] = useState<number>(20)
+    const [totalPrice, setTotalPrice] = useState<number>(0)
 
     useEffect(() => {
         if (item) {
@@ -136,22 +141,56 @@ const BarberDetails = (props: Props) => {
 
     const handleSelectStyle = (index: number, price: any) => {
         const parsedPrice = parseFloat(price);
-        console.log(parsedPrice);
-        
-        setSelectedStyleIndex(prevIndex => {
-            if (prevIndex === index) {  
-                setTotalPrice(prevPrice => prevPrice - parsedPrice)         
-                // setTotalPrice(0)     
-                return null 
-            } else {
-                // setTotalPrice(parsedPrice)
-                setTotalPrice(prevPrice => prevPrice - prevPrice)
-                setTotalPrice(prevPrice => prevPrice + parsedPrice)
-                return index
-            }
-        })
+        if (selectedStyleIndex === index) {
+            setSelectedStyleIndex(null)
+            setTotalPrice((prevPrice) => prevPrice - parsedPrice)
+        } else {
+            setTotalPrice((prevPrice) => prevPrice - prevPrice + parsedPrice)
+            setSelectedStyleIndex(index)
+        }
     }
 
+    useEffect(() => {
+        handleSetPrevoiusSelectedService();
+    }, [selectedService]);
+
+    const handleSetPrevoiusSelectedService = () => {
+        if (pendingAppointment?.barber === selectedService?.barber) {
+            const metchedService = pendingAppointment?.services.find(
+                (service: any) => service?.serviceName === selectedService?.name
+            )
+            if (metchedService) {
+                const index = styleMenu?.findIndex(
+                    (option: any) => option.name === metchedService?.name &&
+                        option?.price === metchedService?.price
+                )
+                if (index !== -1) {
+                    setSelectedStyleIndex(index)
+                    alert(metchedService?.price)
+                }
+            }
+        }
+    }
+
+    const bookAppointment = () => {
+        if (pendingAppointment) {
+            console.log(selectedService);
+
+            alert('pending appointment')
+        } else {
+            let matchedIndex = selectedStyleIndex !== null && styleMenu[selectedStyleIndex]
+            matchedIndex.serviceName = selectedService?.name
+            matchedIndex.serviceIcon = selectedService?.icon
+            const services = [matchedIndex];
+            const obj = {
+                barber: selectedService?.barber,
+                services,
+                status: 'Pending',
+            }
+            dispatch(setPendingAppointment(obj))
+        }
+
+    }
 
     return (
         <div className='px-4 mt-10'>
@@ -381,6 +420,7 @@ const BarberDetails = (props: Props) => {
                                             </div>
                                         </div>
                                         <div className='font-medium'>{`$${parseFloat(item?.price)?.toFixed(2)}`}</div>
+                                        {/* <div className='font-medium'>{item?.price}</div> */}
                                     </div>
                                 )
                             })}
@@ -399,9 +439,10 @@ const BarberDetails = (props: Props) => {
                             <div>
                                 <div className='text-textGray text-sm font-semibold'>Total Amount</div>
                                 <div className='font-semibold text-lg'>{`$${totalPrice?.toFixed(2)}`}</div>
+                                {/* <div className='font-semibold text-lg'>{totalPrice}</div> */}
                             </div>
                             <div className='w-[2px] self-stretch bg-appGray'></div>
-                            <SmallButton dark title='Book Appointment' onClick={() => alert('hello')} disable/>
+                            <SmallButton dark title='Book Appointment' onClick={bookAppointment} disable={selectedStyleIndex === null || selectedStyleIndex === undefined} />
                         </div>
                     </div>
                 </div>
