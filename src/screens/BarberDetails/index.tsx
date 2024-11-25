@@ -7,7 +7,7 @@ import StarRatings from 'react-star-ratings';
 import Map from '../../components/Map';
 import BarberSection from '../../components/BarberSection';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectPendingAppointment, setPendingAppointment } from '../../Store/PendingAppointment';
+import { removePendingAppointment, selectPendingAppointment, setPendingAppointment, updatePendingAppointment } from '../../Store/PendingAppointment';
 const moment = require('moment');
 
 type Props = {}
@@ -38,6 +38,7 @@ const BarberDetails = (props: Props) => {
     const [styleMenu, setStyleMenu] = useState<any>([])
     const [selectedStyleIndex, setSelectedStyleIndex] = useState<number | null>(null);
     const [totalPrice, setTotalPrice] = useState<number>(0)
+    const [isNotSameBarberModal, setIsNotSameBarberModal] = useState<boolean>(false)
 
     useEffect(() => {
         if (item) {
@@ -151,32 +152,35 @@ const BarberDetails = (props: Props) => {
     }
 
     useEffect(() => {
-        handleSetPrevoiusSelectedService();
-    }, [selectedService]);
-
-    const handleSetPrevoiusSelectedService = () => {
-        if (pendingAppointment?.barber === selectedService?.barber) {
-            const metchedService = pendingAppointment?.services.find(
-                (service: any) => service?.serviceName === selectedService?.name
-            )
-            if (metchedService) {
-                const index = styleMenu?.findIndex(
-                    (option: any) => option.name === metchedService?.name &&
-                        option?.price === metchedService?.price
-                )
-                if (index !== -1) {
-                    setSelectedStyleIndex(index)
-                    alert(metchedService?.price)
-                }
-            }
-        }
-    }
+        // handleSetPrevoiusSelectedService();
+    }, [location?.state]);
 
     const bookAppointment = () => {
         if (pendingAppointment) {
-            console.log(selectedService);
-
-            alert('pending appointment')
+            if (pendingAppointment?.barber !== selectedService?.barber) {
+                setIsNotSameBarberModal(true)
+            } else {
+                const serviceNameExist = pendingAppointment?.services.some(
+                    (service: any) => service.serviceName === selectedService?.name
+                )
+                if (serviceNameExist) {
+                    if (selectedStyleIndex !== null) {
+                        const matchedIndex = { ...styleMenu[selectedStyleIndex] }; 
+                        matchedIndex.serviceName = selectedService?.name
+                        matchedIndex.serviceIcon = selectedService?.icon
+                        const services = [matchedIndex];
+                        const obj = {
+                            barber: selectedService?.barber,
+                            services,
+                            status: 'Pending',
+                        }
+                        dispatch(updatePendingAppointment(obj))
+                    }
+                    alert('same service name')
+                } else {
+                    alert(' service name not same')
+                }
+            }
         } else {
             let matchedIndex = selectedStyleIndex !== null && styleMenu[selectedStyleIndex]
             matchedIndex.serviceName = selectedService?.name
@@ -190,6 +194,50 @@ const BarberDetails = (props: Props) => {
             dispatch(setPendingAppointment(obj))
         }
 
+    }
+
+    const handleAddNewBarber = () => {
+        dispatch(removePendingAppointment())
+        if (selectedStyleIndex !== null) {
+            const matchedIndex = { ...styleMenu[selectedStyleIndex] };
+            matchedIndex.serviceName = selectedService?.name
+            matchedIndex.serviceIcon = selectedService?.icon
+            const services = [matchedIndex];
+            const obj = {
+                barber: selectedService?.barber,
+                services,
+                status: 'Pending',
+            }
+            console.log("obj===>", obj);
+            dispatch(setPendingAppointment(obj))
+            setIsNotSameBarberModal(false)
+        }
+    }
+
+    const handleClickedServicesBook = (item: any) => {
+        console.log("item", item);
+        setSelectedStyleIndex(null)
+        if (pendingAppointment?.barber === item?.barber) {
+            const metchedService = pendingAppointment?.services.find(
+                (service: any) => service?.serviceName === item?.name
+            )
+            console.log("metchedService", metchedService);
+
+            if (metchedService) {
+                const index = item?.options?.findIndex(
+                    (option: any) => option.name === metchedService?.name &&
+                        option?.price === metchedService?.price
+                )
+                console.log(index);
+
+                if (index !== -1) {
+                    setSelectedStyleIndex(index)
+                }
+            }
+        }
+        setStyleMenu(item?.options)
+        setSelectedService(item)
+        setShowServiceDetailsModal(true)
     }
 
     return (
@@ -288,9 +336,7 @@ const BarberDetails = (props: Props) => {
                                     </div>
                                     <div className='bg-black px-5 py-1 rounded-xl text-white active:opacity-70 cursor-pointer'
                                         onClick={() => {
-                                            setStyleMenu(item?.options)
-                                            setSelectedService(item)
-                                            setShowServiceDetailsModal(true)
+                                            handleClickedServicesBook(item)
                                         }}
                                     >
                                         Book
@@ -443,6 +489,22 @@ const BarberDetails = (props: Props) => {
                             </div>
                             <div className='w-[2px] self-stretch bg-appGray'></div>
                             <SmallButton dark title='Book Appointment' onClick={bookAppointment} disable={selectedStyleIndex === null || selectedStyleIndex === undefined} />
+                        </div>
+                    </div>
+                </div>
+            }
+            {
+                isNotSameBarberModal &&
+                <div
+                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white rounded-lg p-6 w-[90%] sm:w-[70%] md:w-[70%] lg:w-[50%] xl:w-[35%] xl:w-[22%] max-h-[80vh] overflow-y-scroll hide-scrollbar md:w-[25%] relative">
+                        <div className='text-center'>  You have already selected a different barber. Are you sure you want
+                            to remove the previously selected barber? Please confirm to proceed.</div>
+                        <div className='flex flex-row w-full items-center justify-evenly mt-6'>
+                            <SmallButton dark title='Confirm' long onClick={() => handleAddNewBarber()} />
+                            <SmallButton dark={false} title='Cancel' long onClick={() => setIsNotSameBarberModal(false)} />
                         </div>
                     </div>
                 </div>
