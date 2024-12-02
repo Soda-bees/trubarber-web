@@ -1,5 +1,6 @@
 import axios from "axios";
 import { axiosInstance } from "../axiosInstance";
+const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
 export const validateEmailAvailability = async (body: any) => {
     try {
@@ -35,9 +36,9 @@ export const handleSignup = async (body: any) => {
 
 export const handleSignin = async (body: any) => {
     try {
-        const response = await axiosInstance.post('auth/signin' , body)        
+        const response = await axiosInstance.post('auth/signin', body)
         return response
-    } catch (error:any) {
+    } catch (error: any) {
         return error
     }
 }
@@ -52,9 +53,9 @@ export const getAllBarbers = async () => {
 }
 
 export const getAddressFromCoordinates = async (latitude: number, longitude: number) => {
-    const GOOGLE_MAPS_API_KEY = 'AIzaSyDZHd__SjxYxquisLR6VcqIF1VuyVD4aiY';
-
     try {
+        console.log("GOOGLE_MAPS_API_KEY", GOOGLE_MAPS_API_KEY);
+
         const response = await axios.get(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`,
         );
@@ -68,4 +69,17 @@ export const getAddressFromCoordinates = async (latitude: number, longitude: num
         console.log('Error in geocoding:', error);
     }
 };
+
+export const createChatRoom = async (token: any, body: any) => {
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axiosInstance.post('user/createChatRoom', body, { headers })
+        return response
+    } catch (error) {
+        return error
+    }
+}
 

@@ -2,12 +2,15 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useLocation, useOutletContext } from 'react-router-dom';
 import images from '../../services/config/images';
 import SmallButton from '../../components/SmallButton';
-import { getAddressFromCoordinates } from '../../services/config/Api';
+import { createChatRoom, getAddressFromCoordinates } from '../../services/config/Api';
 import StarRatings from 'react-star-ratings';
 import Map from '../../components/Map';
 import BarberSection from '../../components/BarberSection';
 import { useDispatch, useSelector } from 'react-redux';
 import { removePendingAppointment, selectPendingAppointment, setPendingAppointment, updatePendingAppointment } from '../../Store/PendingAppointment';
+import { Toast } from '../../components/Toast';
+import { selectUser } from '../../Store/userDataSlice';
+import { selectAuthToken } from '../../Store/AuthTokenSlice';
 const moment = require('moment');
 
 type Props = {}
@@ -16,6 +19,8 @@ const BarberDetails = (props: Props) => {
 
     const { showSidebar } = useOutletContext<{ showSidebar: boolean }>();
     const pendingAppointment = useSelector(selectPendingAppointment)
+    const userData = useSelector(selectUser)
+    const authToken = useSelector(selectAuthToken)
 
     const dispatch = useDispatch()
 
@@ -39,6 +44,22 @@ const BarberDetails = (props: Props) => {
     const [selectedStyleIndex, setSelectedStyleIndex] = useState<number | null>(null);
     const [totalPrice, setTotalPrice] = useState<number>(0)
     const [isNotSameBarberModal, setIsNotSameBarberModal] = useState<boolean>(false)
+    const [chatRoomId, setChatRoomId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (showServiceDetailsModal) {
+            // Disable scrolling
+            document.body.style.overflow = "hidden";
+        } else {
+            // Enable scrolling
+            document.body.style.overflow = "auto";
+        }
+
+        // Cleanup when component unmounts
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [showServiceDetailsModal]);
 
     useEffect(() => {
         if (item) {
@@ -151,10 +172,6 @@ const BarberDetails = (props: Props) => {
         }
     }
 
-    useEffect(() => {
-        // handleSetPrevoiusSelectedService();
-    }, [location?.state]);
-
     const bookAppointment = () => {
         if (pendingAppointment) {
             if (pendingAppointment?.barber !== selectedService?.barber) {
@@ -164,21 +181,27 @@ const BarberDetails = (props: Props) => {
                     (service: any) => service.serviceName === selectedService?.name
                 )
                 if (serviceNameExist) {
-                    if (selectedStyleIndex !== null) {
-                        const matchedIndex = { ...styleMenu[selectedStyleIndex] }; 
-                        matchedIndex.serviceName = selectedService?.name
-                        matchedIndex.serviceIcon = selectedService?.icon
-                        const services = [matchedIndex];
-                        const obj = {
-                            barber: selectedService?.barber,
-                            services,
-                            status: 'Pending',
-                        }
-                        dispatch(updatePendingAppointment(obj))
+                    let matchedIndex = selectedStyleIndex !== null && { ...styleMenu[selectedStyleIndex] };
+                    matchedIndex.serviceName = selectedService?.name
+                    matchedIndex.serviceIcon = selectedService?.icon
+                    const services = [matchedIndex];
+                    const obj = {
+                        barber: selectedService?.barber,
+                        services,
+                        status: 'Pending',
                     }
-                    alert('same service name')
+                    dispatch(updatePendingAppointment(obj))
                 } else {
-                    alert(' service name not same')
+                    const oldPendingAppointment = pendingAppointment
+                    let matchedIndex = selectedStyleIndex !== null && { ...styleMenu[selectedStyleIndex] };
+                    matchedIndex.serviceName = selectedService?.name
+                    matchedIndex.serviceIcon = selectedService?.icon
+                    const services = [matchedIndex];
+                    const newPendingAppointment = {
+                        ...oldPendingAppointment,
+                        services: [...oldPendingAppointment?.services, ...services]
+                    }
+                    dispatch(setPendingAppointment(newPendingAppointment))
                 }
             }
         } else {
@@ -215,7 +238,6 @@ const BarberDetails = (props: Props) => {
     }
 
     const handleClickedServicesBook = (item: any) => {
-        console.log("item", item);
         setSelectedStyleIndex(null)
         if (pendingAppointment?.barber === item?.barber) {
             const metchedService = pendingAppointment?.services.find(
@@ -238,6 +260,43 @@ const BarberDetails = (props: Props) => {
         setStyleMenu(item?.options)
         setSelectedService(item)
         setShowServiceDetailsModal(true)
+    }
+
+    const findChat = async () => {
+        try {
+            const isChat = await findChatInRedux();
+            if (!isChat) {
+                const body = {
+                    user: userData?._id,
+                    barber: item?._id,
+                }
+                const response = await createChatRoom(authToken, body) as { status: number; data?: any; message?: string }
+                console.log("chat response ===?", response);
+                if (response?.status === 201) {
+                    setChatRoomId(response?.data?.newChat?._id)
+                } else {
+                    setChatRoomId(null)
+                }
+            }
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+
+    const findChatInRedux = async () => {
+        const name = item?._id + userData?._id
+        const name2 = userData?._id + item?._id
+        const chat = await userData?.chat?.find(
+            (chat: any) => chat?.name === name || chat?.name === name2
+        )
+        if (chat) {
+            setChatRoomId(chat?._id)
+            return true
+        } else {
+            setChatRoomId(null)
+            return false
+        }
     }
 
     return (
@@ -291,7 +350,7 @@ const BarberDetails = (props: Props) => {
                             </div>
                             <div className='flex flex-row items-center gap-2 mt-4 lg:mt-8'>
                                 <SmallButton dark={false} title='Direction' image={images.direction} />
-                                <SmallButton dark={false} title='Message' image={images.message} />
+                                <SmallButton dark={false} title='Message' image={images.message} onClick={() => findChat()} />
                             </div>
                             <div className='mt-4 font-semibold'>About</div>
                             <div className="w-full mt-2 text-hoverGray flex items-end">
@@ -314,6 +373,29 @@ const BarberDetails = (props: Props) => {
                     </div>
                     <div className={`w-[55%] hidden h-[350px] ${showSidebar ? 'xl:flex' : 'lg:flex'}`}>
                         <Map />
+                    </div>
+                </div>
+                <div className='mt-10'>
+                    <div className='mt-4 font-semibold mb-2'>Schedule</div>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4`}>
+                        {
+                            item?.scheduled?.map((item: any, index: number) => {
+                                console.log(item);
+
+                                return (
+                                    <div key={index} className='flex flex-row items-center'>
+                                        <div className={`w-12 h-10 rounded-md flex flex-row items-center justify-center mr-2 ${item?.available ? 'bg-inputGray' : 'bg-disable'}`}>
+                                            <div className={`w-[15px] h-[15px] rounded-sm ${item?.available ? 'bg-green' : 'bg-red-500'}`}></div>
+                                        </div>
+                                        <div className={`h-10 w-full flex flex-row items-center justify-between rounded-md px-2 ${item?.available ? 'bg-inputGray' : 'bg-disable'}`}>
+                                            <div>{item?.day}</div>
+                                            <div>{item?.time}</div>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            )
+                        }
                     </div>
                 </div>
                 <div className='mt-10'>
