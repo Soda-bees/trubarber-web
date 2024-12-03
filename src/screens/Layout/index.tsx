@@ -97,13 +97,26 @@ const Layout = (props: Props) => {
     };
   }, [showSidebar, isSmallScreen]);
 
-  useEffect(() => {
-    if (authToken) {
-      if (activePath === '/signin' || activePath === '/signup') {
-        navigate('/')
+    // useEffect(() => {
+    //   if (authToken) {
+    //     if (activePath === '/signin' || activePath === '/signup') {
+    //       navigate('/')
+    //     }
+    //   }
+    // }, [authToken, navigate])
+
+    useEffect(() => {
+      if (authToken) {
+          // Check for a redirect path saved in sessionStorage
+          const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+          if (redirectPath) {
+              sessionStorage.removeItem('redirectAfterLogin'); // Clear the saved path
+              navigate(redirectPath); // Navigate to the intended path
+          } else if (activePath === '/signin' || activePath === '/signup') {
+              navigate('/'); // Default behavior: Redirect to home
+          }
       }
-    }
-  }, [authToken, navigate])
+  }, [authToken, navigate, activePath]);
 
   return (
     <div className="flex flex-row min-h-screen max-w-[2800px] mx-auto relative">

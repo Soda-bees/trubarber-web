@@ -11,6 +11,7 @@ import { removePendingAppointment, selectPendingAppointment, setPendingAppointme
 import { Toast } from '../../components/Toast';
 import { selectUser } from '../../Store/userDataSlice';
 import { selectAuthToken } from '../../Store/AuthTokenSlice';
+import useNavigate from '../../components/ScrollToTopNavigate';
 const moment = require('moment');
 
 type Props = {}
@@ -28,6 +29,7 @@ const BarberDetails = (props: Props) => {
     const item = location.state?.item;
     const descriptionRef = useRef<HTMLParagraphElement | null>(null);
     const locationRef = useRef<HTMLParagraphElement | null>(null);
+    const navigate = useNavigate()
 
     const [addressLodaer, setAddressLodaer] = useState<boolean>(false)
     const [address, setAddress] = useState<string>('')
@@ -45,27 +47,30 @@ const BarberDetails = (props: Props) => {
     const [totalPrice, setTotalPrice] = useState<number>(0)
     const [isNotSameBarberModal, setIsNotSameBarberModal] = useState<boolean>(false)
     const [chatRoomId, setChatRoomId] = useState<string | null>(null);
+    const [isReviewPosted, setIsReviewPosted] = useState<boolean>(false)
+    const [showWriteReviewModal, setShowWriteReviewModal] = useState<boolean>(false)
+    const [rating, setRating] = useState<number>(0);
+    const [reviewComment , setReviewComment] = useState<string>('')
 
     useEffect(() => {
-        if (showServiceDetailsModal) {
-            // Disable scrolling
+        if (showServiceDetailsModal || showWriteReviewModal) {
             document.body.style.overflow = "hidden";
         } else {
-            // Enable scrolling
             document.body.style.overflow = "auto";
         }
 
-        // Cleanup when component unmounts
         return () => {
             document.body.style.overflow = "auto";
         };
-    }, [showServiceDetailsModal]);
+    }, [showServiceDetailsModal, showWriteReviewModal]);
 
     useEffect(() => {
         if (item) {
             handleGetBarberAddress()
+            setReviewPost()
         }
-    }, [location?.state])
+        findChat()
+    }, [location?.state, authToken])
 
     useEffect(() => {
         if (descriptionRef.current) {
@@ -107,6 +112,17 @@ const BarberDetails = (props: Props) => {
         return () => window.removeEventListener("resize", handleResize);
     }, [showSidebar]);
 
+    const setReviewPost = async () => {
+        const userId = userData?._id
+        const reviews = item?.reviews
+        const userReviewExist = reviews?.some((review: any) => review?.userData?._id === userId)
+        if (userReviewExist) {
+            setIsReviewPosted(true)
+        } else {
+            setIsReviewPosted(false)
+        }
+
+    }
 
     const handleGetBarberAddress = async () => {
         try {
@@ -299,6 +315,18 @@ const BarberDetails = (props: Props) => {
         }
     }
 
+    const handleNavigateToChat = () => {
+        if (chatRoomId) {
+            navigate('/Chat')
+        } else {
+            Toast('error', 'Something wents wrong, try again')
+        }
+    }
+
+    const handleRatingChange = (newRating: number) => {
+        setRating(newRating);
+    };
+
     return (
         <div className='px-4 mt-10'>
             <div className='max-w-7xl mx-auto'>
@@ -350,7 +378,7 @@ const BarberDetails = (props: Props) => {
                             </div>
                             <div className='flex flex-row items-center gap-2 mt-4 lg:mt-8'>
                                 <SmallButton dark={false} title='Direction' image={images.direction} />
-                                <SmallButton dark={false} title='Message' image={images.message} onClick={() => findChat()} />
+                                <SmallButton dark={false} title='Message' image={images.message} onClick={handleNavigateToChat} />
                             </div>
                             <div className='mt-4 font-semibold'>About</div>
                             <div className="w-full mt-2 text-hoverGray flex items-end">
@@ -380,8 +408,6 @@ const BarberDetails = (props: Props) => {
                     <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4`}>
                         {
                             item?.scheduled?.map((item: any, index: number) => {
-                                console.log(item);
-
                                 return (
                                     <div key={index} className='flex flex-row items-center'>
                                         <div className={`w-12 h-10 rounded-md flex flex-row items-center justify-center mr-2 ${item?.available ? 'bg-inputGray' : 'bg-disable'}`}>
@@ -454,7 +480,7 @@ const BarberDetails = (props: Props) => {
                             </div>
                         </div>
                         <div className='flex flex-row items-center justify-between xs:justify-end w-full xs:w-[210px] mt-4 xs:mt-0'>
-                            <SmallButton dark title='Write a Review' />
+                            <SmallButton dark title={isReviewPosted ? 'Edit Review' : 'Write a Review'} onClick={() => setShowWriteReviewModal(true)} />
                             {
                                 showSliderBtn &&
                                 <div className='flex flex-row items-center gap-8 ml-4'>
@@ -588,6 +614,44 @@ const BarberDetails = (props: Props) => {
                             <SmallButton dark title='Confirm' long onClick={() => handleAddNewBarber()} />
                             <SmallButton dark={false} title='Cancel' long onClick={() => setIsNotSameBarberModal(false)} />
                         </div>
+                    </div>
+                </div>
+            }
+            {
+                showWriteReviewModal &&
+                <div
+                    onClick={() => setShowWriteReviewModal(false)}
+                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white rounded-lg p-6 w-[90%] sm:w-[70%] md:w-[70%] lg:w-[50%] xl:w-[35%] xl:w-[22%] max-h-[80vh] overflow-y-scroll hide-scrollbar md:w-[25%] relative flex flex-col items-center justify-center">
+                        <img src={item?.profile ? item?.profile : item?.gender === 'male' ? images.male : images.female}
+                            className='w-24 h-24 rounded-full object-cover'
+                        />
+                        <div className='text-lg font-bold mt-4 border border-inputGrey py-1 px-2 rounded-lg mb-4'>{item?.name}</div>
+                        <StarRatings
+                            rating={rating}
+                            starRatedColor="gold"
+                            numberOfStars={5}
+                            starDimension="25px"
+                            starSpacing="3px"
+                            changeRating={handleRatingChange}
+                            starHoverColor='gold'
+                        />
+                        <div className='mt-4 text-center'>{`Tell us about your experience at ${item?.name}`}</div>
+                        <div className='flex flex-row items-center justify-between w-full sm:w-[70%] md:w-[50%] mt-4'>
+                            <div>Comment</div>
+                            <div className='bg-inputGray rounded-lg cursor-pointer w-8 h-8 flex flex-row items-center justify-center border border-hoverGray active:opacity-60'>
+                                <img src={images.deleteIcon} className='w-4' />
+                            </div>
+                        </div>
+                        <textarea
+                            className='w-full sm:w-[70%] md:w-[50%] mt-4 resize-none border border-inputGray rounded-md p-2 focus:outline-none hide-scrollbar'
+                            placeholder='Enter Your Message'
+                            rows={4}
+                            value={reviewComment}
+                            onChange={(e) => setReviewComment(e.target.value)}
+                        />
                     </div>
                 </div>
             }

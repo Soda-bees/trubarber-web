@@ -75,7 +75,7 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
         />
         <div>
           <div className="font-bold text-lg text-white">{user?.name}</div>
-          <div className="text-sm flex flex-row items-center text-white my-2">
+          <div className="text-sm flex flex-row items-start text-white my-2">
             {
               addressLodaer ?
                 <div
@@ -85,7 +85,7 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
                 :
                 <img
                   src={images.Location}
-                  className="w-3 filter invert brightness-0 mr-2"
+                  className="w-3 filter invert brightness-0 mr-2 mt-1"
                   alt="Location"
                 />
             }

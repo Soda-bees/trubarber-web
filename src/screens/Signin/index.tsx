@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import images from '../../services/config/images'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectRole, setRole } from '../../Store/Role'
@@ -23,6 +23,22 @@ const Signin = (props: Props) => {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
     const [showPass, setShowPass] = useState<boolean>(false)
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Enter") {
+                handleConfirm(); // Trigger login logic
+            }
+        };
+
+        // Listen for the keydown event
+        window.addEventListener("keydown", handleKeyDown);
+
+        // Clean up the event listener on component unmount
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [email, password, role]);
 
     const handleSetRole = (role: string) => {
         dispatch(setRole(role))

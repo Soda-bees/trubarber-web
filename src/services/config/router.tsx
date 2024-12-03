@@ -19,6 +19,7 @@ import Security from "../../screens/Security";
 import BarberDashboard from "../../screens/BarberDashboard";
 import AllBarbers from "../../screens/AllBarbers";
 import BarberDetails from "../../screens/BarberDetails";
+import Chat from "../../screens/Chat";
 
 
 // Component to set up routing
@@ -53,6 +54,7 @@ const Routing = () => {
                 { path: '/barber-dashboard', element: <ProtectedRoute Component={BarberDashboard} /> },
                 { path: '/barbers', element: <AllBarbers /> },
                 { path: '/BarberDetails/:_id', element: <BarberDetails /> },
+                { path: '/Chat', element: <ProtectedRoute Component={Chat} /> },
             ]
         }
     ]);
