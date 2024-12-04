@@ -6,14 +6,21 @@ type Props = {
     onClick: () => void;
     mt?: string,
     loader?: boolean,
-    light: boolean
+    light: boolean,
+    fontSize?: string,
+    px?: string
 }
 
-const Button: React.FC<Props> = ({ title, onClick, mt, loader, light }) => {
+const Button: React.FC<Props> = ({ title, onClick, mt, loader, light, fontSize, px }) => {
     return (
         <div onClick={() => { if (!loader) onClick(); }}
-            style={{ marginTop: mt }}
-            className={`w-full bg-black font-medium flex flex-row items-center justify-between h-12 rounded-xl px-6 cursor-pointer shadow-md ${light ? 'bg-transparent border border-black text-black' : 'text-white border-none '} ${!loader && "active:opacity-50"}`}
+            style={{
+                marginTop: mt,
+                fontSize: fontSize ? fontSize : '16px',
+                paddingLeft: px ? px : '24px',
+                paddingRight: px ? px : '24px'
+            }}
+            className={`w-full bg-black font-medium flex flex-row items-center justify-between h-12 rounded-xl cursor-pointer shadow-md ${light ? 'bg-transparent border border-black text-black' : 'text-white border-none '} ${!loader && "active:opacity-50"}`}
         >{title}
             {
                 loader ?
@@ -23,7 +30,6 @@ const Button: React.FC<Props> = ({ title, onClick, mt, loader, light }) => {
                     </div>
                     :
                     <img src={light ? images.arrowBtnBlack : images.arrowBtn} className='w-3' />
-
             }
         </div>
     )

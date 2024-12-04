@@ -6,6 +6,7 @@ import authTokenReducer from "./AuthTokenSlice"
 import userReducer from "./userDataSlice"
 import barberReducer from "./BarbersSlice"
 import locationReducer from "./LocationSlice";
+import pendingAppointemtReducer from "./PendingAppointment"
 
 const rolePersistConfig = {
     key: "role",
@@ -31,12 +32,18 @@ const locationPersistConfig = {
     storage,
 };
 
+const pendingAppointmentPersistConfig = {
+    key:'pendingAppointment',
+    storage
+}
+
 const rootReducer = combineReducers({
     role: persistReducer(rolePersistConfig, roleReducer),
     authToken: persistReducer(authTokenPersistConfig, authTokenReducer),
     user: persistReducer(userPersistConfig, userReducer),
     barber: persistReducer(barbersPersistConfig, barberReducer),
     location: persistReducer(locationPersistConfig, locationReducer),
+    pendingAppointment: persistReducer(pendingAppointmentPersistConfig, pendingAppointemtReducer),
 });
 
 export const store = configureStore({

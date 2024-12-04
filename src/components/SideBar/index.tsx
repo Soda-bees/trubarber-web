@@ -7,6 +7,7 @@ import useNavigate from "../ScrollToTopNavigate";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser, selectUser } from "../../Store/userDataSlice";
 import { clearAuthToken } from "../../Store/AuthTokenSlice";
+import { getAddressFromCoordinates } from "../../services/config/Api";
 
 type Props = {
   showSidebar: boolean;
@@ -22,17 +23,41 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
   const location = useLocation();
   const activePath = location.pathname;
   const [profileDropDown, setProfileDropDown] = useState<boolean>(false);
+  const [address, setAddress] = useState<string>('')
+  const [addressLodaer, setAddressLodaer] = useState<boolean>(false)
 
   const handleLogout = async () => {
     dispatch(clearUser());
     dispatch(clearAuthToken());
   };
 
+  useEffect(() => {
+    handleGetUserAddress()
+  }, [user])
+
+  const handleGetUserAddress = async () => {
+    try {
+      setAddressLodaer(true)
+      const fetchedAddress = await getAddressFromCoordinates(user?.location?.latitude, user?.location?.longitude);
+      if (fetchedAddress) {
+        setAddress(fetchedAddress)
+        setAddressLodaer(false)
+      } else {
+        setAddressLodaer(false)
+      }
+    } catch (error) {
+      console.log(error);
+      setAddressLodaer(false)
+    }
+  }
+
   const sidebarClass = isSmallScreen
     ? showSidebar
       ? "fixed w-[70%] xs:w-[50%] sm:w-[40%] md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] left-0 top-0 h-[100vh] bg-black z-50 animate-slideIn  py-8"
       : "fixed w-[80%] md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] left-0 top-0 h-[100vh] bg-black z-50 animate-slideOut"
     : "sticky max-h-screen relative top-0 left-0 w-64 md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] bg-black py-8";
+
+  console.log(user);
 
   return (
     <div className={`${sidebarClass} flex flex-col z-50`}>
@@ -44,30 +69,37 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
           alt="Logo"
         />
         <img
-          src={
-            user?.profile
-              ? user?.profile
-              : user?.gender === "male"
-              ? images.male
-              : images.female
-          }
-          className="w-[35%] mt-8 mb-5 rounded-full"
+          src={user?.profile ? user?.profile : user?.gender === 'male' ? images.male : images.female}
+          className="w-[80px] h-[80px] mt-8 mb-5 rounded-full"
           alt="Review"
         />
         <div>
           <div className="font-bold text-lg text-white">{user?.name}</div>
           <div className="text-sm flex flex-row items-center text-white my-2">
-            <img
-              src={images.Location}
-              className="w-3 filter invert brightness-0 mr-2"
-              alt="Location"
-            />
-            Royal Ln. Mesa, New Jersey
+            {
+              addressLodaer ?
+                <div
+                  className="inline-block h-4 w-4 animate-spin rounded-full border-2  border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                  role="status">
+                </div>
+                :
+                <img
+                  src={images.Location}
+                  className="w-3 filter invert brightness-0 mr-2"
+                  alt="Location"
+                />
+            }
+            <div className="">
+
+            {address || addressLodaer && 'Loading...'}
+            </div>
           </div>
         </div>
         <div className="flex flex-row">
           <div className="text-hoverGray">Gender</div>
-          <div className="text-white ml-4">{user?.gender}</div>
+          <div className="text-white ml-4">
+          {user?.gender ? user?.gender?.charAt(0)?.toUpperCase() + user?.gender?.slice(1) : ""}
+          </div>
         </div>
       </div>
       <div className="w-[94%] mx-auto h-px bg-hoverGray my-10" />

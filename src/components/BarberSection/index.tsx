@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import images from "../../services/config/images";
 import Button from "../Button";
 import { getAddressFromCoordinates, getAllBarbers } from "../../services/config/Api";
@@ -7,8 +7,7 @@ import ScrollToTopLink from "../ScrollToTopLink";
 import { useDispatch, useSelector } from "react-redux";
 import { selectBarbers, setBarbers } from "../../Store/BarbersSlice";
 import { useOutletContext } from "react-router-dom";
-
-type Props = {};
+import useNavigate from "../ScrollToTopNavigate";
 
 interface Barber {
   appoinment: any;
@@ -36,10 +35,19 @@ interface Barber {
   _id: string;
 }
 
-const BarberSection = (props: Props) => {
+type Props = {
+  title?: string,
+  showDes?: boolean
+  showBtn?: boolean
+}
+
+const BarberSection = ({ title, showDes, showBtn }: Props) => {
   const { showSidebar } = useOutletContext<{ showSidebar: boolean }>();
   const dispatch = useDispatch()
   const barbers = useSelector(selectBarbers)
+  const navigate = useNavigate()
+
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   const [sliderData, setSliderData] = useState<Barber[]>([]);
 
@@ -55,9 +63,9 @@ const BarberSection = (props: Props) => {
   useEffect(() => {
     const handleResize = () => {
       const breakpoints = [
-        { width: 1280, visibleImages:showSidebar ? 5 : 6 },
+        { width: 1280, visibleImages: showSidebar ? 5 : 6 },
         { width: 1024, visibleImages: 4 },
-        { width: 768, visibleImages:showSidebar ? 2 : 3},
+        { width: 768, visibleImages: showSidebar ? 2 : 3 },
         { width: 450, visibleImages: 2 },
         { width: 544, visibleImages: 1 },
       ];
@@ -81,9 +89,11 @@ const BarberSection = (props: Props) => {
       setLoader(true)
       const response = await getAllBarbers() as { status: any, data: any }
       if (response?.status == 200) {
+        const allBarbers = response?.data?.barbers
+        const filteredBarbers = allBarbers?.filter((barber: any) => !barber?.isDeleted)
         setLoader(false)
-        setSliderData(response?.data?.barbers)
-        dispatch(setBarbers(response?.data?.barbers))
+        setSliderData(filteredBarbers)
+        dispatch(setBarbers(filteredBarbers))
       } else {
         setLoader(false)
       }
@@ -99,6 +109,9 @@ const BarberSection = (props: Props) => {
     } else {
       setStartIndex(0);
     }
+    // if (sliderRef.current) {
+    //   sliderRef.current.scrollBy({ left: 250, behavior: 'smooth' });
+    // }
   };
 
   const handlePrevious = () => {
@@ -107,6 +120,9 @@ const BarberSection = (props: Props) => {
     } else {
       setStartIndex(sliderData.length - visibleImages);
     }
+    // if (sliderRef.current) {
+    //   sliderRef.current.scrollBy({ left: -250, behavior: 'smooth' });
+    // }
   };
 
   const calculateAverageRating = (reviews: any) => {
@@ -142,14 +158,17 @@ const BarberSection = (props: Props) => {
     if (sliderData.length > 0) {
       fetchAllAddresses();
     }
-  }, [sliderData , showSidebar]);
+  }, [sliderData, showSidebar]);
 
   return (
     <div className="flex flex-col w-full p-4 ">
       <div className="flex flex-col mt-4 justify-between p-4 w-full">
         <div className="flex flex-row items-center justify-between">
           <div className="text-3xl md:text-6xl md:w-[70%] lg:w-[60%] font-semibold">
-            Discover Expert Barbers Online Effortlessly
+            {
+              title ? title : 'Discover Expert Barbers Online Effortlessly'
+            }
+            {/* Discover Expert Barbers Online Effortlessly */}
           </div>
           <div className="hidden md:flex flex-row w-[7%] justify-between mr-1">
             <div
@@ -174,13 +193,19 @@ const BarberSection = (props: Props) => {
           </div>
         </div>
         <div className="flex flex-row items-center justify-between mt-7">
-          <div className="text-sm w-full md:text-xl md:w-[70%] lg:w-[30%] font-light">
-            Effortlessly locate and connect with top-rated barbers in your area
-            using our easy-to-use online platform.
-          </div>
-          <ScrollToTopLink to="/barbers" className="hidden border border-black/50 p-2 rounded-xl md:flex justify-center cursor-pointer lg:w-[8%]">
-            View All
-          </ScrollToTopLink>
+          {
+            showDes &&
+            <div className="text-sm w-full md:text-xl md:w-[70%] lg:w-[30%] font-light">
+              Effortlessly locate and connect with top-rated barbers in your area
+              using our easy-to-use online platform.
+            </div>
+          }
+          {
+            showBtn &&
+            <ScrollToTopLink to="/barbers" className="hidden border border-black/50 p-2 rounded-xl md:flex justify-center cursor-pointer lg:w-[8%]">
+              View All
+            </ScrollToTopLink>
+          }
         </div>
         <div className="md:hidden flex flex-row justify-between mt-4">
           <ScrollToTopLink to="/barbers" className="border border-black/50 p-2 px-5 rounded-xl flex justify-center cursor-pointer mr-2">
@@ -203,6 +228,48 @@ const BarberSection = (props: Props) => {
           </div>
         </div>
       </div>
+
+      {/* <div className="relative bg-red-500 w-[40%]">
+        <div className='flex flex-row items-end gap-4 overflow-x-auto whitespace-x my-4 hide-scrollbar'
+          ref={sliderRef}>
+          {barbers?.length > 0 && barbers.map((item, index) => {
+            return (
+              <div key={index} className="w-[240px] md:w-[340px] flex-shrink-0 cursor-pointer relative rounded-2xl">
+                {loader ? <CardLoader /> :
+                  <div>
+                    <img
+                      src={item?.profile ? item?.profile : item?.gender === 'male' ? images.male : images.female}
+                      className="w-full h-[310px] md:h-[410px] rounded-xl"
+                      // style={{ height: "380px", width: "100%" }}
+                    />
+                    <div className="absolute flex flex-row items-center top-3 right-3 bg-white/30 backdrop-blur-lg text-black font-bold px-2 py-1 rounded-lg">
+                      {calculateAverageRating(item?.reviews)}
+                      <img src={images.star} className="w-4 ml-2" />
+                    </div>
+                    <div className="absolute bottom-20 left-[5%] text-black bg-white/20 backdrop-blur-lg p-2 w-[90%] rounded-xl">
+                      <div className="font-bold text-lg">{item.name}</div>
+                      <div className="text-sm flex flex-row items-center">
+                        <img src={images.Location} className="w-[5%] h-full mr-1" />
+                        <span className="truncate whitespace-nowrap overflow-hidden w-full">
+                          {addresses[index] ? (
+                            addresses[index]
+                          ) : (
+                            <span className="w-full flex items-center justify-center">
+                              <span
+                                className="inline-block min-h-[1em] w-full flex-auto cursor-wait bg-black align-middle opacity-30"></span>
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                    <Button light={false} title="Book Appointment" mt={'10px'} onClick={() => alert(index)} />
+                  </div>
+                }
+              </div>
+            )
+          })}
+        </div>
+      </div> */}
 
       <div className="bg-purplegray">
         <div className="flex flex-row gap-2 overflow-hidden">
@@ -249,7 +316,7 @@ const BarberSection = (props: Props) => {
                         </span>
                       </div>
                     </div>
-                    <Button light={false} title="Book Appointment" mt={'10px'} onClick={() => alert(index)} />
+                    <Button light={false} title="Book Appointment" mt={'10px'} onClick={() => navigate(`/BarberDetails/${item?._id}`, { state: { item } })} />
                   </div>
                 }
               </div>
@@ -463,7 +530,7 @@ export default BarberSection;
 //         className="overflow-x-scroll hide-scrollbar mb-4 relative w-[100%] bg-red-500"
 //         style={{ overflowY: 'hidden' }}
 //       >
-//         <div className="flex snap-x snap-mandatory gap-4" 
+//         <div className="flex snap-x snap-mandatory gap-4"
 //         style={{ width: 'max-content' }}
 //         >
 //           {sliderData.map((item, index) => {
@@ -540,7 +607,7 @@ export default BarberSection;
 //         >
 //           <div className="flex gap-4">
 //             {sliderData.map((item, index) => (
-//               <div key={index} className="flex-none w-[280px] snap-start"> 
+//               <div key={index} className="flex-none w-[280px] snap-start">
 //                 <div className="rounded-xl overflow-hidden relative">
 //                   <img
 //                     src={item?.profile ? item?.profile : item?.gender === 'male' ? images.male : images.female}

@@ -8,18 +8,21 @@ type Props = {
     long?: boolean,
     loader?: boolean,
     smallImage?: boolean,
-    imgLoader?: boolean
+    imgLoader?: boolean,
+    disable?: boolean
 }
 
-const SmallButton: React.FC<Props> = ({ title, image, dark, onClick, long, loader, smallImage, imgLoader }) => {
+const SmallButton: React.FC<Props> = ({ title, image, dark, onClick, long, loader, smallImage, imgLoader, disable }) => {
     return (
         <div
             className={
                 dark
-                    ? long ? `bg-black text-white flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer active:opacity-50 px-10 sm:px-14` : `bg-black text-white flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer active:opacity-50 px-3`
-                    : long ? `bg-inputGray text-black flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer active:opacity-50 px-10 sm:px-14` : `bg-inputGray text-black flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer active:opacity-50 px-3`
+                    ? long ? `${disable ? 'bg-appGray text-black' : 'bg-black text-white'} flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer ${!disable && 'active:opacity-50'} px-10 sm:px-14 select-none` 
+                    : `${disable ? 'bg-appGray text-black' : 'bg-black text-white'} flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer ${!disable && 'active:opacity-50'} px-3 select-none`
+                    : long ? `${disable ? 'bg-appGray text-white' : 'bg-inputGray text-black'} flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer ${!disable && 'active:opacity-50'} px-10 sm:px-14 select-none` 
+                    : `${disable ? 'bg-appGray text-white' : 'bg-inputGray text-black'} flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer ${!disable && 'active:opacity-50'} px-3 select-none`
             }
-            onClick={onClick}
+            onClick={() => !disable && onClick && onClick()}
         >
             {
                 imgLoader ? <div
