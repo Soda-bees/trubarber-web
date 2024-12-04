@@ -12,6 +12,8 @@ import { Toast } from '../../components/Toast';
 import { selectUser } from '../../Store/userDataSlice';
 import { selectAuthToken } from '../../Store/AuthTokenSlice';
 import useNavigate from '../../components/ScrollToTopNavigate';
+import Button from '../../components/Button';
+import { selectBarbers } from '../../Store/BarbersSlice';
 const moment = require('moment');
 
 type Props = {}
@@ -22,11 +24,12 @@ const BarberDetails = (props: Props) => {
     const pendingAppointment = useSelector(selectPendingAppointment)
     const userData = useSelector(selectUser)
     const authToken = useSelector(selectAuthToken)
+    const barbers = useSelector(selectBarbers)
 
     const dispatch = useDispatch()
 
     const location = useLocation();
-    const item = location.state?.item;
+    // const item = location.state?.item;
     const descriptionRef = useRef<HTMLParagraphElement | null>(null);
     const locationRef = useRef<HTMLParagraphElement | null>(null);
     const navigate = useNavigate()
@@ -50,7 +53,10 @@ const BarberDetails = (props: Props) => {
     const [isReviewPosted, setIsReviewPosted] = useState<boolean>(false)
     const [showWriteReviewModal, setShowWriteReviewModal] = useState<boolean>(false)
     const [rating, setRating] = useState<number>(0);
-    const [reviewComment , setReviewComment] = useState<string>('')
+    const [reviewComment, setReviewComment] = useState<string>('')
+    const [reviewDeleteLoader, setReviewDeleteLoader] = useState<boolean>(false)
+    const [reviewPostLoader, setReviewPostLoader] = useState<boolean>(false)
+    const [item, setItem] = useState<any>(location.state?.item)
 
     useEffect(() => {
         if (showServiceDetailsModal || showWriteReviewModal) {
@@ -65,11 +71,24 @@ const BarberDetails = (props: Props) => {
     }, [showServiceDetailsModal, showWriteReviewModal]);
 
     useEffect(() => {
+        setRating(0)
+        setReviewComment('')
         if (item) {
+            setItem(location.state?.item)
             handleGetBarberAddress()
-            setReviewPost()
+            setReviewPost(location.state?.item?.reviews)
+            findChat()
+        } else {
+            const path = location?.pathname
+            const _id = path.substring(path.lastIndexOf('/') + 1);
+            const matchedItem = barbers?.find((barber) => barber._id === _id);
+            if (matchedItem) {
+                setItem(matchedItem);
+                handleGetBarberAddress()
+                setReviewPost(matchedItem.reviews)
+                findChat()
+            }
         }
-        findChat()
     }, [location?.state, authToken])
 
     useEffect(() => {
@@ -112,9 +131,8 @@ const BarberDetails = (props: Props) => {
         return () => window.removeEventListener("resize", handleResize);
     }, [showSidebar]);
 
-    const setReviewPost = async () => {
+    const setReviewPost = async (reviews: any) => {
         const userId = userData?._id
-        const reviews = item?.reviews
         const userReviewExist = reviews?.some((review: any) => review?.userData?._id === userId)
         if (userReviewExist) {
             setIsReviewPosted(true)
@@ -247,7 +265,6 @@ const BarberDetails = (props: Props) => {
                 services,
                 status: 'Pending',
             }
-            console.log("obj===>", obj);
             dispatch(setPendingAppointment(obj))
             setIsNotSameBarberModal(false)
         }
@@ -259,15 +276,11 @@ const BarberDetails = (props: Props) => {
             const metchedService = pendingAppointment?.services.find(
                 (service: any) => service?.serviceName === item?.name
             )
-            console.log("metchedService", metchedService);
-
             if (metchedService) {
                 const index = item?.options?.findIndex(
                     (option: any) => option.name === metchedService?.name &&
                         option?.price === metchedService?.price
                 )
-                console.log(index);
-
                 if (index !== -1) {
                     setSelectedStyleIndex(index)
                 }
@@ -282,12 +295,13 @@ const BarberDetails = (props: Props) => {
         try {
             const isChat = await findChatInRedux();
             if (!isChat) {
+                const path = location?.pathname
+                const id = path.substring(path.lastIndexOf('/') + 1);
                 const body = {
                     user: userData?._id,
-                    barber: item?._id,
+                    barber: item?._id || id,
                 }
                 const response = await createChatRoom(authToken, body) as { status: number; data?: any; message?: string }
-                console.log("chat response ===?", response);
                 if (response?.status === 201) {
                     setChatRoomId(response?.data?.newChat?._id)
                 } else {
@@ -295,7 +309,7 @@ const BarberDetails = (props: Props) => {
                 }
             }
         } catch (error) {
-            console.log(error);
+            console.log("chat error", error);
 
         }
     }
@@ -316,16 +330,53 @@ const BarberDetails = (props: Props) => {
     }
 
     const handleNavigateToChat = () => {
-        if (chatRoomId) {
-            navigate('/Chat')
+        if (authToken) {
+            if (chatRoomId) {
+                navigate('/Chat')
+            } else {
+                Toast('error', 'Something wents wrong, try again')
+            }
         } else {
-            Toast('error', 'Something wents wrong, try again')
+            sessionStorage.setItem('redirectAfterLogin', location?.pathname)
+            navigate('/signin')
         }
+
     }
 
     const handleRatingChange = (newRating: number) => {
         setRating(newRating);
     };
+
+    const handleOpenReviewModal = () => {
+        if (authToken) {
+            if (isReviewPosted) {
+                const userReviewExist = item?.reviews?.find((review: any) => review?.userData?._id === userData?._id)
+                setRating(Number(userReviewExist?.rating));
+                setReviewComment(userReviewExist?.comment)
+                setShowWriteReviewModal(true)
+            } else {
+                setShowWriteReviewModal(true)
+            }
+        } else {
+            sessionStorage.setItem('redirectAfterLogin', location?.pathname)
+            navigate('/signin')
+        }
+    }
+
+    const handlePostReview = async () => {
+        alert('post review')
+    }
+
+    const handleUpdateReview = async () => {
+        try {
+            if (!reviewComment || !rating) {
+                Toast('error', 'Please provide rating and some comments to update your review')
+            }
+            // const response = await updateReviewApi()
+        } catch (error) {
+
+        }
+    }
 
     return (
         <div className='px-4 mt-10'>
@@ -480,7 +531,7 @@ const BarberDetails = (props: Props) => {
                             </div>
                         </div>
                         <div className='flex flex-row items-center justify-between xs:justify-end w-full xs:w-[210px] mt-4 xs:mt-0'>
-                            <SmallButton dark title={isReviewPosted ? 'Edit Review' : 'Write a Review'} onClick={() => setShowWriteReviewModal(true)} />
+                            <SmallButton dark title={isReviewPosted ? 'Edit Review' : 'Write a Review'} onClick={handleOpenReviewModal} />
                             {
                                 showSliderBtn &&
                                 <div className='flex flex-row items-center gap-8 ml-4'>
@@ -620,7 +671,7 @@ const BarberDetails = (props: Props) => {
             {
                 showWriteReviewModal &&
                 <div
-                    onClick={() => setShowWriteReviewModal(false)}
+                    onClick={() => !reviewPostLoader && !reviewDeleteLoader && setShowWriteReviewModal(false)}
                     className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div
                         onClick={(e) => e.stopPropagation()}
@@ -642,16 +693,27 @@ const BarberDetails = (props: Props) => {
                         <div className='flex flex-row items-center justify-between w-full sm:w-[70%] md:w-[50%] mt-4'>
                             <div>Comment</div>
                             <div className='bg-inputGray rounded-lg cursor-pointer w-8 h-8 flex flex-row items-center justify-center border border-hoverGray active:opacity-60'>
-                                <img src={images.deleteIcon} className='w-4' />
+                                {
+                                    reviewDeleteLoader ?
+                                        <div
+                                            className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                                            role="status">
+                                        </div>
+                                        : <img src={images.deleteIcon} className='w-4' />
+                                }
                             </div>
                         </div>
                         <textarea
-                            className='w-full sm:w-[70%] md:w-[50%] mt-4 resize-none border border-inputGray rounded-md p-2 focus:outline-none hide-scrollbar'
+                            className='w-full sm:w-[70%] md:w-[50%] mt-2 resize-none border border-inputGray rounded-md p-2 focus:outline-none hide-scrollbar'
                             placeholder='Enter Your Message'
                             rows={4}
                             value={reviewComment}
                             onChange={(e) => setReviewComment(e.target.value)}
                         />
+                        <div className='w-full sm:w-[70%] md:w-[50%] mt-4'>
+
+                            <Button light={false} title='Submit' loader={reviewPostLoader} onClick={() => isReviewPosted ? handleUpdateReview() : handlePostReview()} />
+                        </div>
                     </div>
                 </div>
             }

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectRole } from "../../Store/Role"; // Adjust the path according to your structure
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import ProtectedRoute from "./protectedRouting";
@@ -20,12 +20,24 @@ import BarberDashboard from "../../screens/BarberDashboard";
 import AllBarbers from "../../screens/AllBarbers";
 import BarberDetails from "../../screens/BarberDetails";
 import Chat from "../../screens/Chat";
+import { selectUser } from "../../Store/userDataSlice";
+import { socketService } from "./Socket";
 
 
 // Component to set up routing
 const Routing = () => {
     const role = useSelector(selectRole);
     const authToken = useSelector(selectAuthToken)
+    const userData = useSelector(selectUser)
+    const dispatch = useDispatch()
+    
+    useEffect(() => {
+        const cleanup = socketService(dispatch , authToken , userData)
+
+        return () => {
+            cleanup()
+        }
+    },[userData])
 
     if (role === undefined) {
         return <div>Loading...</div>;
