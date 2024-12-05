@@ -1,5 +1,6 @@
 import io from 'socket.io-client'
 import { acceptAppointment, addAndUpdateNewChatInRedux, addAppoinment, addMessageInChatRoom, addNewChatInRedux, addNewNotificationRedux, addReview, deleteReview, updateAppointmendStatus, updateReview } from '../../../Store/userDataSlice';
+import { addReviewBarberSlice, deleteReviewBarberSlice, updateReviewBarberSlice } from '../../../Store/BarbersSlice';
 const baseURL = process.env.REACT_APP_API_URL || ''
 
 let socket: any
@@ -42,12 +43,15 @@ const socketService = (dispatch: any, authToken: any, userData: any) => {
     };
 
     const handleAddNewReview = (data: any) => {
+        dispatch(addReviewBarberSlice(data))
         dispatch(addReview(data));
     };
-    const handleUpdateReview = (data: any) => {
+    const handleUpdateReview = (data: any) => {        
+        dispatch(updateReviewBarberSlice(data))
         dispatch(updateReview(data));
     };
     const handleDeleteReview = (data: any) => {
+        dispatch(deleteReviewBarberSlice(data))
         dispatch(deleteReview(data));
     };
 

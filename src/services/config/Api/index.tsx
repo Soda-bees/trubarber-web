@@ -83,3 +83,55 @@ export const createChatRoom = async (token: any, body: any) => {
     }
 }
 
+export const updateReviewApi = async (token: any, body: any) => {
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axiosInstance.post('user/updateReview', body, { headers })
+        return response?.data
+    } catch (error) {
+        return error
+    }
+}
+
+export const postReview = async (token: any, body: any) => {
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axiosInstance.post('user/postReview', body, { headers })
+        return response?.data
+    } catch (error) {
+        return error
+    }
+}
+
+export const deleteReviewApi = async (token: any, reviewId: any) => {
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axiosInstance.post(`user/deleteReview/${reviewId}`, {}, { headers })
+        return response?.data
+    } catch (error) {
+        return error
+    }
+}
+
+export const addFavorite = async (token: any, body: any) => {
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axiosInstance.post('user/addFavourite', body, { headers })
+        return response?.data
+    } catch (error) {
+        return error
+    }
+}
+

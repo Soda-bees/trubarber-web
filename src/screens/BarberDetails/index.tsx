@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useLocation, useOutletContext } from 'react-router-dom';
 import images from '../../services/config/images';
 import SmallButton from '../../components/SmallButton';
-import { createChatRoom, getAddressFromCoordinates } from '../../services/config/Api';
+import { addFavorite, createChatRoom, deleteReviewApi, getAddressFromCoordinates, postReview, updateReviewApi } from '../../services/config/Api';
 import StarRatings from 'react-star-ratings';
 import Map from '../../components/Map';
 import BarberSection from '../../components/BarberSection';
 import { useDispatch, useSelector } from 'react-redux';
 import { removePendingAppointment, selectPendingAppointment, setPendingAppointment, updatePendingAppointment } from '../../Store/PendingAppointment';
 import { Toast } from '../../components/Toast';
-import { selectUser } from '../../Store/userDataSlice';
+import { addFavouritesRedux, selectUser } from '../../Store/userDataSlice';
 import { selectAuthToken } from '../../Store/AuthTokenSlice';
 import useNavigate from '../../components/ScrollToTopNavigate';
 import Button from '../../components/Button';
@@ -57,6 +57,8 @@ const BarberDetails = (props: Props) => {
     const [reviewDeleteLoader, setReviewDeleteLoader] = useState<boolean>(false)
     const [reviewPostLoader, setReviewPostLoader] = useState<boolean>(false)
     const [item, setItem] = useState<any>(location.state?.item)
+    const [isFavorite, setIsFavorite] = useState(false)
+    const [favoriteLoader, setFavoriteLoader] = useState(false)
 
     useEffect(() => {
         if (showServiceDetailsModal || showWriteReviewModal) {
@@ -76,20 +78,33 @@ const BarberDetails = (props: Props) => {
         if (item) {
             setItem(location.state?.item)
             handleGetBarberAddress()
-            setReviewPost(location.state?.item?.reviews)
+            // setReviewPost(location.state?.item?.reviews)
             findChat()
+            // handleCheckIsFavorite(location.state?.item?._id)
+            console.log("location");
+
         } else {
             const path = location?.pathname
             const _id = path.substring(path.lastIndexOf('/') + 1);
             const matchedItem = barbers?.find((barber) => barber._id === _id);
+            console.log("matchedItem");
+            
             if (matchedItem) {
                 setItem(matchedItem);
                 handleGetBarberAddress()
-                setReviewPost(matchedItem.reviews)
+                // setReviewPost(matchedItem.reviews)
                 findChat()
+                // handleCheckIsFavorite(matchedItem?._id)
             }
         }
     }, [location?.state, authToken])
+
+    useEffect(() => {
+        const path = location?.pathname
+        const _id = path.substring(path.lastIndexOf('/') + 1);
+        const matchedItem = barbers?.find((barber) => barber._id === _id);
+        handleCheckIsFavorite(matchedItem?._id)
+    }, [userData])
 
     useEffect(() => {
         if (descriptionRef.current) {
@@ -131,8 +146,32 @@ const BarberDetails = (props: Props) => {
         return () => window.removeEventListener("resize", handleResize);
     }, [showSidebar]);
 
+    const handleCheckIsFavorite = async (barberId: any) => {
+        const isFavorite = userData?.favourites?.some(
+            (fav: any) => fav._id === barberId)
+        if (isFavorite) {
+            setIsFavorite(true)
+        } else {
+            setIsFavorite(false)
+        }
+    }
+
     const setReviewPost = async (reviews: any) => {
         const userId = userData?._id
+        const reviewsCopy = [...reviews];
+
+        const index = reviewsCopy.findIndex((review) => review.userData?._id === userId);
+        if (index > 0) {
+            const [matchingReview] = reviewsCopy.splice(index, 1);
+
+            reviewsCopy.unshift(matchingReview);
+        }
+
+        setItem((prevItem: any) => ({
+            ...prevItem,
+            reviews: reviewsCopy,
+        }));
+
         const userReviewExist = reviews?.some((review: any) => review?.userData?._id === userId)
         if (userReviewExist) {
             setIsReviewPosted(true)
@@ -364,7 +403,48 @@ const BarberDetails = (props: Props) => {
     }
 
     const handlePostReview = async () => {
-        alert('post review')
+        try {
+            if (!rating) {
+                return Toast('error', 'Please provide rating to post your review')
+            }
+            if (!reviewComment) {
+                return Toast('error', 'Please provide comments to post your review')
+            }
+            const body = {
+                barberData: item?._id,
+                comment: reviewComment,
+                rating,
+            }
+            setReviewPostLoader(true)
+            const response = await postReview(authToken, body)
+            if (response?.success) {
+                const newReview = response?.review
+                setItem((prevItem: any) => {
+                    const updatedReviews = [...prevItem.reviews, newReview];
+
+                    const updatedItem = {
+                        ...prevItem,
+                        reviews: updatedReviews,
+                    };
+
+                    navigate(".", {
+                        replace: true,
+                        state: { ...location.state, item: updatedItem },
+                    });
+
+                    return updatedItem;
+                });
+                setReviewPostLoader(false)
+                setShowWriteReviewModal(false)
+                Toast('success', 'Review Posted!')
+            } else {
+                setReviewPostLoader(false)
+                Toast('error', response?.message)
+            }
+        } catch (error) {
+            console.log(error);
+            setReviewPostLoader(false)
+        }
     }
 
     const handleUpdateReview = async () => {
@@ -372,11 +452,113 @@ const BarberDetails = (props: Props) => {
             if (!reviewComment || !rating) {
                 Toast('error', 'Please provide rating and some comments to update your review')
             }
-            // const response = await updateReviewApi()
-        } catch (error) {
+            setReviewPostLoader(true)
+            const userReviewExist = item?.reviews?.find((review: any) => review?.userData?._id === userData?._id)
+            const body = {
+                reviewId: userReviewExist?._id,
+                comment: reviewComment,
+                rating,
+            }
+            const response = await updateReviewApi(authToken, body)
+            if (response?.success) {
+                const updatedReview = response?.review
+                setItem((prevItem: any) => {
+                    const updatedReviews = prevItem?.reviews?.map((review: any) =>
+                        review._id === updatedReview._id ? updatedReview : review
+                    );
 
+                    const updatedItem = {
+                        ...prevItem,
+                        reviews: updatedReviews,
+                    };
+
+                    navigate(".", {
+                        replace: true,
+                        state: { ...location.state, item: updatedItem },
+                    });
+
+                    return updatedItem;
+                });
+                setReviewPostLoader(false)
+                setShowWriteReviewModal(false)
+                Toast('success', 'Review Updated!')
+            } else {
+                Toast('error', response?.message)
+                console.log(response?.message);
+                setReviewPostLoader(false)
+            }
+        } catch (error) {
+            console.log(error);
+            setReviewPostLoader(false)
         }
     }
+
+    const handleDeleteReview = async () => {
+        try {
+            setReviewDeleteLoader(true)
+            const userReviewExist = item?.reviews?.find((review: any) => review?.userData?._id === userData?._id)
+            const reviewId = userReviewExist?._id
+            const response = await deleteReviewApi(authToken, reviewId)
+            console.log("delete resp===>", response);
+            if (response?.success) {
+                setItem((prevItem: any) => {
+                    const updatedReviews = prevItem.reviews.filter((review: any) => review._id !== reviewId);
+
+                    const updatedItem = {
+                        ...prevItem,
+                        reviews: updatedReviews,
+                    };
+
+                    navigate(".", {
+                        replace: true,
+                        state: { ...location.state, item: updatedItem },
+                    });
+
+                    return updatedItem;
+                });
+                setReviewDeleteLoader(false)
+                setShowWriteReviewModal(false)
+                Toast('success', 'Review Deleted!')
+            } else {
+                Toast('error', response?.message)
+                setReviewDeleteLoader(false)
+            }
+        } catch (error) {
+            console.log(error);
+            setReviewDeleteLoader(false)
+
+        }
+
+    }
+
+    const handleAddFavorite = async () => {
+        try {
+            if (!authToken) {
+                sessionStorage.setItem('redirectAfterLogin', location?.pathname)
+                navigate('/signin')
+                return
+            }
+            console.log("sadadssa", item);
+
+            setFavoriteLoader(true)
+            const body = {
+                barberId: item?._id
+            }
+            const response = await addFavorite(authToken, body)
+            if (response?.success) {
+                setFavoriteLoader(false)
+                dispatch(addFavouritesRedux(item))
+                Toast('success', response?.message)
+            } else {
+                setFavoriteLoader(false)
+                Toast('error', response?.message)
+            }
+        } catch (error) {
+            console.log(error);
+            setFavoriteLoader(false)
+        }
+    }
+
 
     return (
         <div className='px-4 mt-10'>
@@ -385,8 +567,22 @@ const BarberDetails = (props: Props) => {
                     <div className={`flex flex-col items-start mx-auto w-full ${showSidebar ? 'lg:flex-row' : 'md:flex-row'}`}>
                         <div className={`relative w-full ${showSidebar ? 'lg:w-[270px]' : 'md:w-[270px]'}`}>
                             <img src={item?.profile ? item?.profile : item?.gender === 'male' ? images.male : images.female} className={`w-full h-[400px] xs:h-[450px] sm:h-[500px] rounded-lg ${showSidebar ? 'lg:h-[350px]' : 'md:h-[350px]'}`} />
-                            <div className='absolute left-2 bottom-2 text-black bg-white flex flex-row px-3 py-1 items-center justify-center rounded-lg cursor-pointer active:opacity-70'>
+                            {/* <div className='absolute left-2 bottom-2 text-black bg-white flex flex-row px-3 py-1 items-center justify-center rounded-lg cursor-pointer active:opacity-70'>
                                 <img src={images.bookmarkBlack} className='w-4 h-4 mt-1 mr-1 object-contain' />
+                                save
+                            </div> */}
+                            <div
+                                onClick={() => !favoriteLoader && handleAddFavorite()}
+                                className={`absolute left-2 bottom-2 bg-white flex flex-row px-3 py-1 items-center justify-center rounded-lg cursor-pointer active:opacity-70 ${isFavorite ? 'text-black' : 'text-hoverGray'}`}
+                            >
+                                {
+                                    favoriteLoader ?
+                                        <div
+                                            className="inline-block h-4 w-4 mr-1 animate-spin rounded-full border-2 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                                            role="status">
+                                        </div>
+                                        : <img src={isFavorite ? images.bookmarkBlack : images.bookmarkDissable} className='w-4 h-4 mt-1 mr-1 object-contain' />
+                                }
                                 save
                             </div>
                         </div>
@@ -428,7 +624,8 @@ const BarberDetails = (props: Props) => {
                                 <div className={` w-full mt-4 h-[200px] ${showSidebar ? 'xl:hidden' : 'lg:hidden lg:w-[55%]'}`}>   <Map /></div>
                             </div>
                             <div className='flex flex-row items-center gap-2 mt-4 lg:mt-8'>
-                                <SmallButton dark={false} title='Direction' image={images.direction} />
+                                <SmallButton dark={false} title='Direction' image={images.direction} onClick={() => console.log(item)
+                                } />
                                 <SmallButton dark={false} title='Message' image={images.message} onClick={handleNavigateToChat} />
                             </div>
                             <div className='mt-4 font-semibold'>About</div>
@@ -544,41 +741,49 @@ const BarberDetails = (props: Props) => {
                     <div
                         className={`gap-4 mt-4 w-full grid grid-cols-1 xs:grid-cols-2  ${showSidebar ? 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'}`}
                     >
-                        {item?.reviews
-                            .slice(currentIndex, currentIndex + reviewsPerPage)
-                            .map((review: any, index: number) => (
-                                <div
-                                    key={index}
-                                    className="border border-gray-300 rounded-2xl p-5 flex flex-col justify-between"
-                                >
-                                    <div className="flex flex-row items-start">
-                                        <img
-                                            src={review?.userData?.profile ? review?.userData?.profile : review?.userData?.gender === 'male' ? images.male : images.female}
-                                            className="w-16 h-16 object-cover rounded-full mr-4"
-                                        />
-                                        <div>
-                                            <div className="text-lg font-semibold">{review?.userData?.name}</div>
-                                            <div>{moment(item?.createdAt).format('DD MMMM YYYY')}</div>
-                                            <div className="flex items-center mt-1">
+                        {
+                            // barbers?.find((barber: any) => barber?._id === item?._id)
+                            item?.reviews
+                                .slice(currentIndex, currentIndex + reviewsPerPage)
+                                .map((review: any, index: number) => (
+                                    <div
+                                        key={index}
+                                        className="border border-gray-300 rounded-2xl p-5 flex flex-col justify-between"
+                                    >
+                                        <div className="flex flex-row items-start">
+                                            <img
+                                                src={review?.userData?.profile ? review?.userData?.profile : review?.userData?.gender === 'male' ? images.male : images.female}
+                                                className="w-16 h-16 object-cover rounded-full mr-4"
+                                            />
+                                            <div>
+                                                <div className="text-lg font-semibold flex flex-riw items-center">{review?.userData?.name}
+                                                    {
+                                                        review?.userData?._id === userData?._id &&
+                                                        <div className='text-sm ml-1'>(You)</div>
+                                                    }
+                                                </div>
 
+                                                <div>{moment(item?.createdAt).format('DD MMMM YYYY')}</div>
+                                                <div className="flex items-center mt-1">
+
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className='flex flex-row'>
-                                        <StarRatings
-                                            rating={isNaN(parseFloat(review?.rating)) ? 0 : parseFloat(review?.rating)}
-                                            starRatedColor="gold"
-                                            numberOfStars={5}
-                                            starDimension="20px"
-                                            starSpacing="2px"
-                                        />
-                                    </div>
+                                        <div className='flex flex-row'>
+                                            <StarRatings
+                                                rating={isNaN(parseFloat(review?.rating)) ? 0 : parseFloat(review?.rating)}
+                                                starRatedColor="gold"
+                                                numberOfStars={5}
+                                                starDimension="20px"
+                                                starSpacing="2px"
+                                            />
+                                        </div>
 
-                                    <div className="mt-4 text-gray-700 line-clamp-3">
-                                        {review?.comment}
+                                        <div className="mt-4 text-gray-700 line-clamp-3">
+                                            {review?.comment}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
                     </div>
                 </div>
             </div>
@@ -692,16 +897,19 @@ const BarberDetails = (props: Props) => {
                         <div className='mt-4 text-center'>{`Tell us about your experience at ${item?.name}`}</div>
                         <div className='flex flex-row items-center justify-between w-full sm:w-[70%] md:w-[50%] mt-4'>
                             <div>Comment</div>
-                            <div className='bg-inputGray rounded-lg cursor-pointer w-8 h-8 flex flex-row items-center justify-center border border-hoverGray active:opacity-60'>
-                                {
-                                    reviewDeleteLoader ?
-                                        <div
-                                            className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-                                            role="status">
-                                        </div>
-                                        : <img src={images.deleteIcon} className='w-4' />
-                                }
-                            </div>
+                            {
+                                isReviewPosted &&
+                                <div className='bg-inputGray rounded-lg cursor-pointer w-8 h-8 flex flex-row items-center justify-center border border-hoverGray active:opacity-60'>
+                                    {
+                                        reviewDeleteLoader ?
+                                            <div
+                                                className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                                                role="status">
+                                            </div>
+                                            : <img src={images.deleteIcon} className='w-4' onClick={handleDeleteReview} />
+                                    }
+                                </div>
+                            }
                         </div>
                         <textarea
                             className='w-full sm:w-[70%] md:w-[50%] mt-2 resize-none border border-inputGray rounded-md p-2 focus:outline-none hide-scrollbar'

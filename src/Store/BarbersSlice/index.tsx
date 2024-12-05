@@ -27,7 +27,7 @@ interface Barber {
 }
 
 interface BarberState {
-    barbers: Barber[]; 
+    barbers: Barber[];
 }
 
 const initialState: BarberState = {
@@ -39,20 +39,50 @@ const barberSlice = createSlice({
     initialState,
     reducers: {
         setBarbers(state, action: PayloadAction<Barber[]>) {
-            state.barbers = action.payload; 
+            state.barbers = action.payload;
         },
         removeAllBarbers(state) {
             state.barbers = [];
         },
+        updateReviewBarberSlice: (state, action: PayloadAction<any>) => {
+            const updatedReview = action.payload;
+            const barberId = updatedReview.barberData;
+            const barberIndex = state.barbers.findIndex((barber) => barber._id === barberId);
+            if (barberIndex !== -1) {
+                state.barbers[barberIndex].reviews = state.barbers[barberIndex].reviews.map((review: any) =>
+                    review._id === updatedReview._id ? updatedReview : review
+                );
+            }
+        },
+        deleteReviewBarberSlice: (state, action: PayloadAction<any>) => {
+            const reviewToDelete = action.payload;
+            const barberId = reviewToDelete.barberData;
+            const barberIndex = state.barbers.findIndex((barber) => barber._id === barberId);
+
+            if (barberIndex !== -1) {
+                state.barbers[barberIndex].reviews = state.barbers[barberIndex].reviews.filter(
+                    (review: any) => review._id !== reviewToDelete._id
+                );
+            }
+        },
+        addReviewBarberSlice: (state, action: PayloadAction<any>) => {
+            const newReview = action.payload; 
+            const barberId = newReview.barberData; 
+            const barberIndex = state.barbers.findIndex((barber) => barber._id === barberId);
+        
+            if (barberIndex !== -1) {
+                state.barbers[barberIndex].reviews.push(newReview);
+            }
+        }   
     },
 });
 
-export const { setBarbers , removeAllBarbers} = barberSlice.actions;
+export const { setBarbers, removeAllBarbers, updateReviewBarberSlice , deleteReviewBarberSlice , addReviewBarberSlice} = barberSlice.actions;
 
-export const selectBarbers = (state: { barber: BarberState }) => state.barber.barbers; 
+export const selectBarbers = (state: { barber: BarberState }) => state.barber.barbers;
 
-export default barberSlice.reducer; 
+export default barberSlice.reducer;
 
-export {};
+export { };
 
 
