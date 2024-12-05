@@ -72,6 +72,7 @@ import bookmarkBlack from "../../assets/Images/bookmarkBlack.png";
 import bookmarkDissable from "../../assets/Images/bookmarkDissable.png";
 import direction from "../../assets/Images/direction.png";
 import message from "../../assets/Images/message.png";
+import businessImage from "../../assets/Images/businessImage.png";
 
 const images = {
   direction,
@@ -148,6 +149,7 @@ const images = {
   uploadProfile,
   checkboxMarked,
   checkbox,
+  businessImage,
 };
 
 export default images;

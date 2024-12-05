@@ -26,8 +26,8 @@ const About = (props: Props) => {
         <div>
           <span className="font-semibold text-gray-800">
             Book Appointments:
-          </span>
-          {' '}TruBarber makes booking appointments a breeze. Browse through
+          </span>{" "}
+          TruBarber makes booking appointments a breeze. Browse through
           available barbers, view their profiles, and select an appointment time
           that fits your schedule.
         </div>
@@ -35,17 +35,17 @@ const About = (props: Props) => {
         <div>
           <span className="font-semibold text-gray-800">
             Barber Availability:
-          </span>
-          {' '}Barbers can list their available slots, allowing users to quickly find
+          </span>{" "}
+          Barbers can list their available slots, allowing users to quickly find
           times that work for them. Never miss an opportunity to get the perfect
           cut.
         </div>
 
         <div>
           <span className="font-semibold text-gray-800">
-            Barber Shop Registration: 
-          </span>
-          {' '}Barbers can register their shop on TruBarber, showcasing their
+            Barber Shop Registration:
+          </span>{" "}
+          Barbers can register their shop on TruBarber, showcasing their
           services, specialties, and availability. It’s the perfect way to reach
           new clients and grow your business.
         </div>
@@ -58,12 +58,25 @@ const About = (props: Props) => {
         </div>
 
         <div>
-          <span className="font-semibold text-gray-800">Service Listings:</span>
-          {' '}Barbers can list their services and pricing, so users can find exactly
+          <span className="font-semibold text-gray-800">Service Listings:</span>{" "}
+          Barbers can list their services and pricing, so users can find exactly
           what they’re looking for. From cuts to shaves and beyond, TruBarber
           makes it easy to explore all available options.
         </div>
+        <div>
+          <span className="font-semibold text-gray-800">Contact Us:</span>
+          If you have any questions regarding privacy while using the
+          Application, please contact us via email at{" "}
+          <a
+            href="mailto:brian@simationstudios.com"
+            className="text-blue-500 underline"
+          >
+            brian@simationstudios.com
+          </a>
+          .
+        </div>
       </div>
+
 
       <p className="text-lg text-gray-800 text-center max-w-4xl mt-8">
         With TruBarber, getting the perfect cut is just a few clicks away.

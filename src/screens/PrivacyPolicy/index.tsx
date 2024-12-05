@@ -19,10 +19,9 @@ const PrivacyPolicy = (props: Props) => {
           <p>
             The Application collects information when you download and use it. This information may include information such as:
           </p>
-          <ul className="list-disc ml-6 space-y-2 mb-2">
-            <li>Your device’s Internet Protocol address (e.g. IP address)</li>
-            <li>Track user's location</li>
-            <li>The operating system you use on your mobile device</li>
+          <ul className="list-disc ml-6 space-y-2 mb-4">
+            <li>"App would like to access your location"</li>
+            <li>"Track user's location"</li>
           </ul>
           <p>
           The Application also collects your device’s location data to provide features such as personalized content, relevant recommendations, and location-based services. When you grant location permission, truBarber will track your current location to show you nearby barber shops and provide directions to them. Aggregated and anonymized location data also helps the Service Provider analyze user behavior, identify trends, and improve the Application’s performance.          </p>
