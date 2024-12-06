@@ -22,6 +22,7 @@ import BarberDetails from "../../screens/BarberDetails";
 import Chat from "../../screens/Chat";
 import { selectUser } from "../../Store/userDataSlice";
 import { socketService } from "./Socket";
+import BookAppointment from "../../screens/BookAppointment";
 
 
 // Component to set up routing
@@ -66,7 +67,8 @@ const Routing = () => {
                 { path: '/barber-dashboard', element: <ProtectedRoute Component={BarberDashboard} /> },
                 { path: '/barbers', element: <AllBarbers /> },
                 { path: '/BarberDetails/:_id', element: <BarberDetails /> },
-                { path: '/Chat', element: <ProtectedRoute Component={Chat} /> },
+                { path: '/chat', element: <ProtectedRoute Component={Chat} /> },
+                { path: '/book-appointment' , element:<BookAppointment />}
             ]
         }
     ]);

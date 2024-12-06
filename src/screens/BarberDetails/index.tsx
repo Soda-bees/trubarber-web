@@ -76,25 +76,22 @@ const BarberDetails = (props: Props) => {
         setRating(0)
         setReviewComment('')
         if (item) {
-            setItem(location.state?.item)
+            const path = location?.pathname
+            const _id = path.substring(path.lastIndexOf('/') + 1);
+            const matchedItem = barbers?.find((barber) => barber._id === _id);
+            setItem(location.state?.item || matchedItem)
             handleGetBarberAddress()
-            // setReviewPost(location.state?.item?.reviews)
+            setReviewPost(location.state?.item?.reviews || matchedItem?.reviews)
             findChat()
-            // handleCheckIsFavorite(location.state?.item?._id)
-            console.log("location");
-
         } else {
             const path = location?.pathname
             const _id = path.substring(path.lastIndexOf('/') + 1);
             const matchedItem = barbers?.find((barber) => barber._id === _id);
-            console.log("matchedItem");
-            
             if (matchedItem) {
                 setItem(matchedItem);
                 handleGetBarberAddress()
-                // setReviewPost(matchedItem.reviews)
+                setReviewPost(matchedItem.reviews)
                 findChat()
-                // handleCheckIsFavorite(matchedItem?._id)
             }
         }
     }, [location?.state, authToken])
@@ -264,6 +261,7 @@ const BarberDetails = (props: Props) => {
                         status: 'Pending',
                     }
                     dispatch(updatePendingAppointment(obj))
+                    navigate('/book-appointment')
                 } else {
                     const oldPendingAppointment = pendingAppointment
                     let matchedIndex = selectedStyleIndex !== null && { ...styleMenu[selectedStyleIndex] };
@@ -275,6 +273,7 @@ const BarberDetails = (props: Props) => {
                         services: [...oldPendingAppointment?.services, ...services]
                     }
                     dispatch(setPendingAppointment(newPendingAppointment))
+                    navigate('/book-appointment')
                 }
             }
         } else {
@@ -288,6 +287,7 @@ const BarberDetails = (props: Props) => {
                 status: 'Pending',
             }
             dispatch(setPendingAppointment(obj))
+            navigate('/book-appointment')
         }
 
     }
@@ -306,6 +306,7 @@ const BarberDetails = (props: Props) => {
             }
             dispatch(setPendingAppointment(obj))
             setIsNotSameBarberModal(false)
+            navigate('/book-appointment')
         }
     }
 
@@ -371,7 +372,7 @@ const BarberDetails = (props: Props) => {
     const handleNavigateToChat = () => {
         if (authToken) {
             if (chatRoomId) {
-                navigate('/Chat')
+                navigate('/chat')
             } else {
                 Toast('error', 'Something wents wrong, try again')
             }
@@ -434,6 +435,7 @@ const BarberDetails = (props: Props) => {
 
                     return updatedItem;
                 });
+                setIsReviewPosted(true)
                 setReviewPostLoader(false)
                 setShowWriteReviewModal(false)
                 Toast('success', 'Review Posted!')
@@ -559,6 +561,20 @@ const BarberDetails = (props: Props) => {
         }
     }
 
+    const handleNavigateToInatagram = async () => {
+        console.log(item?.instagram);
+        const instagramUrl = item?.instagram
+        if (!instagramUrl) {
+            return Toast('error', 'Instagram profile URL is not available')
+        }
+        try {
+            window.open(instagramUrl, "_blank", "noopener,noreferrer");
+        } catch (error) {
+            console.error("Failed to open Instagram profile:", error);
+            Toast('error', 'occurred while trying to open the Instagram profile')
+        }
+    }
+
 
     return (
         <div className='px-4 mt-10'>
@@ -627,6 +643,7 @@ const BarberDetails = (props: Props) => {
                                 <SmallButton dark={false} title='Direction' image={images.direction} onClick={() => console.log(item)
                                 } />
                                 <SmallButton dark={false} title='Message' image={images.message} onClick={handleNavigateToChat} />
+                                <SmallButton dark={false} title='Instagram' image={images.instagram} onClick={handleNavigateToInatagram} />
                             </div>
                             <div className='mt-4 font-semibold'>About</div>
                             <div className="w-full mt-2 text-hoverGray flex items-end">

@@ -135,3 +135,16 @@ export const addFavorite = async (token: any, body: any) => {
     }
 }
 
+export const handleGetBookAppointment = async (token: any, id: any) => {
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axiosInstance.get(`user/getBookedAppoinmentTime/${id}`, { headers })
+        return response
+    } catch (error) {
+        return error
+    }
+}
+

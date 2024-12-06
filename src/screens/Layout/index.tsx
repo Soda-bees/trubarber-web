@@ -38,7 +38,7 @@ const Layout = (props: Props) => {
     "/create-user-profile",
     "/create-barber-profile",
   ];
-  const showWhiteHeaderPaths = ['/BarberDetails']
+  const showWhiteHeaderPaths = ['/BarberDetails' , '/book-appointment']
   const shouldShowWhiteHeader = showWhiteHeaderPaths.some(
     (path) => location.pathname === path || location.pathname.startsWith(path)
   );
