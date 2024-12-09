@@ -33,11 +33,24 @@ const pendingAppointmentSlice = createSlice({
                     state.pendingAppointment.services[index] = action?.payload?.services[0]
                 }
             }
+        },
+        deletePendingAppointmentsItem(state, action: PayloadAction<any>) {
+            const { name, price, serviceName } = action.payload;
+
+            // Ensure pendingAppointment exists before modifying services
+            if (state.pendingAppointment) {
+                state.pendingAppointment.services = state.pendingAppointment.services.filter(
+                    (service: any) =>
+                        service.name !== name ||
+                        service.price !== price ||
+                        service.serviceName !== serviceName
+                );
+            }
         }
     }
 })
 
-export const { setPendingAppointment, removePendingAppointment, updatePendingAppointment } = pendingAppointmentSlice.actions;
+export const { setPendingAppointment, removePendingAppointment, updatePendingAppointment , deletePendingAppointmentsItem } = pendingAppointmentSlice.actions;
 
 export const selectPendingAppointment = (state: { pendingAppointment: PendingAppointmentState }) => state.pendingAppointment.pendingAppointment
 
