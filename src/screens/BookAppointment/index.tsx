@@ -9,6 +9,7 @@ import moment from 'moment'
 import images from '../../services/config/images'
 import { Toast } from '../../components/Toast'
 import useNavigate from '../../components/ScrollToTopNavigate'
+import Button from '../../components/Button'
 
 type Props = {}
 
@@ -426,9 +427,12 @@ const BookAppointment = (props: Props) => {
                         <div className='self-end font-semibold mt-4'>
                             {`Total: $ ${totalAmount?.toFixed(2)}`}
                         </div>
-                        <div className='flex flkex-row items-center cursor-pointer' onClick={() => navigate(-1)}>
+                        <div className='flex flkex-row items-center cursor-pointer hover:underline' onClick={() => navigate(-1)}>
                             <img src={images.addWhite} className='filter brightness-0 mr-1' />
                             Add Another Service</div>
+                        <div className='w-[90%] sm:w-[50%] mx-auto my-20'>
+                            <Button light={false} disable={pendingAppointment?.services?.length > 0 ? false : true} title='Book' onClick={() => alert('work')} />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -8,12 +8,13 @@ type Props = {
     loader?: boolean,
     light: boolean,
     fontSize?: string,
-    px?: string
+    px?: string,
+    disable?: boolean
 }
 
-const Button: React.FC<Props> = ({ title, onClick, mt, loader, light, fontSize, px }) => {
+const Button: React.FC<Props> = ({ title, onClick, mt, loader, light, fontSize, px, disable }) => {
     return (
-        <div onClick={() => { if (!loader) onClick(); }}
+        <div onClick={() => { if (!loader && !disable) onClick(); }}
             style={{
                 marginTop: mt,
                 fontSize: fontSize ? fontSize : '16px',
