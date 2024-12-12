@@ -21,7 +21,10 @@ const Button: React.FC<Props> = ({ title, onClick, mt, loader, light, fontSize, 
                 paddingLeft: px ? px : '24px',
                 paddingRight: px ? px : '24px'
             }}
-            className={`w-full bg-black font-medium flex flex-row items-center justify-between h-12 rounded-xl cursor-pointer shadow-md ${light ? 'bg-transparent border border-black text-black' : 'text-white border-none '} ${!loader && "active:opacity-50"}`}
+            // ${disable ? 'bg-appGray text-black' : 'bg-black text-white'} 
+            className={`w-full 
+                font-medium flex flex-row items-center justify-between h-12 rounded-xl cursor-pointer shadow-md
+             ${light ? disable ? 'bg-transparent border border-appGray text-black' : 'bg-transparent border border-black text-black' : disable ? 'text-black bg-appGray' : 'text-white bg-black border-none '} ${!loader || !disable && "active:opacity-50"}`}
         >{title}
             {
                 loader ?
@@ -30,7 +33,7 @@ const Button: React.FC<Props> = ({ title, onClick, mt, loader, light, fontSize, 
                         role="status">
                     </div>
                     :
-                    <img src={light ? images.arrowBtnBlack : images.arrowBtn} className='w-3' />
+                    <img src={light ? images.arrowBtnBlack : images.arrowBtn} className={`w-3 ${disable && 'filter brightness-0'}`} />
             }
         </div>
     )

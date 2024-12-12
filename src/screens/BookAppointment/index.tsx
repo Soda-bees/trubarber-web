@@ -10,6 +10,7 @@ import images from '../../services/config/images'
 import { Toast } from '../../components/Toast'
 import useNavigate from '../../components/ScrollToTopNavigate'
 import Button from '../../components/Button'
+import { useLocation } from 'react-router-dom'
 
 type Props = {}
 
@@ -18,6 +19,7 @@ const BookAppointment = (props: Props) => {
     const timeScrollRef = useRef<HTMLDivElement | null>(null);
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const location = useLocation()
 
     const pendingAppointment = useSelector(selectPendingAppointment)
     const barbers = useSelector(selectBarbers)
@@ -318,11 +320,19 @@ const BookAppointment = (props: Props) => {
         dispatch(deletePendingAppointmentsItem(item))
     }
 
+    const handleBookAppointment = async () => {
+        if (!authToken) {
+            sessionStorage.setItem('redirectAfterLogin', location?.pathname)
+            navigate('/signin')
+            return
+        }
+    }
+
 
     return (
         <div className='px-4'>
             <BackButton light title='Book Appoinment' />
-            <div className='w-full md:w-[70%] lg:w-[60%] xl:w-[40%] mx-auto mt-10'>
+            <div className='w-full md:w-[70%] lg:w-[60%] xl:w-[40%] mx-auto mt-10 bg-red-500'>
                 <div className='flex flex-row items-center justify-between xs:px-[34px] font-semibold mb-1'>
                     <div>Select Date</div>
                     <div>
@@ -333,25 +343,35 @@ const BookAppointment = (props: Props) => {
                     <div className='border-2 border-lineBG shadow-lg px-[6px] py-[4px] mr-1 rounded-md cursor-pointer active:opacity-70 hidden xs:flex' onClick={dateScrollLeft}>
                         <img src={images.arrowBtnBlack} className='w-3 rotate-180' />
                     </div>
+
+                    {/* className="w-full flex overflow-x-auto hide-scrollbar border-2 border-lineBG rounded-lg shadow-md whitespace-nowrap" */}
                     <div
-                        ref={dateScrollRef}
-                        className="w-full flex overflow-x-auto hide-scrollbar border-2 border-lineBG rounded-lg shadow-md whitespace-nowrap">
-                        {
-                            dates &&
-                            dates.map((item: any, index: number) => {
-                                return (
-                                    <div key={index} className=" inline-block w-[40px] md:w-[50px] select-none shrink-0 cursor-pointer"
-                                        onClick={() => handleDateSelected(item?.date, item?.day)}
-                                    >
-                                        <div className='bg-inputGray py-1 text-center text-sm md:text-base'>{item?.day}</div>
-                                        <div className={
-                                            item?.date === selectedDate ? 'py-3 text-center font-semibold text-sm md:text-lg bg-black text-white' : 'py-3 text-center font-semibold text-sm md:text-lg'
-                                        }>{getDayFromDate(item?.date)}</div>
-                                    </div>
-                                )
-                            })
-                        }
+                        className='clip-hidden'
+                    >
+                        <div className="scroll-container"
+                            ref={dateScrollRef}
+
+                        >
+                            <div className="content">
+                                {
+                                    dates &&
+                                    dates.map((item: any, index: number) => {
+                                        return (
+                                            <div key={index} className="bg-yellow-500 inline-block w-[40px] md:w-[50px] select-none shrink-0 cursor-pointer"
+                                                onClick={() => handleDateSelected(item?.date, item?.day)}
+                                            >
+                                                <div className='bg-inputGray py-1 text-center text-sm md:text-base'>{item?.day}</div>
+                                                <div className={
+                                                    item?.date === selectedDate ? 'py-3 text-center font-semibold text-sm md:text-lg bg-black text-white' : 'py-3 text-center font-semibold text-sm md:text-lg'
+                                                }>{getDayFromDate(item?.date)}</div>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div></div>
+
                     </div>
+
                     <div className='border-2 border-lineBG shadow-lg px-[6px] py-[4px] ml-1 rounded-md cursor-pointer active:opacity-70 hidden xs:flex' onClick={dateScrollRight}>
                         <img src={images.arrowBtnBlack} className='w-3' />
                     </div>
@@ -366,7 +386,8 @@ const BookAppointment = (props: Props) => {
                             <div className='border-2 border-lineBG shadow-lg px-[6px] py-[4px] mr-1 rounded-md cursor-pointer active:opacity-70 hidden xs:flex' onClick={timeScrollLeft}>
                                 <img src={images.arrowBtnBlack} className='w-3 rotate-180' />
                             </div>
-                            <div
+
+                            {/* <div
                                 ref={timeScrollRef}
                                 className="w-full flex gap-2 border-2 border-lineBG rounded-lg shadow-md p-1 overflow-x-auto hide-scrollbar grid grid-rows-2 [grid-auto-flow:column] whitespace-nowrap"
                             >
@@ -383,7 +404,11 @@ const BookAppointment = (props: Props) => {
                                             // </div>
                                         );
                                     })}
-                            </div>
+                            </div> */}
+                            
+
+                     
+
                             <div className='border-2 border-lineBG shadow-lg px-[6px] py-[4px] ml-1 rounded-md cursor-pointer active:opacity-70 hidden xs:flex' onClick={timeScrollRight}>
                                 <img src={images.arrowBtnBlack} className='w-3' />
                             </div>
@@ -431,7 +456,12 @@ const BookAppointment = (props: Props) => {
                             <img src={images.addWhite} className='filter brightness-0 mr-1' />
                             Add Another Service</div>
                         <div className='w-[90%] sm:w-[50%] mx-auto my-20'>
-                            <Button light={false} disable={pendingAppointment?.services?.length > 0 ? false : true} title='Book' onClick={() => alert('work')} />
+                            <Button light={false}
+                                disable={!selectedDate || !selected || !(pendingAppointment?.services?.length > 0)}
+                                // disable={!selectedDate} 
+                                // disable={selected ? false : true}
+                                // disable={pendingAppointment?.services?.length > 0 ? false : true} 
+                                title='Book' onClick={() => handleBookAppointment()} />
                         </div>
                     </div>
                 </div>
@@ -442,4 +472,3 @@ const BookAppointment = (props: Props) => {
 }
 
 export default BookAppointment
-//
