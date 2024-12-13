@@ -332,7 +332,7 @@ const BookAppointment = (props: Props) => {
     return (
         <div className='px-4'>
             <BackButton light title='Book Appoinment' />
-            <div className='w-full md:w-[70%] lg:w-[60%] xl:w-[40%] mx-auto mt-10 bg-red-500'>
+            <div className='w-full md:w-[70%] lg:w-[60%] xl:w-[40%] mx-auto mt-10'>
                 <div className='flex flex-row items-center justify-between xs:px-[34px] font-semibold mb-1'>
                     <div>Select Date</div>
                     <div>
@@ -344,20 +344,19 @@ const BookAppointment = (props: Props) => {
                         <img src={images.arrowBtnBlack} className='w-3 rotate-180' />
                     </div>
 
-                    {/* className="w-full flex overflow-x-auto hide-scrollbar border-2 border-lineBG rounded-lg shadow-md whitespace-nowrap" */}
                     <div
-                        className='clip-hidden'
+                        className='relative w-full h-[88px] border-2 border-lineBG rounded-lg shadow-md'
                     >
-                        <div className="scroll-container"
+                        <div className="absolute top-0 left-0 right-0 bottom-0 whitespace-nowrap overflow-x-scroll overflow-y-hidden hide-scrollbar"
                             ref={dateScrollRef}
 
                         >
-                            <div className="content">
+                            <div className="inline-block box-border">
                                 {
                                     dates &&
                                     dates.map((item: any, index: number) => {
                                         return (
-                                            <div key={index} className="bg-yellow-500 inline-block w-[40px] md:w-[50px] select-none shrink-0 cursor-pointer"
+                                            <div key={index} className="inline-block w-[40px] md:w-[50px] select-none shrink-0 cursor-pointer"
                                                 onClick={() => handleDateSelected(item?.date, item?.day)}
                                             >
                                                 <div className='bg-inputGray py-1 text-center text-sm md:text-base'>{item?.day}</div>
@@ -405,9 +404,33 @@ const BookAppointment = (props: Props) => {
                                         );
                                     })}
                             </div> */}
-                            
 
-                     
+
+                            <div
+                                className='relative w-full h-[80px] border-2 border-lineBG rounded-lg shadow-md'
+                            >
+                                <div className="absolute top-0 left-0 right-0 bottom-0 whitespace-nowrap overflow-x-scroll overflow-y-hidden hide-scrollbar"
+                                    ref={timeScrollRef}
+
+                                >
+                                    <div className="inline-block box-border w-full gap-1 p-1 grid grid-rows-2 [grid-auto-flow:column]">
+                                        {dateData?.length > 0 &&
+                                            dateData.map((item: any, index: number) => {
+                                                return (
+                                                    // <div key={index} className="text-center  ">
+                                                    <div key={index}
+                                                        onClick={() => setSelected(item)}
+                                                        className={
+                                                            item === selected ? 'py-1 px-6 text-sm bg-black md:text-base rounded-md font-medium text-center cursor-pointer text-white'
+                                                                : 'py-1 px-6 text-sm bg-inputGray md:text-base rounded-md font-medium text-center text-center cursor-pointer'
+                                                        }>{item}</div>
+                                                    // </div>
+                                                );
+                                            })}
+                                    </div>
+                                </div>
+                            </div>
+
 
                             <div className='border-2 border-lineBG shadow-lg px-[6px] py-[4px] ml-1 rounded-md cursor-pointer active:opacity-70 hidden xs:flex' onClick={timeScrollRight}>
                                 <img src={images.arrowBtnBlack} className='w-3' />
