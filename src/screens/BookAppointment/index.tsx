@@ -345,7 +345,7 @@ const BookAppointment = (props: Props) => {
                     </div>
 
                     <div
-                        className='relative w-full h-[88px] border-2 border-lineBG rounded-lg shadow-md'
+                        className='relative w-full h-[76px] md:h-[88px] border-2 border-lineBG rounded-lg shadow-md'
                     >
                         <div className="absolute top-0 left-0 right-0 bottom-0 whitespace-nowrap overflow-x-scroll overflow-y-hidden hide-scrollbar"
                             ref={dateScrollRef}
@@ -404,27 +404,21 @@ const BookAppointment = (props: Props) => {
                                         );
                                     })}
                             </div> */}
-
-
-                            <div
-                                className='relative w-full h-[80px] border-2 border-lineBG rounded-lg shadow-md'
-                            >
-                                <div className="absolute top-0 left-0 right-0 bottom-0 whitespace-nowrap overflow-x-scroll overflow-y-hidden hide-scrollbar"
+                            <div className='relative w-full h-[72px] md:h-[80px] border-2 border-lineBG rounded-lg shadow-md'>
+                                <div
+                                    className="absolute top-0 left-0 right-0 bottom-0 whitespace-nowrap overflow-x-scroll overflow-y-hidden hide-scrollbar"
                                     ref={timeScrollRef}
-
                                 >
                                     <div className="inline-block box-border w-full gap-1 p-1 grid grid-rows-2 [grid-auto-flow:column]">
                                         {dateData?.length > 0 &&
                                             dateData.map((item: any, index: number) => {
                                                 return (
-                                                    // <div key={index} className="text-center  ">
                                                     <div key={index}
                                                         onClick={() => setSelected(item)}
                                                         className={
                                                             item === selected ? 'py-1 px-6 text-sm bg-black md:text-base rounded-md font-medium text-center cursor-pointer text-white'
                                                                 : 'py-1 px-6 text-sm bg-inputGray md:text-base rounded-md font-medium text-center text-center cursor-pointer'
                                                         }>{item}</div>
-                                                    // </div>
                                                 );
                                             })}
                                     </div>

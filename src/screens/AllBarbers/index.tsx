@@ -30,16 +30,16 @@ const AllBarbers = (props: Props) => {
 
   const calculateAverageRating = (reviews: any) => {
     if (reviews && reviews.length > 0) {
-      const totalRating = reviews.reduce(
-        (sum: any, review: any) => sum + parseFloat(review.rating),
-        0,
-      );
-      return totalRating / reviews.length;
+        const totalRating = reviews.reduce(
+            (sum: any, review: any) => sum + parseFloat(review.rating),
+            0,
+        );
+        const averageRating = totalRating / reviews.length;
+        return parseFloat(averageRating.toFixed(1)); // Round to one decimal place
     } else {
-      return 0;
+        return 0;
     }
-  };
-
+};
   const getAddress = async (location: any) => {
     try {
       const fetchedAddress = await getAddressFromCoordinates(location?.latitude, location?.longitude);

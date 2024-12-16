@@ -17,10 +17,10 @@ const SmallButton: React.FC<Props> = ({ title, image, dark, onClick, long, loade
         <div
             className={
                 dark
-                    ? long ? `${disable ? 'bg-appGray text-black' : 'bg-black text-white'} flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer ${!disable && 'active:opacity-50'} px-10 sm:px-14 select-none` 
-                    : `${disable ? 'bg-appGray text-black' : 'bg-black text-white'} flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer ${!disable && 'active:opacity-50'} px-3 select-none`
-                    : long ? `${disable ? 'bg-appGray text-white' : 'bg-inputGray text-black'} flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer ${!disable && 'active:opacity-50'} px-10 sm:px-14 select-none` 
-                    : `${disable ? 'bg-appGray text-white' : 'bg-inputGray text-black'} flex flex-row items-center justify-center py-2 rounded-xl cursor-pointer ${!disable && 'active:opacity-50'} px-3 select-none`
+                    ? long ? `${disable ? 'bg-appGray text-black cursor-no-drop' : 'bg-black text-white cursor-pointer'} flex flex-row items-center justify-center py-2 rounded-xl ${!disable && 'active:opacity-50'} px-10 sm:px-14 select-none` 
+                    : `${disable ? 'bg-appGray text-black cursor-no-drop' : 'bg-black text-white cursor-pointer'} flex flex-row items-center justify-center py-2 rounded-xl ${!disable && 'active:opacity-50'} px-3 select-none`
+                    : long ? `${disable ? 'bg-appGray text-white cursor-no-drop' : 'bg-inputGray text-black cursor-pointer'} flex flex-row items-center justify-center py-2 rounded-xl ${!disable && 'active:opacity-50'} px-10 sm:px-14 select-none` 
+                    : `${disable ? 'bg-appGray text-white cursor-no-drop' : 'bg-inputGray text-black cursor-pointer'} flex flex-row items-center justify-center py-2 rounded-xl ${!disable && 'active:opacity-50'} px-3 select-none`
             }
             onClick={() => !disable && onClick && onClick()}
         >

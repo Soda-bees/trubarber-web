@@ -23,8 +23,8 @@ const Button: React.FC<Props> = ({ title, onClick, mt, loader, light, fontSize, 
             }}
             // ${disable ? 'bg-appGray text-black' : 'bg-black text-white'} 
             className={`w-full 
-                font-medium flex flex-row items-center justify-between h-12 rounded-xl cursor-pointer shadow-md
-             ${light ? disable ? 'bg-transparent border border-appGray text-black' : 'bg-transparent border border-black text-black' : disable ? 'text-black bg-appGray' : 'text-white bg-black border-none '} ${!loader || !disable && "active:opacity-50"}`}
+                font-medium flex flex-row items-center justify-between h-12 rounded-xl shadow-md
+             ${light ? disable ? 'bg-transparent border border-appGray text-black cursor-no-drop' : 'bg-transparent border border-black text-black cursor-pointer' : disable ? 'text-black bg-appGray cursor-no-drop' : 'text-white bg-black border-none cursor-pointer'} ${!loader || !disable && "active:opacity-50"}`}
         >{title}
             {
                 loader ?

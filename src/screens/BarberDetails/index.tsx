@@ -225,12 +225,12 @@ const BarberDetails = (props: Props) => {
                 (sum: any, review: any) => sum + parseFloat(review.rating),
                 0,
             );
-            return totalRating / reviews.length;
+            const averageRating = totalRating / reviews.length;
+            return parseFloat(averageRating.toFixed(1)); // Round to one decimal place
         } else {
             return 0;
         }
     };
-
     const handleSelectStyle = (index: number, price: any) => {
         const parsedPrice = parseFloat(price);
         if (selectedStyleIndex === index) {
