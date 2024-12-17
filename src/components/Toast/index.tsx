@@ -18,7 +18,6 @@ export const Toast = (
         theme: "colored",
         transition: Bounce,
         onClose: () => {
-            // Run the callback if it exists
             if (onCloseCallback) {
                 onCloseCallback();
             }

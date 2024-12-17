@@ -11,6 +11,7 @@ import { Toast } from '../../components/Toast'
 import useNavigate from '../../components/ScrollToTopNavigate'
 import Button from '../../components/Button'
 import { useLocation } from 'react-router-dom'
+import { selectUser } from '../../Store/userDataSlice'
 
 type Props = {}
 
@@ -24,6 +25,7 @@ const BookAppointment = (props: Props) => {
     const pendingAppointment = useSelector(selectPendingAppointment)
     const barbers = useSelector(selectBarbers)
     const authToken = useSelector(selectAuthToken)
+    const userData = useSelector(selectUser)
 
     const [barber, setBarber] = useState<any>()
     const [bookedTime, setBookedTime] = useState<any>([])
@@ -33,6 +35,8 @@ const BookAppointment = (props: Props) => {
     const [dateData, setDatedata] = useState<any | null>()
     const [selectedDate, setSelectedDate] = useState<any | null>(null)
     const [totalDuration, setTotalDuration] = useState()
+    const [showRechargeModal, setShowRechargeModal] = useState<boolean>(false);
+    const [havePreviousBalance, setHavePreviousBalance] = useState<boolean>(true);
 
     useEffect(() => {
         findBarber()
@@ -320,13 +324,44 @@ const BookAppointment = (props: Props) => {
         dispatch(deletePendingAppointmentsItem(item))
     }
 
+    const calculateTotalPriceForPendingAppointments = (appointments: any) => {
+        return appointments
+            ?.filter((appointment: any) => appointment?.status === 'Pending')
+            ?.reduce((totalPrice: any, appointment: any) => {
+                const servicesTotal = appointment?.services?.reduce((sum: any, service: any) => {
+                    return sum + Number(service?.price);
+                }, 0);
+
+                return totalPrice + servicesTotal;
+            }, 0);
+    };
+
     const handleBookAppointment = async () => {
         if (!authToken) {
             sessionStorage.setItem('redirectAfterLogin', location?.pathname)
             navigate('/signin')
             return
         }
+        const previousPrice = calculateTotalPriceForPendingAppointments(
+            userData?.appoinment,
+        );
+        const walletBalance = userData?.wallet ?? 0;
+        const newAndTotalPrice = previousPrice + totalAmount;
+        if (previousPrice > 0) {
+            if (newAndTotalPrice > walletBalance) {
+                setHavePreviousBalance(true);
+                setShowRechargeModal(true);
+                return;
+            }
+        }
+        if (totalAmount && totalAmount > walletBalance) {
+            return Toast('error', 'Insufficient fund! please recharge your wallet', onHideShowModal)
+        }
     }
+
+    const onHideShowModal = () => {
+        setShowRechargeModal(true);
+    };
 
 
     return (
@@ -385,25 +420,6 @@ const BookAppointment = (props: Props) => {
                             <div className='border-2 border-lineBG shadow-lg px-[6px] py-[4px] mr-1 rounded-md cursor-pointer active:opacity-70 hidden xs:flex' onClick={timeScrollLeft}>
                                 <img src={images.arrowBtnBlack} className='w-3 rotate-180' />
                             </div>
-
-                            {/* <div
-                                ref={timeScrollRef}
-                                className="w-full flex gap-2 border-2 border-lineBG rounded-lg shadow-md p-1 overflow-x-auto hide-scrollbar grid grid-rows-2 [grid-auto-flow:column] whitespace-nowrap"
-                            >
-                                {dateData?.length > 0 &&
-                                    dateData.map((item: any, index: number) => {
-                                        return (
-                                            // <div key={index} className="text-center  ">
-                                            <div key={index}
-                                                onClick={() => setSelected(item)}
-                                                className={
-                                                    item === selected ? 'py-1 px-6 text-sm bg-black md:text-base rounded-md font-medium text-center cursor-pointer text-white'
-                                                        : 'py-1 px-6 text-sm bg-inputGray md:text-base rounded-md font-medium text-center text-center cursor-pointer'
-                                                }>{item}</div>
-                                            // </div>
-                                        );
-                                    })}
-                            </div> */}
                             <div className='relative w-full h-[72px] md:h-[80px] border-2 border-lineBG rounded-lg shadow-md'>
                                 <div
                                     className="absolute top-0 left-0 right-0 bottom-0 whitespace-nowrap overflow-x-scroll overflow-y-hidden hide-scrollbar"
@@ -475,14 +491,47 @@ const BookAppointment = (props: Props) => {
                         <div className='w-[90%] sm:w-[50%] mx-auto my-20'>
                             <Button light={false}
                                 disable={!selectedDate || !selected || !(pendingAppointment?.services?.length > 0)}
-                                // disable={!selectedDate} 
-                                // disable={selected ? false : true}
-                                // disable={pendingAppointment?.services?.length > 0 ? false : true} 
                                 title='Book' onClick={() => handleBookAppointment()} />
                         </div>
                     </div>
                 </div>
             </div>
+            {
+                showRechargeModal &&
+                <div
+                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white rounded-lg p-6 w-[90%] sm:w-[70%] md:w-[70%] lg:w-[50%] xl:w-[35%] xl:w-[25%] max-h-[80vh] overflow-y-scroll hide-scrollbar md:w-[25%] relative">
+                        {
+                            havePreviousBalance &&
+                            <div className='bg-black p-2 cursor-pointer rounded-lg active:opacity-70 absolute top-1 right-1 z-50' onClick={() => {
+                                setHavePreviousBalance(false)
+                                setShowRechargeModal(false)
+                            }}>
+                                <img src={images.cross} className='filter invert brightness-0 sm:w-5 sm:h-5 w-3 h-3' />
+                            </div>
+                        }
+                        <div className='font-semibold text-center text-sm md:text-base'>
+                            {
+                                havePreviousBalance ?
+                                    "It looks like you don't have enough balance in your wallet to book this appointment. You've already booked several other appointments, which is why your current balance is insufficient. To proceed, please recharge your wallet or cancel one of your existing appointments."
+                                    :
+                                    '  you don’t have enough balance in your wallet to book an appointment.Recharge your account?'
+                            }
+                        </div>
+                        <div className='flex flex-col md:flex-row items-center justify-between gap-2 mt-4'>
+                            <Button light={false} title='View Wallet' onClick={() => navigate('/wallet')} />
+                            {
+                                havePreviousBalance ?
+                                    <Button light={false} title='View Appointments' onClick={() => navigate('/appointment')} />
+                                    :
+                                    <Button light title='Cancel' onClick={() => setShowRechargeModal(false)} hideImg />
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
 
         </div>
     )
