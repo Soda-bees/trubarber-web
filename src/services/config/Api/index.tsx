@@ -148,3 +148,46 @@ export const handleGetBookAppointment = async (token: any, id: any) => {
     }
 }
 
+export const bookAppoinment = async (body: any, token: any) => {
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axiosInstance.post('user/bookAppoinment', body, { headers, });
+        return response;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const updateAppointmentStatus = async (token: any, id: any, status: any) => {
+    try {
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axiosInstance.post(`barber/updateAppoinmentStatus/${id}`, { status }, { headers })
+        return response
+    } catch (error) {
+        return error
+    }
+}
+
+export const handleNotificationSeenTrue = async (token:any, notificationsIds:any) => {
+    try {
+        const headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        };
+        const response = await axiosInstance.post(
+          'user/setNotificationTrue',
+          {notificationsIds},
+          {headers},
+        );
+        return response;
+      } catch (error) {
+        return error;
+      }
+}
+

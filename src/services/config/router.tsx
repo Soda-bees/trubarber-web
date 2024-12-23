@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectRole } from "../../Store/Role"; // Adjust the path according to your structure
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
@@ -23,6 +23,7 @@ import Chat from "../../screens/Chat";
 import { selectUser } from "../../Store/userDataSlice";
 import { socketService } from "./Socket";
 import BookAppointment from "../../screens/BookAppointment";
+import Favourite from "../../screens/Favourite";
 
 
 // Component to set up routing
@@ -68,7 +69,8 @@ const Routing = () => {
                 { path: '/barbers', element: <AllBarbers /> },
                 { path: '/BarberDetails/:_id', element: <BarberDetails /> },
                 { path: '/chat', element: <ProtectedRoute Component={Chat} /> },
-                { path: '/book-appointment' , element:<BookAppointment />}
+                { path: '/book-appointment' , element:<BookAppointment />},
+                { path: '/favourite' , element:<ProtectedRoute Component={Favourite} />}
             ]
         }
     ]);

@@ -3,7 +3,7 @@ import images from '../../services/config/images';
 
 type Props = {
     title: string,
-    onClick: () => void;
+    onClick?: () => void;
     mt?: string,
     loader?: boolean,
     light: boolean,
@@ -15,7 +15,13 @@ type Props = {
 
 const Button: React.FC<Props> = ({ title, onClick, mt, loader, light, fontSize, px, disable, hideImg }) => {
     return (
-        <div onClick={() => { if (!loader && !disable) onClick(); }}
+        <div 
+        // onClick={() => { if (!loader && !disable) onClick() }}
+        onClick={() => { 
+            if (!loader && !disable && onClick) { 
+                onClick(); 
+            } 
+        }}
             style={{
                 marginTop: mt,
                 fontSize: fontSize ? fontSize : '16px',

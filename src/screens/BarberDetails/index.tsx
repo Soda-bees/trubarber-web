@@ -277,7 +277,7 @@ const BarberDetails = (props: Props) => {
                 }
             }
         } else {
-            let matchedIndex = selectedStyleIndex !== null && styleMenu[selectedStyleIndex]
+            let matchedIndex = selectedStyleIndex !== null && { ...styleMenu[selectedStyleIndex] };
             matchedIndex.serviceName = selectedService?.name
             matchedIndex.serviceIcon = selectedService?.icon
             const services = [matchedIndex];

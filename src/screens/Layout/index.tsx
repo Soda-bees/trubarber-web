@@ -20,6 +20,7 @@ const Layout = (props: Props) => {
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showHamburger, setShowHamburger] = useState<boolean>(false);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(window.innerWidth < 768);
+  const [showNotification, setShowNotification] = useState<boolean>(false)
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -38,14 +39,14 @@ const Layout = (props: Props) => {
     "/create-user-profile",
     "/create-barber-profile",
   ];
-  const showWhiteHeaderPaths = ['/BarberDetails' , '/book-appointment']
+  const showWhiteHeaderPaths = ['/BarberDetails', '/book-appointment', '/wallet', '/appointment', '/chat']
   const shouldShowWhiteHeader = showWhiteHeaderPaths.some(
     (path) => location.pathname === path || location.pathname.startsWith(path)
   );
 
   const shouldShowHeader = !noHeaderPaths.includes(location.pathname);
 
-  const noMTPaths = ['/', '/barbers']
+  const noMTPaths = ['/', '/barbers', '/favourite']
   const shouldNoMT = noMTPaths.includes(location.pathname)
 
   useEffect(() => {
@@ -86,7 +87,7 @@ const Layout = (props: Props) => {
   }, [authToken, location.pathname]);
 
   useEffect(() => {
-    if (showSidebar && isSmallScreen) {
+    if ((showSidebar && isSmallScreen) || showNotification) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
@@ -95,48 +96,56 @@ const Layout = (props: Props) => {
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [showSidebar, isSmallScreen]);
+  }, [showSidebar, isSmallScreen, showNotification]);
 
-    // useEffect(() => {
-    //   if (authToken) {
-    //     if (activePath === '/signin' || activePath === '/signup') {
-    //       navigate('/')
-    //     }
-    //   }
-    // }, [authToken, navigate])
+  // useEffect(() => {
+  //   if (authToken) {
+  //     if (activePath === '/signin' || activePath === '/signup') {
+  //       navigate('/')
+  //     }
+  //   }
+  // }, [authToken, navigate])
 
-    useEffect(() => {
-      if (authToken) {
-          // Check for a redirect path saved in sessionStorage
-          const redirectPath = sessionStorage.getItem('redirectAfterLogin');
-          if (redirectPath) {
-              sessionStorage.removeItem('redirectAfterLogin'); // Clear the saved path
-              navigate(redirectPath); // Navigate to the intended path
-          } else if (activePath === '/signin' || activePath === '/signup') {
-              navigate('/'); // Default behavior: Redirect to home
-          }
+  useEffect(() => {
+    if (authToken) {
+      // Check for a redirect path saved in sessionStorage
+      const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+      if (redirectPath) {
+        sessionStorage.removeItem('redirectAfterLogin'); // Clear the saved path
+        navigate(redirectPath); // Navigate to the intended path
+      } else if (activePath === '/signin' || activePath === '/signup') {
+        navigate('/'); // Default behavior: Redirect to home
       }
+    }
   }, [authToken, navigate, activePath]);
 
   return (
-    <div className="flex flex-row min-h-screen max-w-[2800px] mx-auto relative">
-
+    <div
+      className="flex flex-row min-h-screen max-w-[2800px] mx-auto relative"
+    >
       {
         showSidebar &&
-        <SideBar showSidebar={showSidebar} isSmallScreen={isSmallScreen} />
+        <SideBar showSidebar={showSidebar} isSmallScreen={isSmallScreen} setShowSidebar={setShowSidebar} />
       }
+
       {
         isSmallScreen && showSidebar && <div className="fixed inset-0 bg-black bg-opacity-70 z-20 " onClick={() => setShowSidebar(false)} ></div>
       }
+
       <div
         className={
           shouldNoMT ? "w-full flex flex-col justify-between" : isSmallScreen ? shouldShowHeader ? "w-full pt-36 flex flex-col justify-between"
             : "w-full flex flex-col justify-between" : shouldShowHeader ? "w-full pt-20 flex flex-col justify-between" : "w-full flex flex-col justify-between"}>
         {
           shouldShowHeader &&
-          <Header showSidebar={showSidebar} showHamburger={showHamburger} setShowSidebar={setShowSidebar} isSmallScreen={isSmallScreen} shouldShowWhiteHeader={shouldShowWhiteHeader} />
+          <Header showSidebar={showSidebar} showHamburger={showHamburger}
+            setShowSidebar={setShowSidebar} isSmallScreen={isSmallScreen}
+            shouldShowWhiteHeader={shouldShowWhiteHeader}
+            showNotification={showNotification}
+            setShowNotification={setShowNotification}
+          />
         }
-        <Outlet context={{ showSidebar }} />
+        <Outlet context={{ showSidebar , isSmallScreen }} />
         <ToastContainer />
         <Footer />
         <ScrollTopButton />

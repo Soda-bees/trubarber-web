@@ -183,7 +183,7 @@ const userSlice = createSlice({
                 }
             }
         },
-        setNotificationSeenTrueRedux: (state, action: PayloadAction<any>) => {
+        setNotificationSeenTrueRedux: (state) => {
             if (state.user) {
                 if (state.user.role === 'user') {
                     const updatedNotifications = state.user.notification.map((notif: any) => ({

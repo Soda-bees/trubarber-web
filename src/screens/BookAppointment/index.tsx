@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import BackButton from '../../components/BackButton'
 import { useDispatch, useSelector } from 'react-redux'
-import { deletePendingAppointmentsItem, selectPendingAppointment } from '../../Store/PendingAppointment'
+import { deletePendingAppointmentsItem, removePendingAppointment, selectPendingAppointment } from '../../Store/PendingAppointment'
 import { selectBarbers } from '../../Store/BarbersSlice'
 import { selectAuthToken } from '../../Store/AuthTokenSlice'
-import { handleGetBookAppointment } from '../../services/config/Api'
+import { bookAppoinment, handleGetBookAppointment } from '../../services/config/Api'
 import moment from 'moment'
 import images from '../../services/config/images'
 import { Toast } from '../../components/Toast'
@@ -37,6 +37,8 @@ const BookAppointment = (props: Props) => {
     const [totalDuration, setTotalDuration] = useState()
     const [showRechargeModal, setShowRechargeModal] = useState<boolean>(false);
     const [havePreviousBalance, setHavePreviousBalance] = useState<boolean>(true);
+    const [loader, setLoader] = useState(false)
+    const [appointmentConfirmModal, setAppointmentConfirmModal] = useState<boolean>(false)
 
     useEffect(() => {
         findBarber()
@@ -336,6 +338,23 @@ const BookAppointment = (props: Props) => {
             }, 0);
     };
 
+    const canBook = (array: any[], barberId: any, date: any, time: any) =>
+        array.some(
+            ({ barber, status, date, time }) =>
+                barber._id === barberId &&
+                status === 'Pending' &&
+                selectedDate === date &&
+                selected === time,
+        );
+
+    const addMinutesToTime = (timeStr: any, minutes: any) => {
+        const timeMoment = moment(timeStr, 'h:mm A');
+
+        timeMoment.add(minutes, 'minutes');
+
+        return timeMoment.format('h:mm A');
+    };
+
     const handleBookAppointment = async () => {
         if (!authToken) {
             sessionStorage.setItem('redirectAfterLogin', location?.pathname)
@@ -357,16 +376,48 @@ const BookAppointment = (props: Props) => {
         if (totalAmount && totalAmount > walletBalance) {
             return Toast('error', 'Insufficient fund! please recharge your wallet', onHideShowModal)
         }
+        if (canBook(userData && userData.appoinment, barber._id, selectedDate, selected)) {
+            return Toast(
+                'error',
+                'You have already scheduled an appointment for this time slot.',
+            );
+        }
+        const endTime = addMinutesToTime(selected, totalDuration);
+        const obj = {
+            ...pendingAppointment,
+            date: selectedDate,
+            time: `${selected} - ${endTime}`,
+        };
+        try {
+            setLoader(true)
+            const response = await bookAppoinment(obj, authToken) as { status: any, data: any }
+            if (response?.status === 200) {
+                setLoader(false)
+                dispatch(removePendingAppointment());
+                setAppointmentConfirmModal(true)
+            } else {
+                setLoader(false)
+                Toast('success', response?.data?.message)
+            }
+        } catch (error) {
+            setLoader(false)
+            Toast('error', (error as Error)?.message)
+        }
     }
 
     const onHideShowModal = () => {
         setShowRechargeModal(true);
     };
 
+    const handleGoAppointment = async () => {
+        sessionStorage.setItem('backNavigation', '/')
+        navigate('/appointment')
+    }
+
 
     return (
         <div className='px-4'>
-            <BackButton light title='Book Appoinment' />
+            <BackButton light title='Book Appoitnment' />
             <div className='w-full md:w-[70%] lg:w-[60%] xl:w-[40%] mx-auto mt-10'>
                 <div className='flex flex-row items-center justify-between xs:px-[34px] font-semibold mb-1'>
                     <div>Select Date</div>
@@ -489,7 +540,9 @@ const BookAppointment = (props: Props) => {
                             <img src={images.addWhite} className='filter brightness-0 mr-1' />
                             Add Another Service</div>
                         <div className='w-[90%] sm:w-[50%] mx-auto my-20'>
-                            <Button light={false}
+                            <Button
+                                loader={loader}
+                                light={false}
                                 disable={!selectedDate || !selected || !(pendingAppointment?.services?.length > 0)}
                                 title='Book' onClick={() => handleBookAppointment()} />
                         </div>
@@ -528,6 +581,23 @@ const BookAppointment = (props: Props) => {
                                     :
                                     <Button light title='Cancel' onClick={() => setShowRechargeModal(false)} hideImg />
                             }
+                        </div>
+                    </div>
+                </div>
+            }
+            {
+                appointmentConfirmModal &&
+                <div
+                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white rounded-lg px-6 py-10 w-[90%] sm:w-[70%] md:w-[70%] lg:w-[50%] xl:w-[35%] xl:w-[25%] max-h-[80vh] overflow-y-scroll hide-scrollbar md:w-[25%] relative flex flex-col items-center">
+                        <img src={images.appointmentConfirm} className='w-16' />
+                        <div className='font-semibold text-lg'>Request sent</div>
+                        <div className='text-center text-xs md:text-sm mt-4'>We’ve sent your request to the barber. Once they review and accept it,
+                            your appointment will be confirmed. You’ll receive a notification with all the details shortly. Thank you for choosing us!</div>
+                        <div className='w-[70%] mt-4'>
+                            <Button title={'View Appointment'} light={false} onClick={handleGoAppointment} />
                         </div>
                     </div>
                 </div>

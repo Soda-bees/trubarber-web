@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import images from "../../services/config/images";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../Store/userDataSlice";
+import { useNavigate } from "react-router-dom";
+import Button from "../../components/Button";
+import { updateAppointmentStatus } from "../../services/config/Api";
+import { selectAuthToken } from "../../Store/AuthTokenSlice";
+import { Toast } from "../../components/Toast";
 
 const Appointment = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedAppointment, setSelectedAppointment] = useState<any>();
   const userData = useSelector(selectUser);
+  const navigate = useNavigate()
+  const authToken = useSelector(selectAuthToken)
 
   const [appointmentStatus, setAppointmentStatus] =
     useState<string>("upcoming");
@@ -21,10 +28,42 @@ const Appointment = () => {
       price: 20,
     },
   ]);
+  const [cancelAppointmentLoader, setCancelAppointmentLoader] = useState<boolean>(false)
+
+  useEffect(() => {
+    const handleBackButton = (event: any) => {
+      event.preventDefault();
+
+      const backNavigation = sessionStorage.getItem('backNavigation');
+      if (backNavigation) {
+        sessionStorage.removeItem('backNavigation');
+        navigate(backNavigation, { replace: true });
+      } else {
+        navigate(-1);
+      }
+    };
+
+    window.history.pushState(null, '', window.location.href);
+    window.addEventListener('popstate', handleBackButton);
+
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isModalOpen]);
 
   const handleClick = (item: any) => {
-    console.log(item);
-
     setSelectedAppointment(item);
     setIsModalOpen(!isModalOpen);
   };
@@ -35,6 +74,27 @@ const Appointment = () => {
       0
     );
   };
+
+  const handleUpdateAppointmentStatus = async (_id: any) => {
+    try {
+      setCancelAppointmentLoader(true)
+      const response = await updateAppointmentStatus(authToken, _id, 'Cancelled') as { status: any, data: any }
+      if (response?.status == 200) {
+        setCancelAppointmentLoader(false)
+        setIsModalOpen(false)
+        Toast("success", 'Appointment cancelled successfully!')
+        setSelectedAppointment((prevAppointment: any) => ({
+          ...prevAppointment,
+          status: 'Cancelled'
+        }))
+      } else {
+        setCancelAppointmentLoader(false)
+        Toast("error", response?.data?.message)
+      }
+    } catch (error) {
+      setCancelAppointmentLoader(false)
+    }
+  }
 
   return (
     <div className="px-4 md:px-10 mb-5">
@@ -56,8 +116,8 @@ const Appointment = () => {
                         item.barber?.profile
                           ? item.barber.profile
                           : item.barber.gender === "male"
-                          ? images.male
-                          : images.female
+                            ? images.male
+                            : images.female
                       }
                       className="h-20 object-contain w-16 md:w-20 rounded-xl border"
                     />
@@ -96,7 +156,7 @@ const Appointment = () => {
                   onClick={() => handleClick(item)}
                 >
                   See Details
-                  <img src={images.arrowBtn} className="w-2" />
+                  <img src={images.arrowBtn} className="w-3" />
                 </div>
               </div>
             );
@@ -110,7 +170,7 @@ const Appointment = () => {
               <div className="text-xl font-bold">Appointment Details</div>
               <div
                 className="bg-black p-3 rounded-xl cursor-pointer"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => { !cancelAppointmentLoader && setIsModalOpen(false) }}
               >
                 <img
                   src={images.cross}
@@ -143,8 +203,8 @@ const Appointment = () => {
                   selectedAppointment.barber?.profile
                     ? selectedAppointment.barber.profile
                     : selectedAppointment.barber.gender === "male"
-                    ? images.male
-                    : images.female
+                      ? images.male
+                      : images.female
                 }
                 className="h-20 object-contain w-16 md:w-20 rounded-xl border"
               />
@@ -174,6 +234,10 @@ const Appointment = () => {
                 selectedAppointment?.services
               )}.00`}
             </div>
+            {
+              selectedAppointment?.status === 'Pending' &&
+              <Button title="Cancel Appointment" light={false} mt="15px" onClick={() => handleUpdateAppointmentStatus(selectedAppointment?._id)} loader={cancelAppointmentLoader} />
+            }
           </div>
         </div>
       )}

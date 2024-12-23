@@ -73,8 +73,10 @@ import bookmarkDissable from "../../assets/Images/bookmarkDissable.png";
 import direction from "../../assets/Images/direction.png";
 import message from "../../assets/Images/message.png";
 import businessImage from "../../assets/Images/businessImage.png";
+import appointmentConfirm from "../../assets/Images/appointmentConfirm.png";
 
 const images = {
+  appointmentConfirm,
   direction,
   message,
   bookmarkBlack,
