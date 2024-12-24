@@ -493,7 +493,6 @@ const BarberSection = ({ title, showDes, showBtn }: Props) => {
             {
               title ? title : 'Discover Expert Barbers Online Effortlessly'
             }
-            {/* Discover Expert Barbers Online Effortlessly */}
           </div>
           <div className="hidden md:flex flex-row w-[7%] justify-between mr-1">
             <div

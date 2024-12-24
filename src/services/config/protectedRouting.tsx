@@ -14,23 +14,42 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ Component }) => {
     const haveUser = async () => {
         // if (!authToken) {
         //     console.log("work");
-            
+
         //     console.log("path=====>" ,  window.location.pathname);
-            
+
         //     sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
         //     navigate("/signin");
         // }
+
+        // if (!authToken) {
+        //     const currentPath = window.location.pathname;
+
+        //     // Prevent re-saving the redirect path for /signin
+        //     if (currentPath !== "/signin" && currentPath !== "/signup" ) {
+        //         console.log("path=====> protected router", currentPath);
+
+        //         sessionStorage.setItem('redirectAfterLogin', currentPath);
+        //         navigate("/signin");
+        //     }
+        // }
+
         if (!authToken) {
             const currentPath = window.location.pathname;
 
-            // Prevent re-saving the redirect path for /signin
-            if (currentPath !== "/signin") {
-                console.log("work");
-                console.log("path=====>", currentPath);
+            // Exclude redirect path saving for specific routes
+            if (currentPath !== "/signin" && currentPath !== "/signup" && currentPath !== "/barber-dashboard") {
+                console.log("path=====> protected router", currentPath);
 
-                sessionStorage.setItem('redirectAfterLogin', currentPath);
+                sessionStorage.setItem("redirectAfterLogin", currentPath);
+            }
+
+            // Redirect to signin for unauthorized access
+            if (currentPath !== "/signin") {
                 navigate("/signin");
             }
+        } else {
+            // If authenticated, allow access
+            console.log("User is authenticated");
         }
     };
 

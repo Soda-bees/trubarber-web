@@ -31,6 +31,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar }: Props) => {
   const handleLogout = async () => {
     dispatch(clearUser());
     dispatch(clearAuthToken());
+    
   };
 
   useEffect(() => {

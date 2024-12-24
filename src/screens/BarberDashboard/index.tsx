@@ -4,7 +4,7 @@ type Props = {}
 
 const BarberDashboard = (props: Props) => {
   return (
-    <div>BarberDashboard</div>
+    <div className=''>BarberDashboard</div>
   )
 }
 

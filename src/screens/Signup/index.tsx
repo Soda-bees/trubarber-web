@@ -7,6 +7,7 @@ import BackButton from '../../components/BackButton'
 import useNavigate from '../../components/ScrollToTopNavigate'
 import { validateEmailAvailability } from '../../services/config/Api'
 import { Toast } from '../../components/Toast'
+import { setAuthToken } from '../../Store/AuthTokenSlice'
 
 type Props = {}
 
@@ -34,45 +35,52 @@ const Signup = (props: Props) => {
     }
 
     const handleConfirm = async () => {
-        try {
-            if (!name) {
-                return Toast('error', 'Enter name')
-            }
-            if (!email) {
-                return Toast('error', 'Enter email')
-            }
-            if (!password) {
-                return Toast('error', 'Enter password')
-            }
-            if (password.length < 8) {
-                return Toast('error', 'Password must contain atleast 8 characters')
-            }
-            if (!check) {
-                return Toast('error', 'Please select the checkbox')
-            }
-            const body = {
-                email
-            }
-            setLoader(true)
-            const response = await validateEmailAvailability(body) as { data: any, success: boolean, message: string }
-            if (response?.data?.success) {
-                setLoader(false)
-                const userData = {
-                    name, email, password, role, deviceToken: ''
-                }
-                navigate('/create-user-profile', { state: { userData } })
-            } else {
-                setLoader(false)
-                Toast('error', response?.data?.message)
-            }
-        } catch (error) {
-            Toast('error', 'An error occurred')
-        }
+        sessionStorage.removeItem('redirectAfterLogin');
+        const token = 'adssssssssssssss'
+        dispatch(setAuthToken(token))
+        dispatch(setRole(role))
+      
+        // try {
+        //     if (!name) {
+        //         return Toast('error', 'Enter name')
+        //     }
+        //     if (!email) {
+        //         return Toast('error', 'Enter email')
+        //     }
+        //     if (!password) {
+        //         return Toast('error', 'Enter password')
+        //     }
+        //     if (password.length < 8) {
+        //         return Toast('error', 'Password must contain atleast 8 characters')
+        //     }
+        //     if (!check) {
+        //         return Toast('error', 'Please select the checkbox')
+        //     }
+        //     const body = {
+        //         email
+        //     }
+        //     setLoader(true)
+        //     const response = await validateEmailAvailability(body) as { data: any, success: boolean, message: string }
+        //     if (response?.data?.success) {
+        //         setLoader(false)
+        //         const userData = {
+        //             name, email, password, role, deviceToken: ''
+        //         }
+        //         navigate('/create-user-profile', { state: { userData } })
+        //     } else {
+        //         setLoader(false)
+        //         Toast('error', response?.data?.message)
+        //     }
+        // } catch (error) {
+        //     Toast('error', 'An error occurred')
+        // }
 
     }
 
     const handleConfirmBarber = async () => {
-        alert('barber')
+        const token = 'adssssssssssssss'
+        dispatch(setAuthToken(token))
+        dispatch(setRole(role))
     }
 
     return (

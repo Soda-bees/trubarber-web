@@ -17,7 +17,7 @@ const Slider = (props: Props) => {
     if (index < sliderImages.length - 1) {
       setActiveIndex(index + 1);
     } else {
-      setActiveIndex(0); // Reset to the first image if at the end
+      setActiveIndex(0); 
     }
   };
 
@@ -25,7 +25,7 @@ const Slider = (props: Props) => {
     if (index > 0) {
       setActiveIndex(index - 1);
     } else {
-      setActiveIndex(sliderImages.length - 1); // Set to the last image if at the beginning
+      setActiveIndex(sliderImages.length - 1); 
     }
   };
 
@@ -34,9 +34,8 @@ const Slider = (props: Props) => {
       setActiveIndex((prevIndex) =>
         prevIndex < sliderImages.length - 1 ? prevIndex + 1 : 0
       );
-    }, 3000); // Change the image every 3 seconds (3000ms)
+    }, 3000); 
 
-    // Clear interval on component unmount
     return () => clearInterval(interval);
   }, [sliderImages.length]);
 

@@ -21,6 +21,7 @@ const Layout = (props: Props) => {
   const [showHamburger, setShowHamburger] = useState<boolean>(false);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(window.innerWidth < 768);
   const [showNotification, setShowNotification] = useState<boolean>(false)
+  const [search , setSearch] = useState<string>('')
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -114,6 +115,8 @@ const Layout = (props: Props) => {
         sessionStorage.removeItem('redirectAfterLogin'); // Clear the saved path
         navigate(redirectPath); // Navigate to the intended path
       } else if (activePath === '/signin' || activePath === '/signup') {
+        console.log("lay out use effect-==--==-=-=-");
+        
         navigate('/'); // Default behavior: Redirect to home
       }
     }
@@ -145,7 +148,7 @@ const Layout = (props: Props) => {
             setShowNotification={setShowNotification}
           />
         }
-        <Outlet context={{ showSidebar , isSmallScreen }} />
+        <Outlet context={{ showSidebar , isSmallScreen , search}} />
         <ToastContainer />
         <Footer />
         <ScrollTopButton />
