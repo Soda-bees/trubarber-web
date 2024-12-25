@@ -31,7 +31,6 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar }: Props) => {
   const handleLogout = async () => {
     dispatch(clearUser());
     dispatch(clearAuthToken());
-    
   };
 
   useEffect(() => {
@@ -83,7 +82,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar }: Props) => {
           className="h-full flex flex-col items-center justify-between "
         >
 
-          <div className="text-white">
+          <div className="text-white w-full">
             <div>
               <div className="pl-4 lg:pl-6 flex flex-col justify-between">
                 <img

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "../../components/Header";
 import { ToastContainer } from "react-toastify";
@@ -16,12 +16,17 @@ const Layout = (props: Props) => {
 
   const authToken = useSelector(selectAuthToken);
   const navigate = useNavigate()
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const footerRef = useRef<HTMLDivElement | null>(null);
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showHamburger, setShowHamburger] = useState<boolean>(false);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(window.innerWidth < 768);
   const [showNotification, setShowNotification] = useState<boolean>(false)
-  const [search , setSearch] = useState<string>('')
+  const [search, setSearch] = useState<string>('')
+  const [headerHeight, setHeaderHeight] = useState<number>(0)
+  const [footerHeight, setfooterHeight] = useState<number>(0)
+  const [headerFooterHeight , setheaderFooterHeight] = useState<number>(0)
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -99,28 +104,47 @@ const Layout = (props: Props) => {
     };
   }, [showSidebar, isSmallScreen, showNotification]);
 
-  // useEffect(() => {
-  //   if (authToken) {
-  //     if (activePath === '/signin' || activePath === '/signup') {
-  //       navigate('/')
-  //     }
-  //   }
-  // }, [authToken, navigate])
 
   useEffect(() => {
     if (authToken) {
-      // Check for a redirect path saved in sessionStorage
       const redirectPath = sessionStorage.getItem('redirectAfterLogin');
       if (redirectPath) {
-        sessionStorage.removeItem('redirectAfterLogin'); // Clear the saved path
-        navigate(redirectPath); // Navigate to the intended path
+        sessionStorage.removeItem('redirectAfterLogin');
+        navigate(redirectPath);
       } else if (activePath === '/signin' || activePath === '/signup') {
         console.log("lay out use effect-==--==-=-=-");
-        
-        navigate('/'); // Default behavior: Redirect to home
+
+        navigate('/');
       }
     }
   }, [authToken, navigate, activePath]);
+
+
+  useEffect(() => {
+    const updateHeight = () => {
+      const headerHeight = headerRef.current?.offsetHeight || 0;
+      const footerHeight = footerRef.current?.offsetHeight || 0;
+
+      const headerHeightInVH = (headerHeight / window.innerHeight) * 100;
+      const footerHeightInVH = (footerHeight / window.innerHeight) * 100;
+
+      const availableHeight = window.innerHeight - headerHeight - footerHeight;
+      const totalHeightInVH = headerHeightInVH + footerHeightInVH;
+
+      setHeaderHeight(headerHeightInVH)
+      setfooterHeight(footerHeightInVH)
+      setheaderFooterHeight(totalHeightInVH)
+    };
+
+    // Initial calculation
+    updateHeight();
+
+    // Recalculate on window resize
+    window.addEventListener("resize", updateHeight);
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, []);
 
   return (
     <div
@@ -141,16 +165,17 @@ const Layout = (props: Props) => {
             : "w-full flex flex-col justify-between" : shouldShowHeader ? "w-full pt-20 flex flex-col justify-between" : "w-full flex flex-col justify-between"}>
         {
           shouldShowHeader &&
-          <Header showSidebar={showSidebar} showHamburger={showHamburger}
+          <Header ref={headerRef} showSidebar={showSidebar} showHamburger={showHamburger}
             setShowSidebar={setShowSidebar} isSmallScreen={isSmallScreen}
             shouldShowWhiteHeader={shouldShowWhiteHeader}
             showNotification={showNotification}
             setShowNotification={setShowNotification}
+            setSearch={setSearch}
           />
         }
-        <Outlet context={{ showSidebar , isSmallScreen , search}} />
+        <Outlet context={{ showSidebar, isSmallScreen, search , headerFooterHeight}} />
         <ToastContainer />
-        <Footer />
+        <Footer ref={footerRef} />
         <ScrollTopButton />
       </div>
     </div>
