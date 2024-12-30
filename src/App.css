@@ -69,14 +69,13 @@ input[type="number"] {
 }
 
 body::-webkit-scrollbar {
-  width: 5px;
+  display: none;
 }
 
-body::-webkit-scrollbar-thumb {
+/* body::-webkit-scrollbar-thumb {
   background-color: #000000;
-  /* Change this to your preferred color */
   border-radius: 10px;
-}
+} */
 
 .line-clamp-3 {
   display: -webkit-box;

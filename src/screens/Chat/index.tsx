@@ -49,11 +49,9 @@ const Chat = (props: Props) => {
                     return participantName.toLowerCase().includes(searchLowerCase);
                   })
                   ?.sort((a: any, b: any) => {
-                    // Get the createdAt of the last message in each chat
                     const lastMessageA = a.messages[a.messages.length - 1];
                     const lastMessageB = b.messages[b.messages.length - 1];
 
-                    // Convert to timestamps and sort based on the createdAt of the last message (descending)
                     const dateA = new Date(lastMessageA?.createdAt || a.createdAt).getTime();
                     const dateB = new Date(lastMessageB?.createdAt || b.createdAt).getTime();
 
@@ -162,7 +160,7 @@ const Chat = (props: Props) => {
       </div>
       {
         !isSmallScreen && userData?.chat?.filter((item: any) => item?.messages?.length > 0)?.length > 0 &&
-        <div className='bg-pink-500 w-[75%] h-full'>
+        <div className='w-[75%] h-full'>
           <ChatMessage chatId={chatId} />
         </div>
       }
