@@ -173,7 +173,7 @@ const Layout = (props: Props) => {
             setSearch={setSearch}
           />
         }
-        <Outlet context={{ showSidebar, isSmallScreen, search , headerFooterHeight}} />
+        <Outlet context={{ showSidebar, isSmallScreen, search , headerFooterHeight , headerHeight}} />
         <ToastContainer />
         <Footer ref={footerRef} />
         <ScrollTopButton />

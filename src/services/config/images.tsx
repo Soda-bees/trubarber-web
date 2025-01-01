@@ -74,8 +74,12 @@ import direction from "../../assets/Images/direction.png";
 import message from "../../assets/Images/message.png";
 import businessImage from "../../assets/Images/businessImage.png";
 import appointmentConfirm from "../../assets/Images/appointmentConfirm.png";
+import arrowBlackIcon from "../../assets/Images/arrowBlackIcon.png";
+import chatImg from "../../assets/Images/chatImg.png";
 
 const images = {
+  chatImg,
+  arrowBlackIcon,
   appointmentConfirm,
   direction,
   message,

@@ -1,103 +1,65 @@
-// import React from 'react'
-
-// type Props = {
-//   chatId: string | null
-// }
-
-// const ChatMessage = ({ chatId }: Props) => {
-//   return (
-//     <div className='bg-yellow-500 w-full h-full '>
-//       {`ChatMessage ${chatId}`}
-//     </div>
-//   )
-// }
-
-// export default ChatMessage
-
-
-
-// import React, { useState, useRef, useEffect } from 'react';
-
-// type Props = {
-//   chatId: string | null;
-// };
-
-// const ChatMessage = ({ chatId }: Props) => {
-//   const messageInputRef = useRef<HTMLInputElement>(null);
-//   const messageContainerRef = useRef<HTMLDivElement>(null);
-
-//   // Function to scroll to the bottom of the messages
-//   const scrollToBottom = () => {
-//     if (messageContainerRef.current) {
-//       messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
-//     }
-//   };
-
-//   useEffect(() => {
-//     scrollToBottom();
-//   }, []);
-
-//   return (
-//     <div className="h-full w-full flex flex-col">
-//       {/* Header with user name */}
-//       <div className="bg-blue-500 py-4 px-6">
-//         <h1 className="text-white text-xl font-bold">{"userName"}</h1>
-//       </div>
-
-//       {/* Scrollable message section */}
-//       <div
-//         ref={messageContainerRef}
-//         className="flex-1 p-4 overflow-auto bg-red-500"
-//       >
-//         {/* Replace with dynamic messages */}
-//         {
-//           [...Array(2)].map((_, index) => (
-//             <div key={index} className="mb-2">message {index + 1}</div>
-//           ))
-//         }
-//       </div>
-
-//       {/* Bottom send message section */}
-//       <div className="bg-gray-200 flex items-center p-4">
-//         <input
-//           type="text"
-//           placeholder="Type a message"
-//           ref={messageInputRef}
-//           className="flex-1 border rounded p-2 mr-2"
-//         />
-//         <button
-//           onClick={() => console.log('Send message')}
-//           className="bg-blue-500 text-white px-4 py-2 rounded"
-//         >
-//           Send
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ChatMessage;
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { selectUser } from '../../Store/userDataSlice';
 import { useSelector } from 'react-redux';
 import { FixedSizeList as List, VariableSizeList } from 'react-window';
 import { motion, AnimatePresence } from "framer-motion";
 import moment from 'moment';
+import { Gallery } from "react-grid-gallery";
+import ImageGrid from '../ImageGrid';
+import images from '../../services/config/images';
+import { useNavigate } from 'react-router-dom';
+import { uploadMultiplesChatImagesApi } from '../../services/config/Api';
+import { selectAuthToken } from '../../Store/AuthTokenSlice';
 
 type Props = {
   chatId: string | null;
+  isSmallScreen: boolean;
+  setChatId: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-const ChatMessage = ({ chatId }: Props) => {
+const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
   const messageInputRef = useRef<HTMLInputElement>(null);
   const messageContainerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<VariableSizeList>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const userData = useSelector(selectUser)
+  const authToken = useSelector(selectAuthToken)
+  const navigate = useNavigate()
 
   const [chatName, setChatName] = useState<string>('')
   const [listHeight, setListHeight] = useState(0);
+  const [text, setText] = useState<string>('')
+
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (isSmallScreen && chatId) {
+        // Clear chatId and prevent navigation back
+        setChatId(null);
+        // window.history.pushState(null, document.title, window.location.href);
+      } else {
+        // Normal back navigation
+        navigate(-1);
+      }
+    };
+
+    // Push a dummy state to handle popstate event
+    window.history.pushState(null, document.title, window.location.href);
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      // Cleanup event listener
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isSmallScreen, chatId, setChatId, navigate]);
+
+
+  const handleDivClick = () => {
+    if (messageInputRef.current) {
+      messageInputRef.current.focus();
+    }
+  };
 
   const getDateHeader = (date: any) => {
     const today = moment().startOf('day');
@@ -147,12 +109,6 @@ const ChatMessage = ({ chatId }: Props) => {
     scrollToLastItem();
   }, [messages.length, listHeight, chatId]);
 
-  useEffect(() => {
-    if (chatId) {
-      handleSetChatName()
-    }
-  }, [chatId]);
-
   const scrollToBottom = () => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
@@ -161,6 +117,9 @@ const ChatMessage = ({ chatId }: Props) => {
 
   useEffect(() => {
     scrollToBottom();
+    if (chatId) {
+      handleSetChatName()
+    }
   }, [chatId]);
 
   useEffect(() => {
@@ -182,9 +141,42 @@ const ChatMessage = ({ chatId }: Props) => {
     userData?.role === 'user' ? setChatName(chat?.barber?.name) : setChatName(chat?.user?.name);
   }
 
+  const handleButtonClick = () => {
+    fileInputRef?.current?.click(); // Manually trigger file input click
+  };
+
+
+  const handleUploadChatImages = async (e: any) => {
+    try {
+      const selectedFiles = e.target.files;  // Get all selected files
+      const formData = new FormData();
+
+      for (let i = 0; i < selectedFiles.length; i++) {
+        formData.append('images', selectedFiles[i]);  // Append each file
+      }
+      const response = await uploadMultiplesChatImagesApi(formData, authToken)
+      
+      console.log("formData-=-=-=-=>", response);
+      // setImageUploadLoader(true)
+      // const selectedFile = e.target.files[0];
+      // const formData = new FormData();
+      // formData.append('image', selectedFile);
+      // const response = await uploadProfile(formData)
+      // if (response?.success) {
+      //     setImgUri(response?.url)
+      //     setImageUploadLoader(false)
+      // } else {
+      //     Toast('error', response?.message)
+      //     setImageUploadLoader(false)
+      // }
+    } catch (error) {
+      console.log(error);
+      // setImageUploadLoader(false)
+    }
+  }
 
   return (
-    <div className='h-full'>
+    <div className='h-full select-none'>
       {
         chatId ?
           <AnimatePresence>
@@ -208,128 +200,77 @@ const ChatMessage = ({ chatId }: Props) => {
                   duration: 0.6,
                   ease: "easeOut",
                 }}
-                className="h-full w-full flex flex-col bg-red-500"
+                className="h-full w-full flex flex-col bg-white shadow-md rounded-md"
               >
-                <div className=''>{chatName}</div>
-
-                {/* <div
-                  ref={messageContainerRef}
-                  className="flex-1 overflow-auto bg-yellow-500 flex flex-col"
-                > */}
+                <div className='px-2 py-1 text-lg font-semibold flex flex-row items-center' onClick={() => setChatId(null)}>
+                  {isSmallScreen && <img src={images.arrowBtnBlack} className='rotate-180 w-4 h-6  cursor-pointer active:opacity-50' />}
+                  <div className={isSmallScreen ? 'ml-3' : ''}>
+                    {chatName}
+                  </div>
+                </div>
 
                 <div
                   ref={messageContainerRef}
-                  className="flex-1 overflow-auto bg-red-500 flex flex-col "
+                  className="flex-1 overflow-auto flex flex-col chatScrollbar p-2"
                 >
                   {
                     messages.map((item: any, index: number) => {
+                      if (item?.type === 'header') {
+                        return (
+                          <div className='flex flex-row items-center justify-between w-full mt-1'>
+                            <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
+                            <div className='text-black text-xs md:text-sm'>{item.header}</div>
+                            <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
+                          </div>
+                        )
+                      }
                       return (
-                        <div key={index} 
-                        className='flex flex-col'
-                        // className="bg-blue-200 max-w-[70%] w-fit box-border"
-                        >
-                          {
-                            item?.type === 'header' &&
-                            <div className='bg-pink-100 text-center'>
-                              {item.header}
-                              </div>
+                        item.image?.length > 0 ? <div
+                          className={
+                            item?.sender === userData?._id ?
+                              'bg-white mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-end rounded-t-md rounded-bl-md border border-appGray' :
+                              'bg-appGray mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-start rounded-t-md rounded-br-md'
                           }
-                          {item.image?.length > 0 ? (
-                            <div>POhoto</div>
-                          ) : (
-                            <div className='bg-pink-500 mt-2 w-fit max-w-[70%] self-end'>{item.text}</div>
-                          )}
-                        </div>
+                        >
+                          <ImageGrid images={item?.image} />
+                        </div> :
+                          <div key={index}
+                            className={
+                              item?.sender === userData?._id ?
+                                'bg-white mt-1 p-1  max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-end rounded-t-md rounded-bl-md border border-appGray' :
+                                'bg-appGray mt-1 p-1 max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-start rounded-t-md rounded-br-md'
+                            }
+                          >
+                            <div>{item.text}</div>
+                          </div>
                       )
                     })
                   }
                 </div>
-                {/* <List
-                    ref={listRef}
-                    height={listHeight || 400}
-                    itemCount={messages.length}
-                    itemSize={50}
-                    width="100%"
-                    style={{ backgroundColor: 'green' }}
+                <div className="flex items-center bg-white border cursor-text w-full border border-appGray rounded-lg pr-2 w-[99%] mx-auto mb-2" onClick={handleDivClick}>
+                  <textarea
+                    placeholder="Write Message.."
+                    className="w-full p-2 resize-none hide-scrollbar focus:outline-none bg-transparent"
+                    rows={2}
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
                   >
-                    {({ index, style , item }) => (
-                      <div style={{ ...style, padding: '10px', borderBottom: '1px solid #ccc' }}>
-                        {'messages[index]'}
-                      </div>
-                    )}
-                  </List>  */}
-
-                {/* <List
-                    ref={listRef}
-                    height={listHeight || 400}
-                    itemCount={messages.length}
-                    itemSize={50}
-                    width="100%"
-                    style={{ backgroundColor: 'green' }}
-                  >
-                    {({ index, style }) => {
-                      const item = messages[index]
-                      console.log("item =--=>", item);
-
-                      return (
-                        <div style={{ ...style, padding: '10px', borderBottom: '1px solid #ccc' }}>
-                          {
-                            item?.type === 'header' && 
-                            <div>{item.header}</div> 
-                          }
-                          {item.image?.length > 0 ? (
-                            <div>POhoto</div>
-                          ) : (
-                            <div
-                            >{item.text}</div>
-                          )}
-                        </div>
-                      )
-                    }}
-                  </List> */}
-                {/* <VariableSizeList
-                    ref={listRef}
-                    height={listHeight || 400}
-                    itemCount={messages.length}
-                    itemSize={getItemSize}
-                    width="100%"
-                    style={{ backgroundColor: 'green' }}
-                  >
-                    {({ index, style }) => {
-                      const item = messages[index]
-                      return (
-                        <div style={{ ...style, borderBottom: '1px solid #ccc' }} className='bg-yellow-500'>
-                          {
-                            item?.type === 'header' && 
-                            <div>{item.header}</div> 
-                          }
-                          {item.image?.length > 0 ? (
-                            <div>POhoto</div>
-                          ) : (
-                            <div className='w-[50%] bg-red-800 mx-auto'
-                            >{item.text}</div>
-                          )}
-                        </div>
-                      )
-                    }}
-                  </VariableSizeList> */}
-
-
-                {/* </div> */}
-
-                <div className="bg-gray-200 flex items-center p-4">
+                  </textarea>
+                  {
+                    text ?
+                      <img src={images.arrowBlackIcon} className='cursor-pointer w-8 active:opacity-70' />
+                      :
+                      <img src={images.chatImg} className='cursor-pointer w-8 active:opacity-70' onClick={handleButtonClick} />
+                  }
                   <input
-                    type="text"
-                    placeholder="Type a message"
-                    ref={messageInputRef}
-                    className="border rounded p-2 mr-2"
+                    id='fileInput'
+                    ref={fileInputRef}
+                    type='file'
+                    className='hidden'
+                    onChange={handleUploadChatImages}
+                    accept='.png, .jpg, .jpeg'
+                    multiple
                   />
-                  <button
-                    onClick={() => console.log('Send message')}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                  >
-                    Send
-                  </button>
                 </div>
               </motion.div>
             </motion.div>
@@ -341,19 +282,3 @@ const ChatMessage = ({ chatId }: Props) => {
 };
 
 export default ChatMessage;
-
-
-{/* <List
-                    ref={listRef}
-                    height={listHeight || 400}
-                    itemCount={messages.length}
-                    itemSize={50}
-                    width="100%"
-                    style={{ backgroundColor: 'green' }}
-                  >
-                    {({ index, style }) => (
-                      <div style={{ ...style, padding: '10px', borderBottom: '1px solid #ccc' }}>
-                        {'messages[index]'}
-                      </div>
-                    )}
-                  </List>  */}

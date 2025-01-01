@@ -174,20 +174,35 @@ export const updateAppointmentStatus = async (token: any, id: any, status: any) 
     }
 }
 
-export const handleNotificationSeenTrue = async (token:any, notificationsIds:any) => {
+export const handleNotificationSeenTrue = async (token: any, notificationsIds: any) => {
     try {
         const headers = {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         };
         const response = await axiosInstance.post(
-          'user/setNotificationTrue',
-          {notificationsIds},
-          {headers},
+            'user/setNotificationTrue',
+            { notificationsIds },
+            { headers },
         );
         return response;
-      } catch (error) {
+    } catch (error) {
         return error;
-      }
+    }
 }
+
+export const uploadMultiplesChatImagesApi = async (formData: FormData, token: any) => {
+    try {
+        const response = await axiosInstance.post('barber/uploadMultiplesChatImages', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Upload Profile Error:', error);
+        throw error;
+    }
+};
 
