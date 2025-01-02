@@ -1,5 +1,5 @@
 import axios from "axios";
-import { axiosInstance } from "../axiosInstance";
+import { axiosInstance, baseURL } from "../axiosInstance";
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
 export const validateEmailAvailability = async (body: any) => {
@@ -191,18 +191,35 @@ export const handleNotificationSeenTrue = async (token: any, notificationsIds: a
     }
 }
 
-export const uploadMultiplesChatImagesApi = async (formData: FormData, token: any) => {
+// export const uploadMultiplesChatImagesApi = async (formData: FormData, token: any) => {
+//     try {
+//         const response = await axiosInstance.post('barber/uploadMultiplesChatImages', formData, {
+//             headers: {
+//                 'Content-Type': 'multipart/form-data',
+//                 Authorization: `Bearer ${token}`,
+//             },
+//         });
+//         return response;
+//     } catch (error) {
+//         return error;
+//     }
+// };
+
+export const uploadMultiplesChatImagesApi = async (formData: any, token: any) => {
     try {
-        const response = await axiosInstance.post('barber/uploadMultiplesChatImages', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
+      const axiosConfig = {
+        method: "post",
+        url: `${baseURL}barber/uploadMultiplesChatImages`,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const data = await axios(axiosConfig);
+      return data;
     } catch (error) {
-        console.error('Upload Profile Error:', error);
-        throw error;
+      return error;
     }
-};
+  };
 

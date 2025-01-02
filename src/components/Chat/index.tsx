@@ -10,6 +10,7 @@ import images from '../../services/config/images';
 import { useNavigate } from 'react-router-dom';
 import { uploadMultiplesChatImagesApi } from '../../services/config/Api';
 import { selectAuthToken } from '../../Store/AuthTokenSlice';
+import { Toast } from '../Toast';
 
 type Props = {
   chatId: string | null;
@@ -22,6 +23,7 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
   const messageContainerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<VariableSizeList>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const sendMessageImageScrollRef = useRef<HTMLDivElement>(null);
 
   const userData = useSelector(selectUser)
   const authToken = useSelector(selectAuthToken)
@@ -30,6 +32,10 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
   const [chatName, setChatName] = useState<string>('')
   const [listHeight, setListHeight] = useState(0);
   const [text, setText] = useState<string>('')
+  const [selectedImage, setSelectedImage] = useState<string[]>([])
+  const [imageUploadLoader, setImageUploadLoader] = useState<boolean>(false)
+  const [showImageScreen, setShowImageScreen] = useState<boolean>(false)
+  const [sendMessageImgSelectedIndex, setSendMessageImgSelectedIndex] = useState<number>(0)
 
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
@@ -142,139 +148,228 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
   }
 
   const handleButtonClick = () => {
-    fileInputRef?.current?.click(); // Manually trigger file input click
+    fileInputRef?.current?.click()
   };
 
 
   const handleUploadChatImages = async (e: any) => {
     try {
-      const selectedFiles = e.target.files;  // Get all selected files
-      const formData = new FormData();
-
-      for (let i = 0; i < selectedFiles.length; i++) {
-        formData.append('images', selectedFiles[i]);  // Append each file
+      setShowImageScreen(true)
+      setImageUploadLoader(true)
+      const selectedFiles = e.target.files;
+      if (selectedFiles && selectedFiles.length > 0) {
+        const formData = new FormData();
+        for (let i = 0; i < selectedFiles.length; i++) {
+          formData.append('images', selectedFiles[i]);
+        }
+        const response = await uploadMultiplesChatImagesApi(formData, authToken) as { status: number, data: any }
+        if (response.status == 200) {
+          setImageUploadLoader(false)
+          setSelectedImage((prevImg: any) => [...prevImg, ...response?.data?.images])
+          return
+        }
+        setImageUploadLoader(false)
+        setShowImageScreen(false)
+        setSelectedImage([])
+        Toast('error', response?.data?.message || 'Something wents wrong, Try again!')
+        return
+      } else {
+        setShowImageScreen(false)
+        setImageUploadLoader(false)
+        console.log("No files selected");
       }
-      const response = await uploadMultiplesChatImagesApi(formData, authToken)
-      
-      console.log("formData-=-=-=-=>", response);
-      // setImageUploadLoader(true)
-      // const selectedFile = e.target.files[0];
-      // const formData = new FormData();
-      // formData.append('image', selectedFile);
-      // const response = await uploadProfile(formData)
-      // if (response?.success) {
-      //     setImgUri(response?.url)
-      //     setImageUploadLoader(false)
-      // } else {
-      //     Toast('error', response?.message)
-      //     setImageUploadLoader(false)
-      // }
     } catch (error) {
       console.log(error);
-      // setImageUploadLoader(false)
     }
+  }
+
+  const removeSpacificImage = (index: number) => {
+    // setSelectedImage((prevImg: any) => prevImg.filter((_: any, i: number) => i !== index))
+    setSelectedImage((prevImages) => {
+      const updatedImages = prevImages.filter((_, i) => i !== index);
+      console.log("length " , updatedImages?.length);
+      if(updatedImages?.length == 0){
+        setShowImageScreen(false)
+      }
+      // Check the remaining length
+      // if (updatedImages.length > 0) {
+      //   setIsImageAvailable(true);
+      // } else {
+      //   setIsImageAvailable(false);
+      // }
+  
+      return updatedImages;
+    });
   }
 
   return (
     <div className='h-full select-none'>
       {
         chatId ?
-          <AnimatePresence>
-            <motion.div
-              initial={{ opacity: 0, y: -50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, y: -50, scale: 0.9 }}
-              transition={{
-                duration: 0.4,
-                ease: "easeInOut",
-                type: 'tween',
-                stiffness: 200,
-              }}
-              className='h-full'
-            >
-              <motion.div
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                transition={{
-                  delay: 0.1,
-                  duration: 0.6,
-                  ease: "easeOut",
-                }}
-                className="h-full w-full flex flex-col bg-white shadow-md rounded-md"
-              >
-                <div className='px-2 py-1 text-lg font-semibold flex flex-row items-center' onClick={() => setChatId(null)}>
-                  {isSmallScreen && <img src={images.arrowBtnBlack} className='rotate-180 w-4 h-6  cursor-pointer active:opacity-50' />}
-                  <div className={isSmallScreen ? 'ml-3' : ''}>
-                    {chatName}
+          showImageScreen ? (
+            imageUploadLoader ? (
+              <div className='h-full inset-0 bg-black bg-opacity-90 flex items-center justify-center'>
+                <div
+                  className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-white border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                  role="status">
+                </div>
+              </div>
+            ) : (
+              <div className='h-full inset-0 bg-black bg-opacity-90 relative w-full h-full flex items-center justify-center'>
+                {/* {
+                  selectedImage?.length > 0 && 
+                  selectedImage?.map((item , index) => {
+                    return (
+                      <div key={index} className='bg-pink-200 flex flex-row justify-center items-center snap-center h-full'   style={{
+                        minWidth: '100%',
+                        // height: '100%',
+                    }}>
+                      <img src={item}  />
+                      </div>
+                    )
+                  })
+                } */}
+                <div
+                  ref={sendMessageImageScrollRef}
+                  className="flex overflow-hidden w-full h-full relative"
+                >
+                  <div className="flex justify-center items-center snap-center min-w-[100%] h-[100%]">
+                    <img
+                      src={selectedImage[sendMessageImgSelectedIndex]}
+                      className="object-contain max-h-[70%] max-w-[90%] rounded-md"
+                    />
                   </div>
                 </div>
-
-                <div
-                  ref={messageContainerRef}
-                  className="flex-1 overflow-auto flex flex-col chatScrollbar p-2"
-                >
+                <div className='absolute bottom-5 flex flex-row gap-3 items-center'>
                   {
-                    messages.map((item: any, index: number) => {
-                      if (item?.type === 'header') {
-                        return (
-                          <div className='flex flex-row items-center justify-between w-full mt-1'>
-                            <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
-                            <div className='text-black text-xs md:text-sm'>{item.header}</div>
-                            <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
-                          </div>
-                        )
-                      }
+                    selectedImage?.map((item, index) => {
                       return (
-                        item.image?.length > 0 ? <div
-                          className={
-                            item?.sender === userData?._id ?
-                              'bg-white mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-end rounded-t-md rounded-bl-md border border-appGray' :
-                              'bg-appGray mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-start rounded-t-md rounded-br-md'
-                          }
-                        >
-                          <ImageGrid images={item?.image} />
-                        </div> :
-                          <div key={index}
-                            className={
-                              item?.sender === userData?._id ?
-                                'bg-white mt-1 p-1  max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-end rounded-t-md rounded-bl-md border border-appGray' :
-                                'bg-appGray mt-1 p-1 max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-start rounded-t-md rounded-br-md'
-                            }
-                          >
-                            <div>{item.text}</div>
-                          </div>
+                        <div key={index}>
+                          <img src={item} className={index === sendMessageImgSelectedIndex ? 'w-20 h-20 cursor-pointer border-2 border-white rounded-md relative' :
+                            'w-16 h-16 cursor-pointer rounded-md relative'}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSendMessageImgSelectedIndex(index)
+                            }} />
+                          <div className='bg-white p-2 absolute -top-2 cursor-pointer active:opacity-70 w-4 h-4 flex items-center justify-center text-sm rounded-full font-semibold text-black' onClick={() => removeSpacificImage(index)}>X</div>
+                        </div>
                       )
                     })
                   }
+                  <div className='w-20 h-20 cursor-pointer rounded-md flex items-center justify-center border-2 border-white active:opacity-70' onClick={handleButtonClick}>
+                    <input
+                      id='fileInput'
+                      ref={fileInputRef}
+                      type='file'
+                      className='hidden'
+                      onChange={handleUploadChatImages}
+                      accept='.png, .jpg, .jpeg'
+                      multiple
+                    />
+                    <img src={images.cross} className='w-10 h-10 rotate-45 filter invert brightness-0' />
+                  </div>
                 </div>
-                <div className="flex items-center bg-white border cursor-text w-full border border-appGray rounded-lg pr-2 w-[99%] mx-auto mb-2" onClick={handleDivClick}>
-                  <textarea
-                    placeholder="Write Message.."
-                    className="w-full p-2 resize-none hide-scrollbar focus:outline-none bg-transparent"
-                    rows={2}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
+              </div>
+            )
+          ) : (
+            <AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, y: -50, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                exit={{ opacity: 0, y: -50, scale: 0.9 }}
+                transition={{
+                  duration: 0.4,
+                  ease: "easeInOut",
+                  type: 'tween',
+                  stiffness: 200,
+                }}
+                className='h-full'
+              >
+                <motion.div
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  transition={{
+                    delay: 0.1,
+                    duration: 0.6,
+                    ease: "easeOut",
+                  }}
+                  className="h-full w-full flex flex-col bg-white shadow-md rounded-md"
+                >
+                  <div className='px-2 py-1 text-lg font-semibold flex flex-row items-center' onClick={() => setChatId(null)}>
+                    {isSmallScreen && <img src={images.arrowBtnBlack} className='rotate-180 w-4 h-6  cursor-pointer active:opacity-50' />}
+                    <div className={isSmallScreen ? 'ml-3' : ''}>
+                      {chatName}
+                    </div>
+                  </div>
+
+                  <div
+                    ref={messageContainerRef}
+                    className="flex-1 overflow-auto flex flex-col chatScrollbar p-2"
                   >
-                  </textarea>
-                  {
-                    text ?
-                      <img src={images.arrowBlackIcon} className='cursor-pointer w-8 active:opacity-70' />
-                      :
-                      <img src={images.chatImg} className='cursor-pointer w-8 active:opacity-70' onClick={handleButtonClick} />
-                  }
-                  <input
-                    id='fileInput'
-                    ref={fileInputRef}
-                    type='file'
-                    className='hidden'
-                    onChange={handleUploadChatImages}
-                    accept='.png, .jpg, .jpeg'
-                    multiple
-                  />
-                </div>
+                    {
+                      messages.map((item: any, index: number) => {
+                        if (item?.type === 'header') {
+                          return (
+                            <div className='flex flex-row items-center justify-between w-full mt-1' key={index}>
+                              <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
+                              <div className='text-black text-xs md:text-sm'>{item.header}</div>
+                              <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
+                            </div>
+                          )
+                        }
+                        return (
+                          item.image?.length > 0 ? <div
+                            key={index}
+                            className={
+                              item?.sender === userData?._id ?
+                                'bg-white mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-end rounded-t-md rounded-bl-md border border-appGray' :
+                                'bg-appGray mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-start rounded-t-md rounded-br-md'
+                            }
+                          >
+                            <ImageGrid images={item?.image} />
+                          </div> :
+                            <div
+                              className={
+                                item?.sender === userData?._id ?
+                                  'bg-white mt-1 p-1  max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-end rounded-t-md rounded-bl-md border border-appGray' :
+                                  'bg-appGray mt-1 p-1 max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-start rounded-t-md rounded-br-md'
+                              }
+                            >
+                              <div>{item.text}</div>
+                            </div>
+                        )
+                      })
+                    }
+                  </div>
+                  <div className="flex items-center bg-white border cursor-text w-full border border-appGray rounded-lg pr-2 w-[99%] mx-auto mb-2" onClick={handleDivClick}>
+                    <textarea
+                      placeholder="Write Message.."
+                      className="w-full p-2 resize-none hide-scrollbar focus:outline-none bg-transparent"
+                      rows={2}
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                    >
+                    </textarea>
+                    {
+                      text ?
+                        <img src={images.arrowBlackIcon} className='cursor-pointer w-8 active:opacity-70' />
+                        :
+                        <img src={images.chatImg} className='cursor-pointer w-8 active:opacity-70' onClick={handleButtonClick} />
+                    }
+                    <input
+                      id='fileInput'
+                      ref={fileInputRef}
+                      type='file'
+                      className='hidden'
+                      onChange={handleUploadChatImages}
+                      accept='.png, .jpg, .jpeg'
+                      multiple
+                    />
+                  </div>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          </AnimatePresence>
+            </AnimatePresence>
+          )
           : <div>no chat to show </div>
       }
     </div>
@@ -282,3 +377,101 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
 };
 
 export default ChatMessage;
+
+{/* <AnimatePresence>
+<motion.div
+  initial={{ opacity: 0, y: -50, scale: 0.9 }}
+  animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+  exit={{ opacity: 0, y: -50, scale: 0.9 }}
+  transition={{
+    duration: 0.4,
+    ease: "easeInOut",
+    type: 'tween',
+    stiffness: 200,
+  }}
+  className='h-full'
+>
+  <motion.div
+    initial={{ scale: 0.8 }}
+    animate={{ scale: 1 }}
+    transition={{
+      delay: 0.1,
+      duration: 0.6,
+      ease: "easeOut",
+    }}
+    className="h-full w-full flex flex-col bg-white shadow-md rounded-md"
+  >
+    <div className='px-2 py-1 text-lg font-semibold flex flex-row items-center' onClick={() => setChatId(null)}>
+      {isSmallScreen && <img src={images.arrowBtnBlack} className='rotate-180 w-4 h-6  cursor-pointer active:opacity-50' />}
+      <div className={isSmallScreen ? 'ml-3' : ''}>
+        {chatName}
+      </div>
+    </div>
+
+    <div
+      ref={messageContainerRef}
+      className="flex-1 overflow-auto flex flex-col chatScrollbar p-2"
+    >
+      {
+        messages.map((item: any, index: number) => {
+          if (item?.type === 'header') {
+            return (
+              <div className='flex flex-row items-center justify-between w-full mt-1' key={index}>
+                <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
+                <div className='text-black text-xs md:text-sm'>{item.header}</div>
+                <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
+              </div>
+            )
+          }
+          return (
+            item.image?.length > 0 ? <div
+            key={index}
+              className={
+                item?.sender === userData?._id ?
+                  'bg-white mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-end rounded-t-md rounded-bl-md border border-appGray' :
+                  'bg-appGray mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-start rounded-t-md rounded-br-md'
+              }
+            >
+              <ImageGrid images={item?.image} />
+            </div> :
+              <div 
+                className={
+                  item?.sender === userData?._id ?
+                    'bg-white mt-1 p-1  max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-end rounded-t-md rounded-bl-md border border-appGray' :
+                    'bg-appGray mt-1 p-1 max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-start rounded-t-md rounded-br-md'
+                }
+              >
+                <div>{item.text}</div>
+              </div>
+          )
+        })
+      }
+    </div>
+    <div className="flex items-center bg-white border cursor-text w-full border border-appGray rounded-lg pr-2 w-[99%] mx-auto mb-2" onClick={handleDivClick}>
+      <textarea
+        placeholder="Write Message.."
+        className="w-full p-2 resize-none hide-scrollbar focus:outline-none bg-transparent"
+        rows={2}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      >
+      </textarea>
+      {
+        text ?
+          <img src={images.arrowBlackIcon} className='cursor-pointer w-8 active:opacity-70' />
+          :
+          <img src={images.chatImg} className='cursor-pointer w-8 active:opacity-70' onClick={handleButtonClick} />
+      }
+      <input
+        id='fileInput'
+        ref={fileInputRef}
+        type='file'
+        className='hidden'
+        onChange={handleUploadChatImages}
+        accept='.png, .jpg, .jpeg'
+        multiple
+      />
+    </div>
+  </motion.div>
+</motion.div>
+</AnimatePresence> */}
