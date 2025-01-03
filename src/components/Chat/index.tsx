@@ -187,8 +187,8 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
     // setSelectedImage((prevImg: any) => prevImg.filter((_: any, i: number) => i !== index))
     setSelectedImage((prevImages) => {
       const updatedImages = prevImages.filter((_, i) => i !== index);
-      console.log("length " , updatedImages?.length);
-      if(updatedImages?.length == 0){
+      console.log("length ", updatedImages?.length);
+      if (updatedImages?.length == 0) {
         setShowImageScreen(false)
       }
       // Check the remaining length
@@ -197,7 +197,7 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
       // } else {
       //   setIsImageAvailable(false);
       // }
-  
+
       return updatedImages;
     });
   }
@@ -216,19 +216,6 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
               </div>
             ) : (
               <div className='h-full inset-0 bg-black bg-opacity-90 relative w-full h-full flex items-center justify-center'>
-                {/* {
-                  selectedImage?.length > 0 && 
-                  selectedImage?.map((item , index) => {
-                    return (
-                      <div key={index} className='bg-pink-200 flex flex-row justify-center items-center snap-center h-full'   style={{
-                        minWidth: '100%',
-                        // height: '100%',
-                    }}>
-                      <img src={item}  />
-                      </div>
-                    )
-                  })
-                } */}
                 <div
                   ref={sendMessageImageScrollRef}
                   className="flex overflow-hidden w-full h-full relative"
@@ -240,7 +227,7 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
                     />
                   </div>
                 </div>
-                <div className='absolute bottom-5 flex flex-row gap-3 items-center'>
+                {/* <div className='absolute bottom-5 flex flex-row gap-3 items-center overflow-x-auto max-w-[90%]'>
                   {
                     selectedImage?.map((item, index) => {
                       return (
@@ -251,7 +238,15 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
                               e.stopPropagation()
                               setSendMessageImgSelectedIndex(index)
                             }} />
-                          <div className='bg-white p-2 absolute -top-2 cursor-pointer active:opacity-70 w-4 h-4 flex items-center justify-center text-sm rounded-full font-semibold text-black' onClick={() => removeSpacificImage(index)}>X</div>
+                          {
+                            index === sendMessageImgSelectedIndex &&
+                            <div className='bg-black bg-opacity-30 p-2 absolute top-0 cursor-pointer active:opacity-70 w-20 h-20 flex items-center justify-center rounded-md' onClick={() => removeSpacificImage(index)}>
+                              <img
+                                src={images.deleteIcon}
+                                className='absolute w-8 h-8 invert brightness-0'
+                              />
+                            </div>
+                          }
                         </div>
                       )
                     })
@@ -267,6 +262,55 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
                       multiple
                     />
                     <img src={images.cross} className='w-10 h-10 rotate-45 filter invert brightness-0' />
+                  </div>
+                </div> */}
+
+                <div className="absolute bottom-5 flex flex-row gap-3 items-center overflow-x-auto max-w-[90%] hide-scrollbar">
+                  {
+                    selectedImage?.map((item, index) => {
+                      return (
+                        <div key={index}  className="flex-shrink-0">
+                          <img
+                            src={item}
+                            className={index === sendMessageImgSelectedIndex
+                              ? 'w-20 h-20 cursor-pointer border-2 border-white rounded-md relative'
+                              : 'w-16 h-16 cursor-pointer rounded-md relative'}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSendMessageImgSelectedIndex(index);
+                            }}
+                          />
+                          {
+                            index === sendMessageImgSelectedIndex && (
+                              <div
+                                className="bg-black bg-opacity-30 p-2 absolute top-0 cursor-pointer active:opacity-70 w-20 h-20 flex items-center justify-center rounded-md"
+                                onClick={() => removeSpacificImage(index)}
+                              >
+                                <img
+                                  src={images.deleteIcon}
+                                  className="absolute w-8 h-8 invert brightness-0"
+                                />
+                              </div>
+                            )
+                          }
+                        </div>
+                      );
+                    })
+                  }
+                  <div
+                    className="w-20 h-20 cursor-pointer rounded-md flex items-center justify-center border-2 border-white active:opacity-70 flex-shrink-0"
+                    onClick={handleButtonClick}
+                  >
+                    <input
+                      id="fileInput"
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      onChange={handleUploadChatImages}
+                      accept=".png, .jpg, .jpeg"
+                      multiple
+                    />
+                    <img src={images.cross} className="w-10 h-10 rotate-45 filter invert brightness-0" />
                   </div>
                 </div>
               </div>

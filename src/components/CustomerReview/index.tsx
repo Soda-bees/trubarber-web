@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import images from "../../services/config/images";
 import StarRatings from "react-star-ratings";
+import { motion, AnimatePresence } from "framer-motion";
+import LeftToRightAnimation from "../LeftToRightAnimation";
+import RightToLeftAnimation from "../RightToLeftAnimation";
 
 type Review = {
   image: string;
@@ -87,8 +90,8 @@ const CustomerReview = (props: Props) => {
   };
 
   return (
-    <div className="p-4 md:p-10 lg:p-20 flex flex-col lg:flex-row">
-      <div className="mb-10 flex flex-col justify-between w-full lg:w-[70%]">
+    <div className="p-4 md:p-10 lg:p-20 flex flex-col lg:flex-row gap-4">
+      <LeftToRightAnimation className="mb-10 flex flex-col justify-between w-full lg:w-[70%]">
         <div>
           <h2 className="text-3xl md:text-5xl font-semibold">
             Customer Reviews
@@ -114,9 +117,48 @@ const CustomerReview = (props: Props) => {
             alt="Next"
           />
         </div>
+      </LeftToRightAnimation>
+
+      <div
+        className="grid grid-cols-1 h-[50%] sm:grid-cols-2 gap-4 w-full"
+      >
+        {reviews
+          .slice(currentIndex, currentIndex + reviewsPerPage)
+          .map((review, index) => (
+            <RightToLeftAnimation
+              key={currentIndex + index}
+              className="border border-gray-300 rounded-2xl p-5 flex flex-col justify-between"
+            >
+              <div className="flex flex-row items-start">
+                <img
+                  src={review.image}
+                  alt={review.name}
+                  className="w-16 h-16 object-cover rounded-full mr-4"
+                />
+                <div>
+                  <div className="text-lg font-semibold">{review.name}</div>
+                  <div className="flex items-center mt-1">
+                    <span className="text-md mr-2 mt-1">{review.rating}</span>
+                    <StarRatings
+                      rating={review.rating}
+                      starRatedColor="gold"
+                      numberOfStars={5}
+                      starDimension="20px"
+                      starSpacing="2px"
+                      changeRating={(newRating) =>
+                        handleRatingChange(newRating, index)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 text-gray-700 line-clamp-3">{review.content}</div>
+            </RightToLeftAnimation>
+          ))}
       </div>
 
-      <div className="grid grid-cols-1 h-[50%] sm:grid-cols-2 gap-4 w-full">
+
+      {/* <div className="grid grid-cols-1 h-[50%] sm:grid-cols-2 gap-4 w-full">
         {reviews
           .slice(currentIndex, currentIndex + reviewsPerPage)
           .map((review, index) => (
@@ -153,7 +195,8 @@ const CustomerReview = (props: Props) => {
               </div>
             </div>
           ))}
-      </div>
+      </div> */}
+
     </div>
   );
 };

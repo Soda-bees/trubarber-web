@@ -148,7 +148,7 @@ const Layout = (props: Props) => {
 
   return (
     <div
-      className="flex flex-row min-h-screen max-w-[2800px] mx-auto relative"
+      className="flex flex-row min-h-screen max-w-[2800px] mx-auto relative "
     >
       {
         showSidebar &&
@@ -161,8 +161,8 @@ const Layout = (props: Props) => {
 
       <div
         className={
-          shouldNoMT ? "w-full flex flex-col justify-between" : isSmallScreen ? shouldShowHeader ? "w-full pt-36 flex flex-col justify-between"
-            : "w-full flex flex-col justify-between" : shouldShowHeader ? "w-full pt-20 flex flex-col justify-between" : "w-full flex flex-col justify-between"}>
+          shouldNoMT ? "w-full flex flex-col justify-between overflow-x-hidden" : isSmallScreen ? shouldShowHeader ? "w-full pt-36 flex flex-col justify-between overflow-x-hidden"
+            : "w-full flex flex-col justify-between overflow-x-hidden" : shouldShowHeader ? "w-full pt-20 flex flex-col justify-between overflow-x-hidden" : "w-full flex flex-col justify-between overflow-x-hidden"}>
         {
           shouldShowHeader &&
           <Header ref={headerRef} showSidebar={showSidebar} showHamburger={showHamburger}
