@@ -101,111 +101,111 @@ export const createChatRoom = async (token: any, body: any) => {
 };
 
 export const updateReviewApi = async (token: any, body: any) => {
-    try {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const response = await axiosInstance.post('user/updateReview', body, { headers })
-        return response?.data
-    } catch (error) {
-        return error
-    }
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post('user/updateReview', body, { headers })
+    return response?.data
+  } catch (error) {
+    return error
+  }
 }
 
 export const postReview = async (token: any, body: any) => {
-    try {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const response = await axiosInstance.post('user/postReview', body, { headers })
-        return response?.data
-    } catch (error) {
-        return error
-    }
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post('user/postReview', body, { headers })
+    return response?.data
+  } catch (error) {
+    return error
+  }
 }
 
 export const deleteReviewApi = async (token: any, reviewId: any) => {
-    try {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const response = await axiosInstance.post(`user/deleteReview/${reviewId}`, {}, { headers })
-        return response?.data
-    } catch (error) {
-        return error
-    }
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post(`user/deleteReview/${reviewId}`, {}, { headers })
+    return response?.data
+  } catch (error) {
+    return error
+  }
 }
 
 export const addFavorite = async (token: any, body: any) => {
-    try {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const response = await axiosInstance.post('user/addFavourite', body, { headers })
-        return response?.data
-    } catch (error) {
-        return error
-    }
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post('user/addFavourite', body, { headers })
+    return response?.data
+  } catch (error) {
+    return error
+  }
 }
 
 export const handleGetBookAppointment = async (token: any, id: any) => {
-    try {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const response = await axiosInstance.get(`user/getBookedAppoinmentTime/${id}`, { headers })
-        return response
-    } catch (error) {
-        return error
-    }
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.get(`user/getBookedAppoinmentTime/${id}`, { headers })
+    return response
+  } catch (error) {
+    return error
+  }
 }
 
 export const bookAppoinment = async (body: any, token: any) => {
-    try {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const response = await axiosInstance.post('user/bookAppoinment', body, { headers, });
-        return response;
-    } catch (error) {
-        return error;
-    }
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post('user/bookAppoinment', body, { headers, });
+    return response;
+  } catch (error) {
+    return error;
+  }
 };
 
 export const updateAppointmentStatus = async (token: any, id: any, status: any) => {
-    try {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const response = await axiosInstance.post(`barber/updateAppoinmentStatus/${id}`, { status }, { headers })
-        return response
-    } catch (error) {
-        return error
-    }
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post(`barber/updateAppoinmentStatus/${id}`, { status }, { headers })
+    return response
+  } catch (error) {
+    return error
+  }
 }
 
 export const handleNotificationSeenTrue = async (token: any, notificationsIds: any) => {
-    try {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const response = await axiosInstance.post(
-            'user/setNotificationTrue',
-            { notificationsIds },
-            { headers },
-        );
-        return response;
-    } catch (error) {
-        return error;
-    }
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post(
+      'user/setNotificationTrue',
+      { notificationsIds },
+      { headers },
+    );
+    return response;
+  } catch (error) {
+    return error;
+  }
 }
 
 // export const uploadMultiplesChatImagesApi = async (formData: FormData, token: any) => {
@@ -223,22 +223,22 @@ export const handleNotificationSeenTrue = async (token: any, notificationsIds: a
 // };
 
 export const uploadMultiplesChatImagesApi = async (formData: any, token: any) => {
-    try {
-      const axiosConfig = {
-        method: "post",
-        url: `${baseURL}barber/uploadMultiplesChatImages`,
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const data = await axios(axiosConfig);
-      return data;
-    } catch (error) {
-      return error;
-    }
-  };
+  try {
+    const axiosConfig = {
+      method: "post",
+      url: `${baseURL}barber/uploadMultiplesChatImages`,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const data = await axios(axiosConfig);
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
 
 export const uploadMultiplesImages = async (formData: any) => {
   try {
@@ -257,7 +257,7 @@ export const uploadMultiplesImages = async (formData: any) => {
   }
 };
 
-export const handleIncreaseWallet = async (_id:any, token:any, body:any) => {
+export const handleIncreaseWallet = async (_id: any, token: any, body: any) => {
   try {
     const headers = {
       'Content-Type': 'application/json',
@@ -266,7 +266,7 @@ export const handleIncreaseWallet = async (_id:any, token:any, body:any) => {
     const response = await axiosInstance.post(
       `user/increaseWallet/${_id}`,
       body,
-      {headers},
+      { headers },
     );
     return response;
   } catch (error) {
@@ -274,7 +274,7 @@ export const handleIncreaseWallet = async (_id:any, token:any, body:any) => {
   }
 };
 
-export const updatePassword = async (body:any, token:any) => {
+export const updatePassword = async (body: any, token: any) => {
   try {
     const headers = {
       'Content-Type': 'application/json',
@@ -289,7 +289,7 @@ export const updatePassword = async (body:any, token:any) => {
   }
 };
 
-export const updateProfile = async (body:any, token:any) => {
+export const updateProfile = async (body: any, token: any) => {
   try {
     const headers = {
       'Content-Type': 'application/json',
@@ -303,3 +303,29 @@ export const updateProfile = async (body:any, token:any) => {
     return error;
   }
 };
+
+export const sendMessage = async (token: any, body: any, chatId: any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post(`user/sendMessage/${chatId}`, body, { headers, });
+    return response
+  } catch (error) {
+    return error
+  }
+}
+
+export const setSeenTrue = async (token: any, messageIds: any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post(`user/setSeenTrue`, { messageIds }, { headers, });
+    return response
+  } catch (error) {
+    return error
+  }
+}

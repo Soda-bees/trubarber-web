@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface ImageGridProps {
     images: string[];
+    isSmallScreen?: any
 }
 
-const ImageGrid: React.FC<ImageGridProps> = ({ images }) => {
+const ImageGrid: React.FC<ImageGridProps> = ({ images, isSmallScreen }) => {
     const scrollViewRef = useRef<HTMLDivElement>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -182,6 +183,33 @@ const ImageGrid: React.FC<ImageGridProps> = ({ images }) => {
         calculateHeights();
     }, [images]);
 
+    const handleSwipeDirection = (e: any) => {
+        const touch = e.touches[0];
+        const startX = touch.clientX;
+
+        const handleTouchEnd = (e: any) => {
+            const touchEnd = e.changedTouches[0];
+            const deltaX = touchEnd.clientX - startX;
+
+            if (Math.abs(deltaX) > Math.abs(touchEnd.clientY - touch.clientY)) {
+                if (deltaX > 0) {
+                    setSelectedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+                } else {
+                    setSelectedIndex((prevIndex) => Math.min(prevIndex + 1, images.length - 1));
+                }
+            }
+
+            if (scrollViewRef.current) {
+                scrollViewRef.current.removeEventListener('touchend', handleTouchEnd);
+            }
+        };
+
+        if (scrollViewRef.current) {
+            scrollViewRef.current.addEventListener('touchend', handleTouchEnd);
+        }
+    };
+
+
     return (
         <div className="w-full">
             {images.length > 3 ? (
@@ -191,7 +219,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({ images }) => {
             )}
 
 
-            {modalVisible && (
+            {/* {modalVisible && (
                 <div className="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center z-50" onClick={() => setModalVisible(false)}>
                     <button
                         className="absolute top-10 right-10 text-white font-bold text-lg cursor-pointer z-10"
@@ -260,6 +288,79 @@ const ImageGrid: React.FC<ImageGridProps> = ({ images }) => {
                                 />
                             })
                         }
+                    </div>
+                </div>
+            )} */}
+
+            {modalVisible && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center z-50"
+                    onClick={() => setModalVisible(false)}
+                >
+                    <button
+                        className="absolute top-10 right-10 text-white font-bold text-lg cursor-pointer z-10"
+                        onClick={() => setModalVisible(false)}
+                    >
+                        Close
+                    </button>
+                    <div className="relative w-full h-full flex items-center">
+                        {images.length > 1 && !isSmallScreen && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+                                }}
+                                className="absolute active:opacity-80 left-5 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-70 text-white p-3 rounded-full z-10 w-14 h-14 flex items-center justify-center"
+                            >
+                                <img src={imagesas.buttonArrow} className="w-4 h-6 rotate-180" />
+                            </button>
+                        )}
+
+                        <div
+                            ref={scrollViewRef}
+                            className="flex overflow-x-scroll snap-x w-full h-full"
+                            style={{ position: 'relative', scrollSnapType: 'x mandatory', touchAction: 'pan-x', }}
+                            onTouchStart={handleSwipeDirection}
+                        >
+                            <div
+                                className="flex justify-center items-center snap-center"
+                                style={{
+                                    minWidth: '100%',
+                                    height: '100%',
+                                }}
+                            >
+                                <img
+                                    src={images[selectedIndex]}
+                                    className="object-contain max-h-[80vh] max-w-full rounded-md"
+                                />
+                            </div>
+                        </div>
+
+                        {images.length > 1 && !isSmallScreen && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedIndex((prevIndex) => Math.min(prevIndex + 1, images.length - 1));
+                                }}
+                                className="absolute active:opacity-80 right-5 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-70 text-white p-3 rounded-full z-10 w-14 h-14 flex items-center justify-center"
+                            >
+                                <img src={imagesas.buttonArrow} className="w-4 h-6" />
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="absolute bottom-10 text-white flex flex-row gap-3 items-center overflow-x-auto">
+                        {images.map((item, index) => (
+                            <img
+                                key={index}
+                                src={item}
+                                className={index === selectedIndex ? 'w-20 h-20 cursor-pointer border-2 border-white rounded-md' : 'w-16 h-16 cursor-pointer rounded-md'}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedIndex(index);
+                                }}
+                            />
+                        ))}
                     </div>
                 </div>
             )}

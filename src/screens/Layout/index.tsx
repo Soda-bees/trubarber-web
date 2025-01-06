@@ -28,6 +28,7 @@ const Layout = (props: Props) => {
   const [headerHeight, setHeaderHeight] = useState<number>(0)
   const [footerHeight, setfooterHeight] = useState<number>(0)
   const [headerFooterHeight, setheaderFooterHeight] = useState<number>(0)
+  const [showLogoutModal , setShowLogoutModal] = useState<boolean>(false)
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -94,7 +95,7 @@ const Layout = (props: Props) => {
   }, [authToken, location.pathname]);
 
   useEffect(() => {
-    if ((showSidebar && isSmallScreen) || showNotification) {
+    if ((showSidebar && isSmallScreen) || showNotification || showLogoutModal) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
@@ -103,7 +104,7 @@ const Layout = (props: Props) => {
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [showSidebar, isSmallScreen, showNotification]);
+  }, [showSidebar, isSmallScreen, showNotification , showLogoutModal]);
 
 
   useEffect(() => {
@@ -153,7 +154,7 @@ const Layout = (props: Props) => {
     >
       {
         showSidebar &&
-        <SideBar showSidebar={showSidebar} isSmallScreen={isSmallScreen} setShowSidebar={setShowSidebar} />
+        <SideBar showSidebar={showSidebar} isSmallScreen={isSmallScreen} setShowSidebar={setShowSidebar} showLogoutModal={showLogoutModal}  setShowLogoutModal={setShowLogoutModal} />
       }
 
       {

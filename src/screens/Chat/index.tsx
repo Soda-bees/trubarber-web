@@ -6,6 +6,7 @@ import { selectUser } from '../../Store/userDataSlice'
 import moment from 'moment'
 import images from '../../services/config/images'
 import { motion } from 'framer-motion';
+import LeftToRightAnimation from '../../components/LeftToRightAnimation'
 
 type Props = {}
 
@@ -16,6 +17,10 @@ const Chat = (props: Props) => {
 
   const [chatId, setChatId] = useState<string | null>(null)
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(window.innerWidth < 1024)
+  const [text, setText] = useState<string>('')
+  const [selectedImage, setSelectedImage] = useState<string[]>([])
+  const [showImageScreen, setShowImageScreen] = useState<boolean>(false)
+  const [isDeleted, setIsDeleted] = useState<boolean | null>(null)
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -85,12 +90,19 @@ const Chat = (props: Props) => {
                         const oppositeMessage = messages.filter((obj: any) => obj?.sender !== userData?._id);
                         const unseenMessages = oppositeMessage.filter((obj: any) => obj.seen === false)
                         return (
-                          <div
-                            onClick={() => setChatId(item?._id)}
+                          <LeftToRightAnimation
+                            custom={index}
                             key={index}
-                            className="flex flex-row items-start justify-between  cursor-pointer"
+                            className="flex flex-row items-start justify-between cursor-pointer"
                           >
                             <motion.div
+                              onClick={() => {
+                                setText('')
+                                setSelectedImage([])
+                                setShowImageScreen(false)
+                                setChatId(item?._id)
+                                setIsDeleted(isDeleted)
+                              }}
                               whileHover={{
                                 scale: 0.98,
                                 boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)",
@@ -133,7 +145,7 @@ const Chat = (props: Props) => {
                                 ) : null}
                               </div>
                             </motion.div>
-                          </div>
+                          </LeftToRightAnimation>
                         )
                       })
                   }
@@ -186,7 +198,13 @@ const Chat = (props: Props) => {
           : userData?.chat?.filter((item: any) => item?.messages?.length > 0)?.length > 0
         ) && (
           <div className="w-full lg:w-[75%] h-full">
-            <ChatMessage chatId={chatId} isSmallScreen={isSmallScreen} setChatId={setChatId} />
+            <ChatMessage
+              chatId={chatId} isSmallScreen={isSmallScreen}
+              setChatId={setChatId}
+              text={text} setText={setText}
+              selectedImage={selectedImage} setSelectedImage={setSelectedImage}
+              showImageScreen={showImageScreen} setShowImageScreen={setShowImageScreen} isDeleted={isDeleted}
+            />
           </div>
         )
       }

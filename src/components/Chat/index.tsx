@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { selectUser } from '../../Store/userDataSlice';
-import { useSelector } from 'react-redux';
+import { selectUser, setSeenTrueRedux } from '../../Store/userDataSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { FixedSizeList as List, VariableSizeList } from 'react-window';
 import { motion, AnimatePresence } from "framer-motion";
 import moment from 'moment';
@@ -8,33 +8,43 @@ import { Gallery } from "react-grid-gallery";
 import ImageGrid from '../ImageGrid';
 import images from '../../services/config/images';
 import { useNavigate } from 'react-router-dom';
-import { uploadMultiplesChatImagesApi } from '../../services/config/Api';
+import { sendMessage, setSeenTrue, uploadMultiplesChatImagesApi } from '../../services/config/Api';
 import { selectAuthToken } from '../../Store/AuthTokenSlice';
 import { Toast } from '../Toast';
+import LeftToRightAnimation from '../LeftToRightAnimation';
+import RightToLeftAnimation from '../RightToLeftAnimation';
+import AnimatedImage from '../AnimatedImage';
 
 type Props = {
   chatId: string | null;
   isSmallScreen: boolean;
   setChatId: React.Dispatch<React.SetStateAction<string | null>>;
+  text: string,
+  setText: React.Dispatch<React.SetStateAction<string>>;
+  selectedImage: string[];
+  setSelectedImage: React.Dispatch<React.SetStateAction<string[]>>
+  showImageScreen: boolean;
+  setShowImageScreen: React.Dispatch<React.SetStateAction<boolean>>
+  isDeleted: boolean | null
 };
 
-const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
+const ChatMessage = ({ chatId, isSmallScreen, setChatId, text, setText, selectedImage, setSelectedImage, showImageScreen, setShowImageScreen, isDeleted }: Props) => {
   const messageInputRef = useRef<HTMLInputElement>(null);
   const messageContainerRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<VariableSizeList>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const sendMessageImageScrollRef = useRef<HTMLDivElement>(null);
 
   const userData = useSelector(selectUser)
   const authToken = useSelector(selectAuthToken)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const [chatName, setChatName] = useState<string>('')
   const [listHeight, setListHeight] = useState(0);
-  const [text, setText] = useState<string>('')
-  const [selectedImage, setSelectedImage] = useState<string[]>([])
+  // const [text, setText] = useState<string>('')
+  // const [selectedImage, setSelectedImage] = useState<string[]>([])
+  // const [showImageScreen, setShowImageScreen] = useState<boolean>(false)
   const [imageUploadLoader, setImageUploadLoader] = useState<boolean>(false)
-  const [showImageScreen, setShowImageScreen] = useState<boolean>(false)
   const [sendMessageImgSelectedIndex, setSendMessageImgSelectedIndex] = useState<number>(0)
 
   useEffect(() => {
@@ -106,15 +116,6 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
 
   const messages = prepareData()
 
-  useEffect(() => {
-    const scrollToLastItem = () => {
-      if (listRef.current) {
-        listRef.current.scrollToItem(messages.length - 1, 'end');
-      }
-    };
-    scrollToLastItem();
-  }, [messages.length, listHeight, chatId]);
-
   const scrollToBottom = () => {
     if (messageContainerRef.current) {
       messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
@@ -125,8 +126,10 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
     scrollToBottom();
     if (chatId) {
       handleSetChatName()
+      handleUpdateSeen(chatId)
     }
-  }, [chatId]);
+  }, [chatId, messages.length]);
+
 
   useEffect(() => {
     const updateHeight = () => {
@@ -141,6 +144,27 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
 
     return () => window.removeEventListener('resize', updateHeight);
   }, [chatId]);
+
+  const handleUpdateSeen = async (chatRoomId: any) => {
+    try {
+
+      let filteredMessages = [];
+      filteredMessages = userData?.chat
+        ?.find((chat: any) => chat?._id === chatRoomId)
+        ?.messages?.filter(
+          (message: any) =>
+            message?.sender !== userData?._id && message.seen === false,
+        )
+        ?.map((message: any) => message._id) || [];
+      if (filteredMessages?.length > 0) {
+        dispatch(setSeenTrueRedux({ chatRoomId, messageIds: filteredMessages }));
+        const response = await setSeenTrue(authToken, filteredMessages);
+      }
+    } catch (error) {
+      console.log(error);
+
+    }
+  }
 
   const handleSetChatName = async () => {
     const chat = userData?.chat?.find((chat: any) => chat?._id === chatId)
@@ -184,23 +208,53 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
   }
 
   const removeSpacificImage = (index: number) => {
-    // setSelectedImage((prevImg: any) => prevImg.filter((_: any, i: number) => i !== index))
     setSelectedImage((prevImages) => {
       const updatedImages = prevImages.filter((_, i) => i !== index);
-      console.log("length ", updatedImages?.length);
       if (updatedImages?.length == 0) {
         setShowImageScreen(false)
       }
-      // Check the remaining length
-      // if (updatedImages.length > 0) {
-      //   setIsImageAvailable(true);
-      // } else {
-      //   setIsImageAvailable(false);
-      // }
-
       return updatedImages;
     });
   }
+
+  const handleSendMessage = async () => {
+    try {
+      setText('')
+      setSelectedImage([])
+      setShowImageScreen(false)
+      const body = { text, image: selectedImage }
+      const response = await sendMessage(authToken, body, chatId)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleSwipeDirection = (e: any) => {
+    const touch = e.touches[0];
+    const startX = touch.clientX;
+
+    const handleTouchEnd = (e: any) => {
+      const touchEnd = e.changedTouches[0];
+      const deltaX = touchEnd.clientX - startX;
+
+      if (Math.abs(deltaX) > Math.abs(touchEnd.clientY - touch.clientY)) {
+        if (deltaX > 0) {
+          setSendMessageImgSelectedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+        } else {
+          setSendMessageImgSelectedIndex((prevIndex) => Math.min(prevIndex + 1, selectedImage.length - 1));
+        }
+      }
+
+      if (sendMessageImageScrollRef.current) {
+        sendMessageImageScrollRef.current.removeEventListener('touchend', handleTouchEnd);
+      }
+    };
+
+    if (sendMessageImageScrollRef.current) {
+      sendMessageImageScrollRef.current.addEventListener('touchend', handleTouchEnd);
+    }
+  };
+
 
   return (
     <div className='h-full select-none'>
@@ -208,17 +262,33 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
         chatId ?
           showImageScreen ? (
             imageUploadLoader ? (
-              <div className='h-full inset-0 bg-black bg-opacity-90 flex items-center justify-center'>
-                <div
-                  className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-white border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-                  role="status">
-                </div>
+              <div className='h-full inset-0 bg-black bg-opacity-85 flex items-center justify-center'>
+                <RightToLeftAnimation>
+                  <div
+                    className="inline-block h-9 w-9 animate-spin rounded-full border-4 border-white border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                    role="status">
+                  </div>
+                </RightToLeftAnimation>
               </div>
             ) : (
-              <div className='h-full inset-0 bg-black bg-opacity-90 relative w-full h-full flex items-center justify-center'>
+
+              <RightToLeftAnimation className='h-full inset-0 bg-black bg-opacity-85 relative w-full h-full flex items-center justify-center'>
+                <div className='bg-white absolute top-4 left-4 p-2 rounded-full cursor-pointer active:opacity-50 z-10' onClick={() => {
+                  setShowImageScreen(false)
+                  setSelectedImage([])
+                }}>
+                  <motion.img
+                    src={images.cross}
+                    className="w-4 cursor-pointer"
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 1.5 }}
+                  />
+                </div>
                 <div
                   ref={sendMessageImageScrollRef}
                   className="flex overflow-hidden w-full h-full relative"
+                  style={{ position: 'relative', scrollSnapType: 'x mandatory', touchAction: 'pan-x', }}
+                  onTouchStart={handleSwipeDirection}
                 >
                   <div className="flex justify-center items-center snap-center min-w-[100%] h-[100%]">
                     <img
@@ -227,49 +297,11 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
                     />
                   </div>
                 </div>
-                {/* <div className='absolute bottom-5 flex flex-row gap-3 items-center overflow-x-auto max-w-[90%]'>
-                  {
-                    selectedImage?.map((item, index) => {
-                      return (
-                        <div key={index}>
-                          <img src={item} className={index === sendMessageImgSelectedIndex ? 'w-20 h-20 cursor-pointer border-2 border-white rounded-md relative' :
-                            'w-16 h-16 cursor-pointer rounded-md relative'}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setSendMessageImgSelectedIndex(index)
-                            }} />
-                          {
-                            index === sendMessageImgSelectedIndex &&
-                            <div className='bg-black bg-opacity-30 p-2 absolute top-0 cursor-pointer active:opacity-70 w-20 h-20 flex items-center justify-center rounded-md' onClick={() => removeSpacificImage(index)}>
-                              <img
-                                src={images.deleteIcon}
-                                className='absolute w-8 h-8 invert brightness-0'
-                              />
-                            </div>
-                          }
-                        </div>
-                      )
-                    })
-                  }
-                  <div className='w-20 h-20 cursor-pointer rounded-md flex items-center justify-center border-2 border-white active:opacity-70' onClick={handleButtonClick}>
-                    <input
-                      id='fileInput'
-                      ref={fileInputRef}
-                      type='file'
-                      className='hidden'
-                      onChange={handleUploadChatImages}
-                      accept='.png, .jpg, .jpeg'
-                      multiple
-                    />
-                    <img src={images.cross} className='w-10 h-10 rotate-45 filter invert brightness-0' />
-                  </div>
-                </div> */}
-
                 <div className="absolute bottom-5 flex flex-row gap-3 items-center overflow-x-auto max-w-[90%] hide-scrollbar">
                   {
                     selectedImage?.map((item, index) => {
                       return (
-                        <div key={index}  className="flex-shrink-0">
+                        <div key={index} className="flex-shrink-0">
                           <img
                             src={item}
                             className={index === sendMessageImgSelectedIndex
@@ -313,79 +345,67 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
                     <img src={images.cross} className="w-10 h-10 rotate-45 filter invert brightness-0" />
                   </div>
                 </div>
-              </div>
+                <div className='bg-white absolute bottom-4 right-4 p-2 rounded-full active:opacity-70 ' onClick={handleSendMessage}>
+                  <AnimatedImage src={images.arrowBlackIcon} className='cursor-pointer w-6 ' />
+                </div>
+              </RightToLeftAnimation>
             )
           ) : (
-            <AnimatePresence>
-              <motion.div
-                initial={{ opacity: 0, y: -50, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-                exit={{ opacity: 0, y: -50, scale: 0.9 }}
-                transition={{
-                  duration: 0.4,
-                  ease: "easeInOut",
-                  type: 'tween',
-                  stiffness: 200,
-                }}
-                className='h-full'
-              >
-                <motion.div
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  transition={{
-                    delay: 0.1,
-                    duration: 0.6,
-                    ease: "easeOut",
-                  }}
-                  className="h-full w-full flex flex-col bg-white shadow-md rounded-md"
-                >
-                  <div className='px-2 py-1 text-lg font-semibold flex flex-row items-center' onClick={() => setChatId(null)}>
-                    {isSmallScreen && <img src={images.arrowBtnBlack} className='rotate-180 w-4 h-6  cursor-pointer active:opacity-50' />}
-                    <div className={isSmallScreen ? 'ml-3' : ''}>
-                      {chatName}
-                    </div>
-                  </div>
+            <RightToLeftAnimation
+              key={chatId}
+              className="h-full w-full flex flex-col bg-white shadow-md rounded-md">
+              <div className='px-2 py-1 text-lg font-semibold flex flex-row items-center' onClick={() => setChatId(null)}>
+                {isSmallScreen && <img src={images.arrowBtnBlack} className='rotate-180 w-4 h-6  cursor-pointer active:opacity-50' />}
+                <div className={isSmallScreen ? 'ml-3' : ''}>
+                  {chatName}
+                </div>
+              </div>
 
-                  <div
-                    ref={messageContainerRef}
-                    className="flex-1 overflow-auto flex flex-col chatScrollbar p-2"
-                  >
-                    {
-                      messages.map((item: any, index: number) => {
-                        if (item?.type === 'header') {
-                          return (
-                            <div className='flex flex-row items-center justify-between w-full mt-1' key={index}>
-                              <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
-                              <div className='text-black text-xs md:text-sm'>{item.header}</div>
-                              <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
-                            </div>
-                          )
-                        }
-                        return (
-                          item.image?.length > 0 ? <div
-                            key={index}
-                            className={
-                              item?.sender === userData?._id ?
-                                'bg-white mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-end rounded-t-md rounded-bl-md border border-appGray' :
-                                'bg-appGray mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-start rounded-t-md rounded-br-md'
-                            }
-                          >
-                            <ImageGrid images={item?.image} />
-                          </div> :
-                            <div
-                              className={
-                                item?.sender === userData?._id ?
-                                  'bg-white mt-1 p-1  max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-end rounded-t-md rounded-bl-md border border-appGray' :
-                                  'bg-appGray mt-1 p-1 max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-start rounded-t-md rounded-br-md'
-                              }
-                            >
-                              <div>{item.text}</div>
-                            </div>
-                        )
-                      })
+              <div
+                ref={messageContainerRef}
+                className="flex-1 overflow-auto flex flex-col chatScrollbar p-2"
+              >
+                {
+                  messages.map((item: any, index: number) => {
+                    if (item?.type === 'header') {
+                      return (
+                        <div className='flex flex-row items-center justify-between w-full mt-1' key={index}>
+                          <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
+                          <div className='text-black text-xs md:text-sm'>{item.header}</div>
+                          <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
+                        </div>
+                      )
                     }
-                  </div>
-                  <div className="flex items-center bg-white border cursor-text w-full border border-appGray rounded-lg pr-2 w-[99%] mx-auto mb-2" onClick={handleDivClick}>
+                    return (
+                      item.image?.length > 0 ? <div
+                        key={index}
+                        className={
+                          item?.sender === userData?._id ?
+                            'bg-white mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-end rounded-t-md rounded-bl-md border border-appGray' :
+                            'bg-appGray mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-start rounded-t-md rounded-br-md'
+                        }
+                      >
+                        <ImageGrid images={item?.image} isSmallScreen={isSmallScreen} />
+                      </div> :
+                        <div
+                          className={
+                            item?.sender === userData?._id ?
+                              'bg-white mt-1 p-1  max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-end rounded-t-md rounded-bl-md border border-appGray' :
+                              'bg-appGray mt-1 p-1 max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-start rounded-t-md rounded-br-md'
+                          }
+                        >
+                          <div>{item.text}</div>
+                        </div>
+                    )
+                  })
+                }
+              </div>
+              {
+                isDeleted ? (
+                  <div className='text-red-500 p-2 font-semibold text-center bg-transparent'> This account is no longer available </div>
+                ) : (
+
+                  < div className="flex items-center bg-white border cursor-text w-full border border-appGray rounded-lg pr-2 w-[99%] mx-auto mb-2" onClick={handleDivClick}>
                     <textarea
                       placeholder="Write Message.."
                       className="w-full p-2 resize-none hide-scrollbar focus:outline-none bg-transparent"
@@ -396,7 +416,7 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
                     </textarea>
                     {
                       text ?
-                        <img src={images.arrowBlackIcon} className='cursor-pointer w-8 active:opacity-70' />
+                        <img src={images.arrowBlackIcon} className='cursor-pointer w-8 active:opacity-70' onClick={handleSendMessage} />
                         :
                         <img src={images.chatImg} className='cursor-pointer w-8 active:opacity-70' onClick={handleButtonClick} />
                     }
@@ -410,112 +430,14 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId }: Props) => {
                       multiple
                     />
                   </div>
-                </motion.div>
-              </motion.div>
-            </AnimatePresence>
+                )}
+
+            </RightToLeftAnimation>
           )
           : <div>no chat to show </div>
       }
-    </div>
+    </div >
   );
 };
 
 export default ChatMessage;
-
-{/* <AnimatePresence>
-<motion.div
-  initial={{ opacity: 0, y: -50, scale: 0.9 }}
-  animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-  exit={{ opacity: 0, y: -50, scale: 0.9 }}
-  transition={{
-    duration: 0.4,
-    ease: "easeInOut",
-    type: 'tween',
-    stiffness: 200,
-  }}
-  className='h-full'
->
-  <motion.div
-    initial={{ scale: 0.8 }}
-    animate={{ scale: 1 }}
-    transition={{
-      delay: 0.1,
-      duration: 0.6,
-      ease: "easeOut",
-    }}
-    className="h-full w-full flex flex-col bg-white shadow-md rounded-md"
-  >
-    <div className='px-2 py-1 text-lg font-semibold flex flex-row items-center' onClick={() => setChatId(null)}>
-      {isSmallScreen && <img src={images.arrowBtnBlack} className='rotate-180 w-4 h-6  cursor-pointer active:opacity-50' />}
-      <div className={isSmallScreen ? 'ml-3' : ''}>
-        {chatName}
-      </div>
-    </div>
-
-    <div
-      ref={messageContainerRef}
-      className="flex-1 overflow-auto flex flex-col chatScrollbar p-2"
-    >
-      {
-        messages.map((item: any, index: number) => {
-          if (item?.type === 'header') {
-            return (
-              <div className='flex flex-row items-center justify-between w-full mt-1' key={index}>
-                <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
-                <div className='text-black text-xs md:text-sm'>{item.header}</div>
-                <div className='h-[2px] w-[35%] sm:w-[40%] md:w-[42%] lg:w-[45%] bg-inputGray'></div>
-              </div>
-            )
-          }
-          return (
-            item.image?.length > 0 ? <div
-            key={index}
-              className={
-                item?.sender === userData?._id ?
-                  'bg-white mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-end rounded-t-md rounded-bl-md border border-appGray' :
-                  'bg-appGray mt-1 p-1 w-[80%] sm:w-[60%] md:w-[50%] lg:w-[70%] xl:w-[40%] 2xl:w-[30%] self-start rounded-t-md rounded-br-md'
-              }
-            >
-              <ImageGrid images={item?.image} />
-            </div> :
-              <div 
-                className={
-                  item?.sender === userData?._id ?
-                    'bg-white mt-1 p-1  max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-end rounded-t-md rounded-bl-md border border-appGray' :
-                    'bg-appGray mt-1 p-1 max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[80%] xl:max-w-[50%] 2xl:max-w-[40%] self-start rounded-t-md rounded-br-md'
-                }
-              >
-                <div>{item.text}</div>
-              </div>
-          )
-        })
-      }
-    </div>
-    <div className="flex items-center bg-white border cursor-text w-full border border-appGray rounded-lg pr-2 w-[99%] mx-auto mb-2" onClick={handleDivClick}>
-      <textarea
-        placeholder="Write Message.."
-        className="w-full p-2 resize-none hide-scrollbar focus:outline-none bg-transparent"
-        rows={2}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      >
-      </textarea>
-      {
-        text ?
-          <img src={images.arrowBlackIcon} className='cursor-pointer w-8 active:opacity-70' />
-          :
-          <img src={images.chatImg} className='cursor-pointer w-8 active:opacity-70' onClick={handleButtonClick} />
-      }
-      <input
-        id='fileInput'
-        ref={fileInputRef}
-        type='file'
-        className='hidden'
-        onChange={handleUploadChatImages}
-        accept='.png, .jpg, .jpeg'
-        multiple
-      />
-    </div>
-  </motion.div>
-</motion.div>
-</AnimatePresence> */}

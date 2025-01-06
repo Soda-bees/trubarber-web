@@ -4,10 +4,13 @@ import React from "react";
 interface ScrollAnimationProps {
     children: React.ReactNode;
     className?: string;
-    delay?: number
+    delay?: number,
+    custom?: number;
 }
 
-const LeftToRightAnimation: React.FC<ScrollAnimationProps> = ({ children, className, delay }) => {
+const LeftToRightAnimation: React.FC<ScrollAnimationProps> = ({ children, className, delay, custom }) => {
+    const animationDuration = 0.6; // Duration of a single animation
+    const staggerFactor = 0.6;
     return (
         <motion.div
             initial={{ opacity: 0, x: -100 }}
@@ -15,7 +18,8 @@ const LeftToRightAnimation: React.FC<ScrollAnimationProps> = ({ children, classN
             viewport={{ once: false, amount: 0.5 }}
             transition={{
                 duration: 0.6,
-                delay,
+                // delay,
+                delay: custom ? custom * animationDuration * staggerFactor : delay, // Calculate delay dynamically
                 ease: "easeOut",
             }}
             className={className}
