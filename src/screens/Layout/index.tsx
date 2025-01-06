@@ -9,6 +9,7 @@ import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import Footer from "../../components/Footer";
 import useNavigate from "../../components/ScrollToTopNavigate";
 import ScrollTopButton from "../../components/ScrollTopButton";
+import { selectRole } from "../../Store/Role";
 
 type Props = {};
 
@@ -16,6 +17,7 @@ const Layout = (props: Props) => {
 
   const authToken = useSelector(selectAuthToken);
   const navigate = useNavigate()
+  const role = useSelector(selectRole)
 
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
   const [showHamburger, setShowHamburger] = useState<boolean>(false);
@@ -105,18 +107,45 @@ const Layout = (props: Props) => {
     //   }
     // }, [authToken, navigate])
 
-    useEffect(() => {
-      if (authToken) {
-          // Check for a redirect path saved in sessionStorage
-          const redirectPath = sessionStorage.getItem('redirectAfterLogin');
-          if (redirectPath) {
-              sessionStorage.removeItem('redirectAfterLogin'); // Clear the saved path
-              navigate(redirectPath); // Navigate to the intended path
-          } else if (activePath === '/signin' || activePath === '/signup') {
-              navigate('/'); // Default behavior: Redirect to home
-          }
-      }
-  }, [authToken, navigate, activePath]);
+  //   useEffect(() => {
+  //     if (authToken) {
+  //         // Check for a redirect path saved in sessionStorage
+  //         const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+  //         if (redirectPath) {
+  //             sessionStorage.removeItem('redirectAfterLogin'); // Clear the saved path
+  //             navigate(redirectPath); // Navigate to the intended path
+  //         } else if (activePath === '/signin' || activePath === '/signup') {
+  //             navigate('/'); // Default behavior: Redirect to home
+  //         }
+  //     }
+  // }, [authToken, navigate, activePath]);
+
+  useEffect(() => {
+    if (authToken) {
+        // Check if there's a redirect path saved (e.g., from sessionStorage or query params)
+        const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+        if (redirectPath) {
+            sessionStorage.removeItem('redirectAfterLogin'); // Clear the saved path
+            navigate(redirectPath); // Navigate to the intended path
+        } else if (activePath === '/signin' || activePath === '/signup') {
+          console.log("work 1");
+          
+            if (role === 'barber') {
+              console.log("work barber");
+              
+                navigate('/barber-dashboard'); // Redirect barber
+            } else if (role === 'user') {
+              console.log("work user");
+              
+                navigate('/'); // Redirect user to home
+            } else {
+              console.log("no role");
+              
+                navigate('/'); // Fallback redirection
+            }
+        }
+    }
+}, [authToken, role, navigate, activePath]);
 
   return (
     <div className="flex flex-row min-h-screen max-w-[2800px] mx-auto relative">

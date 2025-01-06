@@ -45,6 +45,8 @@ const socketService = (dispatch: any, authToken: any, userData: any) => {
         dispatch(addReview(data));
     };
     const handleUpdateReview = (data: any) => {
+        console.log('data', data);
+        
         dispatch(updateReview(data));
     };
     const handleDeleteReview = (data: any) => {

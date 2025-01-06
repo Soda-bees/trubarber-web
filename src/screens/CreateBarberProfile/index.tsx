@@ -1,15 +1,35 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import BackButton from "../../components/BackButton";
 import images from "../../services/config/images";
 import SmallButton from "../../components/SmallButton";
 import { Toast } from "../../components/Toast";
 import TimePicker from "react-time-picker";
 import moment from "moment";
+import { useLocation } from "react-router-dom";
+import {
+  handleBarberSignup,
+  uploadMultiplesImages,
+  uploadProfile,
+} from "../../services/config/Api";
+import { useDispatch, useSelector } from "react-redux";
+import { selectLocation, setLocation } from "../../Store/LocationSlice";
+import { setUser } from "../../Store/userDataSlice";
+import { setAuthToken } from "../../Store/AuthTokenSlice";
+import { setRole } from "../../Store/Role";
 
 type Props = {};
 
 const CreateBarberProfile = (props: Props) => {
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const reduxLocation = useSelector(selectLocation);
+  // console.log("location from Redux ==========>>", reduxLocation);
+
+  const userData = location.state?.userData;
+  // console.log('data from previous screen', userData);
+
   const [gender, setGender] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [tagSelection, setTagSelection] = useState<string[]>([
     "#OfferedServices",
     "#HaircutStyles",
@@ -50,6 +70,15 @@ const CreateBarberProfile = (props: Props) => {
   const [showUpdateServiceModal, setShowUpdateServiceModal] =
     useState<boolean>(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [serviceImageLoader, setServiceImageLoader] = useState<boolean>(false);
+  const [instagram, setInstagram] = useState<string>("https://");
+  const [showTimeModal, setShowTimeModal] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState<any>({
+    index: null,
+    type: null,
+  });
+  const [imgUri, setImgUri] = useState<any>("");
 
   const handleSetGender = (selected: string) => {
     setGender(selected);
@@ -65,22 +94,36 @@ const CreateBarberProfile = (props: Props) => {
     });
   };
 
-  const handleCreate = () => {
-    if (!gender) {
-      return Toast("error", "Gender required");
-    }
-    if (selectedTagSelection?.length <= 0) {
-      return Toast("error", "Please select tags");
-    }
+  const [currentPosition, setCurrentPosition] = useState({
+    lat: 30.8157976264542,
+    lng: 70.04061958392309,
+  });
 
-    setIsModalOpen(true);
-  };
-
-  const handleConfirm = async () => {
-    setLoader(true);
-    setTimeout(() => {
-      setLoader(false);
-    }, 1500);
+  const handleAccessLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const newPosition = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          console.log("Current Position:", newPosition);
+          dispatch(setLocation(newPosition));
+        },
+        (error) => {
+          if (error.code === error.PERMISSION_DENIED) {
+            Toast(
+              "error",
+              "Location access denied. Please enable location access in your browser settings."
+            );
+          } else {
+            Toast("error", `Error fetching location: ${error.message}`);
+          }
+        }
+      );
+    } else {
+      Toast("error", "Geolocation is not supported by this browser.");
+    }
   };
 
   const handleSelectDays = async (item: string) => {
@@ -196,21 +239,12 @@ const CreateBarberProfile = (props: Props) => {
     });
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files[0]) {
-      const imageUrl = URL.createObjectURL(files[0]);
-      setUploadedImage(imageUrl);
-      console.log("Selected file:", files[0]);
-    }
-  };
-
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
 
   const [scheduleTiming, setScheduleTiming] = useState<any[]>([
     {
-      avaiable: false,
+      avaiable: true,
       day: "Monday",
       startTime: new Date(),
       endTime: new Date(),
@@ -233,6 +267,24 @@ const CreateBarberProfile = (props: Props) => {
       startTime: new Date(),
       endTime: new Date(),
     },
+    {
+      avaiable: true,
+      day: "Friday",
+      startTime: new Date(),
+      endTime: new Date(),
+    },
+    {
+      avaiable: true,
+      day: "Saturday",
+      startTime: new Date(),
+      endTime: new Date(),
+    },
+    {
+      avaiable: true,
+      day: "Sunday",
+      startTime: new Date(),
+      endTime: new Date(),
+    },
   ]);
 
   const handleAvailabilityToggle = (index: number) => {
@@ -243,60 +295,9 @@ const CreateBarberProfile = (props: Props) => {
     );
   };
 
-  const [showTimeModal, setShowTimeModal] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState<any>({
-    index: null,
-    type: null,
-  });
-
   const handleSetSelectedIndex = (index: number, type: string) => {
     setSelectedIndex({ index, type });
     setShowTimeModal(true);
-  };
-
-  const handleTimeChange = (time: string | null) => {
-    if (time !== null) {
-        const [hours, minutes] = time.split(":").map(Number); // Split the string into hours and minutes
-    
-        if (isNaN(hours) || isNaN(minutes)) {
-          console.error("Invalid time format");
-          return;
-        }
-    
-        // Create a new Date object with today's date and the specified time
-        const currentDate = new Date();
-        currentDate.setHours(hours);
-        currentDate.setMinutes(minutes);
-        currentDate.setSeconds(0); // Optional: reset seconds to 0
-        currentDate.setMilliseconds(0); // Optional: reset milliseconds to 0
-    
-        const updatedScheduleTiming = [...scheduleTiming];
-        if (selectedIndex?.index !== null) {
-          updatedScheduleTiming[selectedIndex.index] = {
-            ...updatedScheduleTiming[selectedIndex.index],
-            [selectedIndex.type]: currentDate, // Store the full Date object
-          };
-        }
-    
-        console.log("Parsed Time:", currentDate);
-        console.log("Updated Schedule Timing:", updatedScheduleTiming);
-    
-        setScheduleTiming(updatedScheduleTiming);
-      }
-    // if (time !== null) {
-    //   const updatedScheduleTiming = [...scheduleTiming];
-    //   if (selectedIndex?.index !== null) {
-    //     updatedScheduleTiming[selectedIndex.index] = {
-    //       ...updatedScheduleTiming[selectedIndex.index],
-    //       [selectedIndex.type]: time,
-    //     };
-    //   }
-    //   console.log(time);
-      
-    //   console.log(updatedScheduleTiming);
-      
-    //   setScheduleTiming(updatedScheduleTiming);
-    // }
   };
 
   const handleCloseModal = () => {
@@ -317,6 +318,290 @@ const CreateBarberProfile = (props: Props) => {
     return `${hours}:${minutes} ${ampm}`;
   };
 
+  const handleTimeChange = (time: string | null) => {
+    if (time !== null) {
+      const [hours, minutes] = time.split(":").map(Number);
+
+      if (isNaN(hours) || isNaN(minutes)) {
+        console.error("Invalid time format");
+        return;
+      }
+
+      const currentDate = new Date();
+      currentDate.setHours(hours);
+      currentDate.setMinutes(minutes);
+      currentDate.setSeconds(0);
+      currentDate.setMilliseconds(0);
+
+      const updatedScheduleTiming = [...scheduleTiming];
+      if (selectedIndex?.index !== null) {
+        updatedScheduleTiming[selectedIndex.index] = {
+          ...updatedScheduleTiming[selectedIndex.index],
+          [selectedIndex.type]: currentDate,
+        };
+      }
+
+      console.log("Parsed Time:", currentDate);
+      console.log("Updated Schedule Timing:", updatedScheduleTiming);
+
+      setScheduleTiming(updatedScheduleTiming);
+    }
+  };
+
+  const triggerFileInput = () => {
+    document.getElementById("fileInput")?.click();
+  };
+
+  const handleUploadProfile = async (e: any) => {
+    try {
+      setServiceImageLoader(true);
+      const selectedFile = e.target.files[0];
+      const formData = new FormData();
+      formData.append("image", selectedFile);
+      const response = await uploadProfile(formData);
+      if (response?.success) {
+        setProfileImage(response?.url);
+        setServiceImageLoader(false);
+      } else {
+        Toast("error", response?.message);
+        setServiceImageLoader(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setServiceImageLoader(false);
+    }
+  };
+
+  const handleUploadServiceImg = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const formData = new FormData();
+
+      Array.from(files).forEach((file) => {
+        formData.append("images", file);
+      });
+      setServiceImageLoader(true);
+      const response = (await uploadMultiplesImages(formData)) as {
+        status: any;
+        data: any;
+      };
+      if (response?.status === 200) {
+        const uploadedUrls = response?.data?.images || [];
+        setSelectedServices((prevServices) => {
+          const newServices = [...prevServices];
+          newServices[activeServiceIndex] = {
+            ...newServices[activeServiceIndex],
+            pictures: [
+              ...newServices[activeServiceIndex].pictures,
+              ...uploadedUrls,
+            ],
+          };
+          return newServices;
+        });
+        setServiceImageLoader(false);
+      } else {
+        setServiceImageLoader(false);
+      }
+    } else {
+      setServiceImageLoader(false);
+      console.log("No files selected");
+    }
+  };
+
+  const triggerServiceFileInput = () => {
+    document.getElementById("service")?.click();
+  };
+
+  const handleRemoveImage = (pictureIndex: any) => {
+    setSelectedServices((prevServices) => {
+      const newServices = [...prevServices];
+      newServices[activeServiceIndex] = {
+        ...newServices[activeServiceIndex],
+        pictures: newServices[activeServiceIndex].pictures.filter(
+          (_: any, idx: any) => idx !== pictureIndex
+        ),
+      };
+      return newServices;
+    });
+  };
+
+  const handleSaveBarberService = (options: any) => {
+    if (!options || options.length === 0) {
+      return { success: false, message: "At least one catogery is required." };
+    }
+
+    for (const [index, option] of options.entries()) {
+      const { name, price, time } = option;
+
+      if (name.trim() === "") {
+        return {
+          success: false,
+          message: `Please add catogery ${index + 1} name`,
+        };
+      }
+      if ("time" in option && time.trim() === "") {
+        return {
+          success: false,
+          message: `Please add catogery ${index + 1} time`,
+        };
+      }
+      if (price.trim() === "") {
+        return {
+          success: false,
+          message: `Please add catogery ${index + 1} price`,
+        };
+      }
+    }
+
+    return { success: true, message: "" };
+  };
+
+  const handleConfirmService = () => {
+    const isValid = handleSaveBarberService(
+      selectedServices[activeServiceIndex]?.options
+    );
+    if (selectedServices[activeServiceIndex].pictures?.length === 0) {
+      return Toast("error", "Please upload at least one picture");
+    }
+    if (!isValid?.success) {
+      return Toast("error", isValid?.message);
+    }
+    if (!selectedServices[activeServiceIndex].description) {
+      return Toast("error", "Please add service description");
+    } else {
+      setShowUpdateServiceModal(false);
+    }
+  };
+
+  const isValidInstagramLink = (url: any) => {
+    const instagramRegex =
+      /^(https?:\/\/)?(www\.)?instagram\.com\/([a-zA-Z0-9._]+)/;
+
+    // Test the URL against the regex pattern
+    return instagramRegex.test(url);
+  };
+
+  const handleCreate = () => {
+    if (!reduxLocation) {
+      Toast("error", "Please enable current Location");
+      handleAccessLocation();
+      return;
+    }
+    if (!profileImage) {
+      return Toast("error", "Please upload Profile picture");
+    }
+    if (!gender) {
+      return Toast("error", "Gender required");
+    }
+    if (!instagram) {
+      return Toast("error", "Please provide your instagram profile link");
+    }
+    if (!isValidInstagramLink(instagram)) {
+      return Toast(
+        "error",
+        "Please provide your correct instagram profile link"
+      );
+    }
+    if (!description) {
+      return Toast("error", "Please enter description");
+    }
+    if (!selectedServices[activeServiceIndex]) {
+      return Toast("error", "Please select service");
+    }
+    if (selectedTagSelection?.length <= 0) {
+      return Toast("error", "Please select tags");
+    }
+    if (!imgUri) {
+      return Toast("error", "Please complete Business Verification");
+    }
+    setIsModalOpen(true);
+  };
+
+  const triggerBusinessFileInput = () => {
+    document.getElementById("business")?.click();
+  };
+
+  const handleBusinessProfile = async (e: any) => {
+    try {
+      setServiceImageLoader(true);
+      const selectedFile = e.target.files[0];
+      const formData = new FormData();
+      formData.append("image", selectedFile);
+      const response = await uploadProfile(formData);
+      if (response?.success) {
+        setImgUri(response?.url);
+        setServiceImageLoader(false);
+      } else {
+        Toast("error", response?.message);
+        setServiceImageLoader(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setServiceImageLoader(false);
+    }
+  };
+
+  const handleSignUp = async () => {
+    const updatedScheduled = scheduleTiming.map((item) => {
+      const formattedStartTime = formatTime(item?.startTime);
+      const formattedEndTime = formatTime(item?.endTime);
+      const { startTime, endTime, ...rest } = item;
+      console.log("format", formattedStartTime);
+
+      return {
+        ...rest,
+        time: item?.avaiable
+          ? `${formattedStartTime} - ${formattedEndTime}`
+          : "",
+      };
+    });
+    // console.log("updatedScheduled", updatedScheduled);
+    try {
+      setLoader(true);
+      const updatedUserData = {
+        ...userData,
+        location: reduxLocation,
+        gender,
+        description,
+        instagram,
+        services: selectedServices,
+        tagSelection: selectedTagSelection,
+        businessVerification: imgUri,
+        scheduled: updatedScheduled,
+      };
+      // console.log("userData", userData);
+      // console.log("updatedUserData", updatedUserData);
+
+      const response = (await handleBarberSignup(updatedUserData)) as {
+        data: any;
+        status: any;
+      };
+
+      if (response.status == 201) {
+        setLoader(false);
+        dispatch(setUser(response?.data?.barber));
+        dispatch(setAuthToken(response?.data?.token));
+        dispatch(setRole(response?.data?.barber?.role));
+        console.log("signup ka res", response);
+      } else {
+        setLoader(false);
+        Toast("error", response?.data?.message);
+      }
+    } catch (error: any) {
+      setLoader(false);
+      Toast("error", error?.message);
+    }
+  };
+
+  // const handleConfirm = async () => {
+  //   setLoader(true);
+  //   setTimeout(() => {
+  //     setLoader(false);
+  //   }, 1500);
+  // };
+
   return (
     <div className="px-4 py-4 w-full">
       <BackButton light={true} title="Create Your Barber Account" />
@@ -327,11 +612,23 @@ const CreateBarberProfile = (props: Props) => {
               Upload your profile picture
             </div>
             <div className="flex flex-row items-center p-3 border border-inputGray rounded-3xl mt-2 shadow-sm">
-              <img src={images.profileUpload} className="w-20 mr-4 sm:mr-10" />
+              <img
+                src={profileImage || images.profileUpload}
+                className="w-20 mr-4 sm:mr-10 rounded-3xl h-20"
+              />
+              <input
+                id="fileInput"
+                type="file"
+                style={{ display: "none" }}
+                accept="image/*"
+                onChange={handleUploadProfile}
+              />
               <SmallButton
                 title={"Upload Photo"}
                 dark={true}
                 image={images.uploadBtn}
+                imgLoader={serviceImageLoader}
+                onClick={triggerFileInput}
               />
             </div>
           </div>
@@ -363,36 +660,71 @@ const CreateBarberProfile = (props: Props) => {
                 <input
                   placeholder="Add Link"
                   className="w-full bg-transparent text-sm h-10 focus:outline-none pl-2"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
                 />
               </div>
               <textarea
                 placeholder="Description"
                 className="bg-inputGray w-full mt-2 rounded-xl px-4 py-2 focus:outline-none resize-none h-36"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               ></textarea>
-              <div className="bg-inputGray flex flel-row items-center justify-between px-4 py-1 rounded-xl w-full mt-2">
-                <div className="">
-                  <div className="text-sm text-textGray">Time</div>
-                  <div className="font-semibold">06:00 AM - 10:00 PM</div>
-                </div>
-                <img src={images.clock} className="w-6" />
-              </div>
-              <div className="mt-6">
-                <div className="text-textGray text-sm">
-                  Choose your day off from work
-                </div>
-                <div className="flex flex-row items-center gap-4 mt-2 flex-wrap">
-                  {days?.map((item: string, index: number) => {
-                    return (
-                      <div key={index}>
-                        <SmallButton
-                          title={item}
-                          dark={offDays.includes(item) ? true : false}
-                          onClick={() => handleSelectDays(item)}
-                        />
+              <div
+                className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-4 mt-5 w-full`}
+              >
+                {scheduleTiming.map((item, index) => {
+                  return (
+                    <div key={index} className="flex flex-row items-center">
+                      <div
+                        className={`w-12 h-10 rounded-md flex flex-row items-center justify-center mr-2 cursor-pointer ${
+                          item?.avaiable ? "bg-inputGray" : "bg-disable"
+                        }`}
+                        onClick={() => handleAvailabilityToggle(index)}
+                      >
+                        <div
+                          className={`w-[15px] h-[15px] rounded-sm ${
+                            item?.avaiable ? "bg-green" : "bg-red-500"
+                          }`}
+                        ></div>
                       </div>
-                    );
-                  })}
-                </div>
+                      <div
+                        className={`h-10 w-full flex flex-row items-center justify-between rounded-md px-2 ${
+                          item?.avaiable ? "bg-inputGray" : "bg-disable"
+                        }`}
+                      >
+                        <div>{item?.day}</div>
+                        <div className="flex flex-row items-center">
+                          {!item?.avaiable ? (
+                            <div className="text-sm text-black font-semibold">
+                              Closed
+                            </div>
+                          ) : (
+                            <>
+                              <div
+                                className="cursor-pointer"
+                                onClick={() =>
+                                  handleSetSelectedIndex(index, "startTime")
+                                }
+                              >
+                                {formatTime(item?.startTime)}
+                              </div>
+                              <div className="mx-1">-</div>
+                              <div
+                                className="cursor-pointer"
+                                onClick={() =>
+                                  handleSetSelectedIndex(index, "endTime")
+                                }
+                              >
+                                {formatTime(item?.endTime)}
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -422,27 +754,29 @@ const CreateBarberProfile = (props: Props) => {
           <div className="mt-10">
             <div className="text-lg font-semibold">Services Added</div>
             <div className="text-sm mt-1 text-textGray">
-              Your service have been added successfully
+              Your service has been added successfully
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {selectedServices?.map((item: any, index: number) => {
                 return (
                   <div
                     key={index}
-                    className="border flex flex-row items-center justify-between border-inputGray rounded-3xl mt-2 p-4 shadow-sm"
+                    className="border border-inputGray rounded-3xl p-4 shadow-sm flex flex-col justify-between relative"
                   >
-                    <div className="flex flex-row items-start flex-grow">
+                    <div className="flex">
                       <div className="bg-inputGray p-6 rounded-md w-24 h-24 flex-shrink-0">
                         <img src={item?.icon} className="w-10 h-10" />
                       </div>
                       <div className="ml-4 flex-grow">
-                        <div className="text-lg font-bold">{`${item?.name} (${item?.options?.length} style)`}</div>
-                        <div className="text-textGray break-words w-[90%] line-clamp-3 leading-5">
+                        <div className="text-lg font-bold break-words">
+                          {`${item?.name} (${item?.options?.length} style)`}
+                        </div>
+                        <div className="text-textGray break-words overflow-hidden line-clamp-3 leading-5 max-h-[4.5rem]">
                           {item?.description}
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-row flex-shrink-0 mt-2 h-full">
+                    <div className="absolute top-4 right-4 flex space-x-4">
                       <img
                         src={images.edit}
                         onClick={() => handleUpdateService(index)}
@@ -451,7 +785,7 @@ const CreateBarberProfile = (props: Props) => {
                       <img
                         src={images.deleteIcon}
                         onClick={() => handleDeleteService(index)}
-                        className="w-4 h-5 active:opacity-50 cursor-pointer ml-4"
+                        className="w-4 h-5 active:opacity-50 cursor-pointer"
                       />
                     </div>
                   </div>
@@ -486,90 +820,43 @@ const CreateBarberProfile = (props: Props) => {
           <div className="text-sm mt-1 text-textGray">
             Verify Your Business: Upload Required Documents
           </div>
-          <div className="p-3 border border-inputGray rounded-3xl p-6 mt-3 items-center gap-2 shadow-sm flex flex-col">
-            <img
-              src={uploadedImage || images.businessImage}
-              alt="Uploaded Preview"
-              className="w-20 h-20 object-contain mb-2"
-            />
+          <div className="p-3 border border-inputGray rounded-3xl p-6 mt-3 items-center gap-4 shadow-sm flex flex-col">
+            <div className="w-full flex flex-wrap gap-4 justify-center"></div>
+            {serviceImageLoader ? (
+              <div
+                className="inline-block h-10 w-10 animate-spin rounded-full border-[3px] border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                role="status"
+              ></div>
+            ) : (
+              <>
+                <img
+                  src={imgUri || images.businessImage}
+                  alt="Placeholder"
+                  className="w-20 h-20 object-contain mb-2"
+                />
+              </>
+            )}
             <div className="text-textGray break-words w-[90%] text-sm text-center">
               Please attach your Business License or Registration Certificate
               for verification
             </div>
-            <div className="text-textGray break-words w-[90%] text-sm text-center">
+            <div className="text-textGray break-words w-[90%] text-sm text-center flex flex-row justify-center">
               Drag and drop your files here or
-              <label
-                htmlFor="fileUpload"
+              <div
                 className="font-bold text-black underline cursor-pointer ml-1"
+                onClick={triggerBusinessFileInput}
               >
                 choose files
-              </label>
+              </div>
               <input
-                id="fileUpload"
+                id="business"
                 type="file"
+                style={{ display: "none" }}
                 accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handleFileChange}
+                onChange={handleBusinessProfile}
               />
             </div>
           </div>
-        </div>
-        <div
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 gap-4 mt-10`}
-        >
-          {scheduleTiming.map((item, index) => {
-            return (
-              <div key={index} className="flex flex-row items-center">
-                <div
-                  className={`w-12 h-10 rounded-md flex flex-row items-center justify-center mr-2 cursor-pointer ${
-                    item?.avaiable ? "bg-inputGray" : "bg-disable"
-                  }`}
-                  onClick={() => handleAvailabilityToggle(index)}
-                >
-                  <div
-                    className={`w-[15px] h-[15px] rounded-sm ${
-                      item?.avaiable ? "bg-green" : "bg-red-500"
-                    }`}
-                  ></div>
-                </div>
-                <div
-                  className={`h-10 w-full flex flex-row items-center justify-between rounded-md px-2 ${
-                    item?.avaiable ? "bg-inputGray" : "bg-disable"
-                  }`}
-                >
-                  <div>{item?.day}</div>
-                  <div className="flex flex-row items-center">
-                    {!item?.avaiable ? (
-                      <div className="text-sm text-black font-semibold">
-                        Closed
-                      </div>
-                    ) : (
-                      <>
-                        <div
-                          className="cursor-pointer"
-                          onClick={() =>
-                            handleSetSelectedIndex(index, "startTime")
-                          }
-                        >
-                          {formatTime(item?.startTime)}
-                        </div>
-                        <div className="mx-1">-</div>
-                        <div
-                          className="cursor-pointer"
-                          onClick={() =>
-                            handleSetSelectedIndex(index, "endTime")
-                          }
-                        >
-                          {formatTime(item?.endTime)}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
         </div>
 
         <div className="mt-10 flex justify-center">
@@ -601,7 +888,7 @@ const CreateBarberProfile = (props: Props) => {
                 title="Get ready"
                 dark={true}
                 loader={loader}
-                onClick={handleConfirm}
+                onClick={handleSignUp}
               />
             </div>
           </div>
@@ -610,25 +897,152 @@ const CreateBarberProfile = (props: Props) => {
       {showUpdateServiceModal && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={() => !loader && setShowUpdateServiceModal(false)}
+          // onClick={() => !loader && setShowUpdateServiceModal(false)}
         >
           <div
-            className="bg-white w-[95%] sm:w-[50%] lg:w-[30%] xl:w-[25%] flex flex-col items-start rounded-xl p-4 shadow-lg max-h-[80vh] overflow-scroll hide-scrollbar"
+            className="bg-white w-[95%] sm:w-[50%] lg:w-[30%] xl:w-[25%] flex flex-col rounded-xl p-4 shadow-lg max-h-[80vh] overflow-scroll hide-scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex flex-row items-center justify-between w-full font-bold text-lg">
               {selectedServices[activeServiceIndex]?.name}
               {/* <img src={images.cross} className='w-4 cursor-pointer' /> */}
             </div>
-            {selectedServices[activeServiceIndex].pictures?.length > 0 ? (
+            {/* {selectedServices[activeServiceIndex].pictures?.length > 0 ? (
+              <div>{selectedServices[activeServiceIndex].pictures?.length}</div>
+            ) : (
               <div>
-                {" "}
-                {selectedServices[activeServiceIndex].pictures?.length}
+                <div className="bg-inputGray flex items-center justify-center py-2 px-2 rounded-xl mt-6">
+                  <div className="w-full overflow-x-auto flex gap-4 hide-scrollbar">
+                    {uploadServiceImages.length > 0 ? (
+                      uploadServiceImages.map((image, index) => (
+                        <div
+                          key={index}
+                          className="relative flex-shrink-0 w-48 h-48"
+                        >
+                          <img
+                            src={image}
+                            alt={`Uploaded ${index}`}
+                            className="w-full h-full rounded bg-no-repeat object-cover"
+                          />
+                          <div
+                            className="absolute top-2 right-2 bg-black text-white rounded-full p-1 cursor-pointer"
+                            onClick={() => handleRemoveImage(index)}
+                          >
+                            <img
+                              src={images.cross}
+                              className="filter invert dark-0 w-2"
+                              alt="Remove"
+                            />
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <img
+                        src={images.uploadGray}
+                        className="w-18 h-18 object-cover flex self-center ml-48 my-9"
+                        alt="Placeholder"
+                      />
+                    )}
+                    <input
+                      id="service"
+                      type="file"
+                      style={{ display: "none" }}
+                      accept="image/*"
+                      multiple={true}
+                      onChange={handleUploadServiceImg}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-row items-end justify-end mt-2">
+                  <SmallButton
+                    title="Add Service Pictures"
+                    dark={true}
+                    image={images.addWhite}
+                    smallImage={true}
+                    onClick={triggerServiceFileInput}
+                  />
+                </div>
+              </div>
+            )} */}
+            {selectedServices[activeServiceIndex].pictures?.length > 0 ? (
+              <div className="w-full overflow-x-auto flex gap-4 hide-scrollbar">
+                {selectedServices[activeServiceIndex].pictures.map(
+                  (image: any, index: number) => (
+                    <div
+                      key={index}
+                      className="relative flex-shrink-0 w-48 h-48"
+                    >
+                      <img
+                        src={image}
+                        alt={`Uploaded ${index}`}
+                        className="w-full h-full rounded bg-no-repeat object-cover"
+                      />
+                      <div
+                        className="absolute top-2 right-2 bg-black text-white rounded-full p-1 cursor-pointer"
+                        onClick={() => handleRemoveImage(index)}
+                      >
+                        <img
+                          src={images.cross}
+                          className="filter invert dark-0 w-2"
+                          alt="Remove"
+                        />
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
             ) : (
-              <div className="bg-inputGray cursor-pointer active:opacity-50 w-full flex flex-col items-center justify-center py-10 rounded-xl mt-6">
-                <img src={images.uploadGray} />
-                Add Service Pictures
+              <div className="bg-inputGray w-full flex flex-col items-center justify-center py-10 rounded-xl mt-6">
+                {serviceImageLoader ? (
+                  <div
+                    className="inline-block h-8 w-8 animate-spin rounded-full border-[3px] border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                    role="status"
+                  ></div>
+                ) : (
+                  <div
+                    className="flex flex-col items-center justify-center cursor-pointer active:opacity-50"
+                    onClick={triggerServiceFileInput}
+                  >
+                    <img src={images.uploadGray} />
+                    Add Service Pictures
+                    <input
+                      id="service"
+                      type="file"
+                      style={{ display: "none" }}
+                      accept="image/*"
+                      multiple={true}
+                      onChange={handleUploadServiceImg}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+            {selectedServices[activeServiceIndex]?.pictures?.length > 0 && (
+              <div className="flex flex-row items-end justify-end mt-2">
+                <div
+                  className=""
+                  // onClick={triggerServiceFileInput}
+                >
+                  <SmallButton
+                    title="Upload more Pictures"
+                    dark={true}
+                    image={images.addWhite}
+                    smallImage={true}
+                    imgLoader={serviceImageLoader}
+                    onClick={() =>
+                      !serviceImageLoader && triggerServiceFileInput()
+                    }
+                  />
+                </div>
+                <input
+                  id="service"
+                  type="file"
+                  style={{ display: "none" }}
+                  accept="image/*"
+                  multiple={true}
+                  onChange={handleUploadServiceImg}
+                />
               </div>
             )}
             {selectedServices[activeServiceIndex].options?.length > 0 ? (
@@ -731,35 +1145,47 @@ const CreateBarberProfile = (props: Props) => {
                 className="bg-inputGray w-full mt-2 rounded-xl px-4 py-2 focus:outline-none resize-none h-32"
               ></textarea>
             </div>
-            {/* <div className='mx-auto'>
-                            <SmallButton title='Save Changes' dark={true} long={true}/>
-                        </div> */}
+            <div className="mx-auto my-5">
+              <SmallButton
+                title="Save Changes"
+                dark={true}
+                long={true}
+                onClick={handleConfirmService}
+              />
+            </div>
           </div>
         </div>
       )}
       {showTimeModal && (
-        <div className="time-modal fixed inset-0 flex justify-center items-center bg-opacity-50 bg-gray-700">
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Select Time</h2>
+        <div className="time-modal fixed inset-0 flex justify-center items-center bg-gray-700 bg-opacity-75 z-50 px-4">
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg flex flex-col items-center">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">
+              {selectedIndex.type === "startTime"
+                ? "Select Opening Time"
+                : "Select Closing Time"}
+            </h2>
             <TimePicker
               value={
                 selectedIndex.type === "startTime"
                   ? scheduleTiming[selectedIndex.index]?.startTime
                   : scheduleTiming[selectedIndex.index]?.endTime
               }
+              disableClock={true}
+              clearIcon={null}
               onChange={handleTimeChange}
               format="hh:mm a"
+              className="w-40 border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 flex justify-center"
             />
-            <div className="mt-4 flex justify-between">
+            <div className="mt-4 sm:mt-6 flex flex-wrap gap-2 sm:gap-4 justify-center w-full">
               <button
                 onClick={handleCloseModal}
-                className="px-4 py-2 bg-gray-500 text-white rounded"
+                className="flex-1 py-2 bg-white text-black border rounded-md transition duration-200 px-4 sm:px-6"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCloseModal}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
+                className="flex-1 py-2 bg-black text-white rounded-md transition duration-200 px-4 sm:px-6"
               >
                 Confirm
               </button>

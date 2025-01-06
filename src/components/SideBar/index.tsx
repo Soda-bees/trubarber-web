@@ -18,7 +18,7 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
-  console.log("userlog", user);
+  // console.log("userlog", user);
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -27,7 +27,7 @@ const SideBar = ({ showSidebar, isSmallScreen }: Props) => {
   const [addressLodaer, setAddressLodaer] = useState<boolean>(false)
 
   const handleLogout = async () => {
-    dispatch(clearUser());
+    // dispatch(clearUser());
     dispatch(clearAuthToken());
   };
 
