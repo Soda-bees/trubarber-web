@@ -3,85 +3,102 @@ import { axiosInstance, baseURL } from "../axiosInstance";
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
 export const validateEmailAvailability = async (body: any) => {
-    try {
-        const response = await axiosInstance.post(`auth/validateEmailAvailability`, body)
-        return response
-    } catch (error) {
-        return error
-    }
-}
+  try {
+    const response = await axiosInstance.post(
+      `auth/validateEmailAvailability`,
+      body
+    );
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
 
 export const uploadProfile = async (formData: FormData) => {
-    try {
-        const response = await axiosInstance.post('user/uploadProfile', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Upload Profile Error:', error);
-        throw error;
-    }
+  try {
+    const response = await axiosInstance.post("user/uploadProfile", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Upload Profile Error:", error);
+    throw error;
+  }
 };
 
 export const handleSignup = async (body: any) => {
-    try {
-        const response = await axiosInstance.post('auth/signup', body)
-        return response.data
-    } catch (error) {
-        return error
-    }
-}
+  try {
+    const response = await axiosInstance.post("auth/signup", body);
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const handleBarberSignup = async (body: any) => {
+  try {
+    const response = await axiosInstance.post("auth/barberSignup", body);
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
 
 export const handleSignin = async (body: any) => {
-    try {
-        const response = await axiosInstance.post('auth/signin', body)
-        return response
-    } catch (error: any) {
-        return error
-    }
-}
+  try {
+    const response = await axiosInstance.post("auth/signin", body);
+    return response;
+  } catch (error: any) {
+    return error;
+  }
+};
 
 export const getAllBarbers = async () => {
-    try {
-        const response = await axiosInstance.get('user/allBarber')
-        return response
-    } catch (error) {
-        return error
-    }
-}
+  try {
+    const response = await axiosInstance.get("user/allBarber");
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
 
-export const getAddressFromCoordinates = async (latitude: number, longitude: number) => {
-    try {
-        console.log("GOOGLE_MAPS_API_KEY", GOOGLE_MAPS_API_KEY);
+export const getAddressFromCoordinates = async (
+  latitude: number,
+  longitude: number
+) => {
+  try {
+    console.log("GOOGLE_MAPS_API_KEY", GOOGLE_MAPS_API_KEY);
 
-        const response = await axios.get(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`,
-        );
-        if (response.data.status === 'OK') {
-            const fullAddress = response.data.results[0].formatted_address;
-            return fullAddress;
-        } else {
-            console.log('Error fetching address:', response.data.status);
-        }
-    } catch (error) {
-        console.log('Error in geocoding:', error);
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`
+    );
+    if (response.data.status === "OK") {
+      const fullAddress = response.data.results[0].formatted_address;
+      return fullAddress;
+    } else {
+      console.log("Error fetching address:", response.data.status);
     }
+  } catch (error) {
+    console.log("Error in geocoding:", error);
+  }
 };
 
 export const createChatRoom = async (token: any, body: any) => {
-    try {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        };
-        const response = await axiosInstance.post('user/createChatRoom', body, { headers })
-        return response
-    } catch (error) {
-        return error
-    }
-}
+  try {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post("user/createChatRoom", body, {
+      headers,
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
 
 export const updateReviewApi = async (token: any, body: any) => {
     try {
@@ -223,3 +240,66 @@ export const uploadMultiplesChatImagesApi = async (formData: any, token: any) =>
     }
   };
 
+export const uploadMultiplesImages = async (formData: any) => {
+  try {
+    const axiosConfig = {
+      method: "post",
+      url: `${baseURL}barber/uploadMultiplesImages`,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+    const data = await axios(axiosConfig);
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const handleIncreaseWallet = async (_id:any, token:any, body:any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post(
+      `user/increaseWallet/${_id}`,
+      body,
+      {headers},
+    );
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updatePassword = async (body:any, token:any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post('auth/updatePassword', body, {
+      headers,
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updateProfile = async (body:any, token:any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post('auth/updateProfile', body, {
+      headers,
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

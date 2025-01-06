@@ -138,10 +138,10 @@ const Header = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         ref={ref}
-        className={`flex bg-blue-500 flex-col items-center px-3 lg:px-4 pb-2 w-full fixed top-0 z-10 transition-transform duration-300 max-w-[2800px] 
-        ${showSidebar ? 'md:pr-[28%] lg:pr-[23%] xl:pr-[21%] 2xl:pr-[15%] bg-blue-500' : ''} 
-        ${isVisible ? "translate-y-0 bg-blue-500" : "-translate-y-full bg-blue-500"}
-        ${shouldShowWhiteHeader ? 'bg-blue-500 bg-blue-500' : 'bg-gradient-to-b from-black to-transparent bg-blue-500'}
+        className={`flex flex-col items-center px-3 lg:px-4 pb-2 w-full fixed top-0 z-10 transition-transform duration-300 max-w-[2800px] 
+        ${showSidebar ? 'md:pr-[28%] lg:pr-[23%] xl:pr-[21%] 2xl:pr-[15%]' : ''} 
+        ${isVisible ? "translate-y-0" : "-translate-y-full"}
+        ${shouldShowWhiteHeader ? 'bg-transparent' : 'bg-gradient-to-b from-black to-transparent'}
         `}
       >
         <motion.div
@@ -152,7 +152,7 @@ const Header = forwardRef<HTMLDivElement, Props>(
             duration: 1,                 
             ease: "easeOut",
           }}
-          className="w-full bg-yellow-500"
+          className="w-full"
         >
           
           <div className="bg-transparent flex flex-row items-center h-20 justify-between w-full">

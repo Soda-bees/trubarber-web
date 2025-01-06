@@ -11,32 +11,23 @@ import { selectBarbers } from "../../Store/BarbersSlice";
 import { useLocation, useOutletContext } from "react-router-dom";
 import { selectUser } from "../../Store/userDataSlice";
 import { setLocation } from "../../Store/LocationSlice";
+import { selectRole } from "../../Store/Role";
 
 type Props = {};
 
 const Welcome = (props: Props) => {
   const { showSidebar } = useOutletContext<{ showSidebar: boolean }>();
   const dispatch = useDispatch();
-  const location = useSelector(setLocation);
-
-  console.log("licaaaaaaaaaa", location);
-
   const barbers = useSelector(selectBarbers);
+  const role = useSelector(selectRole)  
+
+  const location = useSelector<any>((state) => state.location);
+  console.log("Location from Redux:", location);
 
   const [currentPosition, setCurrentPosition] = useState({
     lat: 30.8157976264542,
     lng: 70.04061958392309,
   });
-
-  // const [map, setMap] = useState<google.maps.Map | null>(null);
-
-  // const onLoad = React.useCallback((map: google.maps.Map) => {
-  //   setMap(map);
-  // }, []);
-
-  // const onUnmount = React.useCallback(() => {
-  //   setMap(null);
-  // }, []);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -54,7 +45,6 @@ const Welcome = (props: Props) => {
             lng: newPosition.longitude,
           };
           setCurrentPosition(mapPosition);
-          // map?.panTo(mapPosition);
         },
         (error) => {
           console.error("Error fetching geolocation:", error.message);

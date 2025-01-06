@@ -9,6 +9,7 @@ import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import Footer from "../../components/Footer";
 import useNavigate from "../../components/ScrollToTopNavigate";
 import ScrollTopButton from "../../components/ScrollTopButton";
+import { selectRole } from "../../Store/Role";
 
 type Props = {};
 
@@ -26,7 +27,7 @@ const Layout = (props: Props) => {
   const [search, setSearch] = useState<string>('')
   const [headerHeight, setHeaderHeight] = useState<number>(0)
   const [footerHeight, setfooterHeight] = useState<number>(0)
-  const [headerFooterHeight , setheaderFooterHeight] = useState<number>(0)
+  const [headerFooterHeight, setheaderFooterHeight] = useState<number>(0)
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -160,8 +161,9 @@ const Layout = (props: Props) => {
       }
 
       <div
+        style={shouldNoMT ? {} : isSmallScreen && shouldShowHeader ? { paddingTop: `${headerHeight}vh` } : {}}
         className={
-          shouldNoMT ? "w-full flex flex-col justify-between overflow-x-hidden" : isSmallScreen ? shouldShowHeader ? "w-full pt-36 flex flex-col justify-between overflow-x-hidden"
+          shouldNoMT ? "w-full flex flex-col justify-between overflow-x-hidden" : isSmallScreen ? shouldShowHeader ? `w-full flex flex-col justify-between overflow-x-hidden`
             : "w-full flex flex-col justify-between overflow-x-hidden" : shouldShowHeader ? "w-full pt-20 flex flex-col justify-between overflow-x-hidden" : "w-full flex flex-col justify-between overflow-x-hidden"}>
         {
           shouldShowHeader &&
@@ -173,7 +175,7 @@ const Layout = (props: Props) => {
             setSearch={setSearch}
           />
         }
-        <Outlet context={{ showSidebar, isSmallScreen, search , headerFooterHeight , headerHeight}} />
+        <Outlet context={{ showSidebar, isSmallScreen, search, headerFooterHeight, headerHeight }} />
         <ToastContainer />
         <Footer ref={footerRef} />
         <ScrollTopButton />

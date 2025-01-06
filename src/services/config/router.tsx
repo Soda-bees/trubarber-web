@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider, Navigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { selectRole } from "../../Store/Role"; // Adjust the path according to your structure
+import { selectRole } from "../../Store/Role";
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import ProtectedRoute from "./protectedRouting";
 import Layout from "../../screens/Layout";

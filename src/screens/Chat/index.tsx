@@ -50,13 +50,13 @@ const Chat = (props: Props) => {
   const availableHeightInVH = 100 - headerHeight || 100
 
   return (
-    <div className={`flex flex-row items-start bg-pink-500 px-4 flex-1 select-none gap-2 pb-2 `} style={{
-      // minHeight: `${availableHeightInVH}vh`,
-      // maxHeight: `${availableHeightInVH}vh`,
+    <div className={`flex flex-row items-start px-4 flex-1 select-none gap-2 pb-2 `} style={{
+      minHeight: `${availableHeightInVH}vh`,
+      maxHeight: `${availableHeightInVH}vh`,
     }}>
       {
         (isSmallScreen && !chatId) || !isSmallScreen ? (
-          <div className='w-full lg:w-[50%] xl:w-[40%] h-full overflow-y-auto hide-scrollbar bg-red-500'>
+          <div className='w-full lg:w-[50%] xl:w-[40%] h-full overflow-y-auto hide-scrollbar'>
             {
               userData?.chat?.filter((item: any) => item?.messages?.length > 0)?.length > 0 ? (
                 <div className='flex flex-col gap-2'>

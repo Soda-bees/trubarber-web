@@ -29,7 +29,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar }: Props) => {
   const [addressLodaer, setAddressLodaer] = useState<boolean>(false)
 
   const handleLogout = async () => {
-    dispatch(clearUser());
+    // dispatch(clearUser());
     dispatch(clearAuthToken());
   };
 
