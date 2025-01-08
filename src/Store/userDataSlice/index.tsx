@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// Define the structure of the user or use Partial for flexibility
 interface User {
     name: string;
     email: string;
@@ -21,15 +20,16 @@ interface User {
     updatedAt: string;
     wallet: number;
     __v: number;
-    _id: string
+    _id: string;
+    phone?: string
 }
 
 interface UserState {
-    user: User | null;  // Define User or set as null initially
+    user: User | null;
 }
 
 const initialState: UserState = {
-    user: null, // Initially null until a user is set
+    user: null,
 };
 
 const userSlice = createSlice({
@@ -266,7 +266,7 @@ export const {
     setNotificationSeenTrueRedux,
     addFavouritesRedux,
     updateWalletRedux,
-    addAndUpdateNewChatInRedux ,
+    addAndUpdateNewChatInRedux,
     acceptAppointment
 } = userSlice.actions;
 

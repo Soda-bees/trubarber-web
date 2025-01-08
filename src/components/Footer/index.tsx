@@ -2,6 +2,8 @@ import React, { forwardRef } from "react";
 import images from "../../services/config/images";
 import ScrollToTopLink from "../ScrollToTopLink";
 import useNavigate from "../ScrollToTopNavigate";
+import { useSelector } from "react-redux";
+import { selectRole } from "../../Store/Role";
 
 type Props = {
   ref: any
@@ -11,13 +13,23 @@ type Props = {
 const Footer = forwardRef<HTMLDivElement, Props>(
   ({ }, ref) => {
     const navigate = useNavigate()
+    const role = useSelector(selectRole)
     return (
       <div ref={ref} className="bg-black py-10 px-5 ">
         <div className="flex flex-row xs:flex-row justify-between w-full items-center xs:items-start gap-2  ">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-3 xl:flex flex-row sm:gap-4  text-white text-lg font-light ">
-            <div className="cursor-pointer  hover:underline">Book Appointment</div>
-            <div className="cursor-pointer hover:underline">Services</div>
-            <div className="cursor-pointer hover:underline">Customer Reviews</div>
+            {
+              role === 'user' &&
+              <div className="cursor-pointer  hover:underline">Book Appointment</div>
+            }
+            {
+              role === 'user' &&
+              <div className="cursor-pointer hover:underline">Services</div>
+            }
+            {
+              role === 'user' &&
+              <div className="cursor-pointer hover:underline">Customer Reviews</div>
+            }
             <ScrollToTopLink to={'/privacy-policy'} className="cursor-pointer hover:underline">Terms & Policy</ScrollToTopLink>
             <div className="cursor-pointer hover:underline">Career</div>
             <ScrollToTopLink to={'/about'} className="cursor-pointer hover:underline">About-Us</ScrollToTopLink>

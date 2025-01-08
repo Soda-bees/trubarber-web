@@ -7,6 +7,7 @@ import useNavigate from "../ScrollToTopNavigate";
 import { motion, AnimatePresence } from "framer-motion";
 import { selectUser, setNotificationSeenTrueRedux } from "../../Store/userDataSlice";
 import { handleNotificationSeenTrue } from "../../services/config/Api";
+import { selectRole } from "../../Store/Role";
 
 type Props = {
   showSidebar: boolean;
@@ -20,8 +21,6 @@ type Props = {
   setSearch: any
 };
 
-// const Header = ({ showSidebar, showHamburger, setShowSidebar, isSmallScreen, shouldShowWhiteHeader, showNotification, setShowNotification , ref}: Props) => {
-
 const Header = forwardRef<HTMLDivElement, Props>(
   (
     {
@@ -33,11 +32,14 @@ const Header = forwardRef<HTMLDivElement, Props>(
     const navigate = useNavigate()
 
     const [isVisible, setIsVisible] = useState(true);
-    const [prevScrollPos, setPrevScrollPos] = useState(0);
     const authToken = useSelector(selectAuthToken);
     const userData = useSelector(selectUser)
+    const role = useSelector(selectRole)
     const dispatch = useDispatch();
-    const [unseenNotification, setUnseenNotification] = useState(0)
+
+    const [prevScrollPos, setPrevScrollPos] = useState(0);
+    const [unseenNotification, setUnseenNotification] = useState<number>(0)
+    const [unseenMessages, setUnseenMessages] = useState<number>(0)
 
     useEffect(() => {
       const handleScroll = () => {
@@ -62,10 +64,15 @@ const Header = forwardRef<HTMLDivElement, Props>(
       if (userData?.notification?.length > 0) {
         handleCalculateTotalUnseenNotification();
       }
+      if (userData?.chat?.length > 0) {
+        handleCelculateTotalUnseenMessage()
+      }
       if (showNotification) {
         setSeenTrue()
       }
     }, [userData, showNotification])
+
+
 
     const setSeenTrue = async () => {
       try {
@@ -91,7 +98,19 @@ const Header = forwardRef<HTMLDivElement, Props>(
       }
     };
 
+    const handleCelculateTotalUnseenMessage = async () => {
+      let totalUnseenMessages = 0;
 
+      userData?.chat?.forEach((chatRoom: any) => {
+        const unseenMessagesCount = chatRoom.messages.filter(
+          (message: any) => !message.seen && message.sender !== userData._id,
+        ).length;
+
+        totalUnseenMessages += unseenMessagesCount;
+      });
+
+      setUnseenMessages(totalUnseenMessages);
+    };
 
     const handleCalculateTotalUnseenNotification = async () => {
       const totalUnseenNotification = userData?.notification?.filter(
@@ -145,16 +164,16 @@ const Header = forwardRef<HTMLDivElement, Props>(
         `}
       >
         <motion.div
-          initial={{ opacity: 0, y: -100 }} 
-          animate={{ opacity: 1, y: 0 }}    
+          initial={{ opacity: 0, y: -100 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{
-            delay: 0.5,               
-            duration: 1,                 
+            delay: 0.5,
+            duration: 1,
             ease: "easeOut",
           }}
           className="w-full"
         >
-          
+
           <div className="bg-transparent flex flex-row items-center h-20 justify-between w-full">
             <img
               onClick={() => navigate('')}
@@ -175,22 +194,24 @@ const Header = forwardRef<HTMLDivElement, Props>(
 
               {authToken ? (
                 <div className="flex flex-row items-center items-center justify-center ">
-
-                  <ScrollToTopLink
-                    to="/favourite"
-                    className="border bg-black  rounded-lg ml-2 p-2 sm:p-[10px] flex items-center justify-center cursor-pointer select-none"
-                    title="Bookmark"
-                  >
-                    <img
-                      src={images.bookmarkIcon}
-                      className="w-4 h-4 sm:w-5 sm:h-5 object-contain"
-                    />
-                  </ScrollToTopLink>
+                  {
+                    role === 'user' &&
+                    <ScrollToTopLink
+                      to="/favourite"
+                      className="border bg-black  rounded-lg ml-2 p-2 sm:p-[10px] flex items-center justify-center cursor-pointer select-none"
+                      title="Bookmark"
+                    >
+                      <img
+                        src={images.bookmarkIcon}
+                        className="w-4 h-4 sm:w-5 sm:h-5 object-contain"
+                      />
+                    </ScrollToTopLink>
+                  }
 
 
                   <ScrollToTopLink
                     to="/chat"
-                    className="border bg-black  rounded-lg ml-2 p-2 sm:p-[10px] flex items-center justify-center cursor-pointer select-none"
+                    className="border bg-black relative rounded-lg ml-2 p-2 sm:p-[10px] flex items-center justify-center cursor-pointer select-none"
                     title="Chat"
                   >
                     <img
@@ -198,6 +219,10 @@ const Header = forwardRef<HTMLDivElement, Props>(
                       alt="Chat"
                       className="w-4 h-4 sm:w-5 sm:h-5 object-contain"
                     />
+                    {
+                      unseenMessages > 0 &&
+                      <div className="text-white bg-red-700 rounded-full absolute text-sm h-6 w-6 flex flex-row items-center justify-center font-semibold -top-2 -right-2">{unseenMessages}</div>
+                    }
                   </ScrollToTopLink>
                   <div className="relative select-none" >
                     <div

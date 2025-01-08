@@ -76,8 +76,10 @@ import businessImage from "../../assets/Images/businessImage.png";
 import appointmentConfirm from "../../assets/Images/appointmentConfirm.png";
 import arrowBlackIcon from "../../assets/Images/arrowBlackIcon.png";
 import chatImg from "../../assets/Images/chatImg.png";
+import catalouge from "../../assets/Images/catalouge.png";
 
 const images = {
+  catalouge,
   chatImg,
   arrowBlackIcon,
   appointmentConfirm,

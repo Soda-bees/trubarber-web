@@ -47,7 +47,7 @@ const Layout = (props: Props) => {
     "/create-user-profile",
     "/create-barber-profile",
   ];
-  const showWhiteHeaderPaths = ['/BarberDetails', '/book-appointment', '/wallet', '/appointment', '/chat']
+  const showWhiteHeaderPaths = ['/BarberDetails', '/book-appointment', '/wallet', '/appointment', '/chat' , '/edit-profile' , '/security' , '/barber-dashboard' , '/catalouge']
   const shouldShowWhiteHeader = showWhiteHeaderPaths.some(
     (path) => location.pathname === path || location.pathname.startsWith(path)
   );

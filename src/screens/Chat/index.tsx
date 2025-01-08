@@ -125,7 +125,7 @@ const Chat = (props: Props) => {
                                           ? images.male
                                           : images.female
                                   }
-                                  className="w-12 h-12 rounded-full"
+                                  className="w-12 h-12 rounded-full object-contain"
                                 />
                                 <div className="ml-2 w-full">
                                   <div className="font-semibold leading-5">
@@ -154,41 +154,6 @@ const Chat = (props: Props) => {
                 <div className='font-semibold text-center md:text-start'>There is currently no chat to show</div>
               )
             }
-
-            {/* {[...Array(20)].map((_, index) => (
-            <div
-              key={index}
-              className="flex flex-row items-start justify-between cursor-pointer mb-2"
-            >
-              <motion.div
-                whileHover={{
-                  scale: 0.98,
-                  boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)",
-                }}
-                transition={{ duration: 0.1 }}
-                className="flex flex-row items-start justify-between w-full bg-inputGray px-3 py-2 rounded-xl"
-              >
-                <div className="flex flex-row items-center">
-                  <img
-                    src={images.female}
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <div className="ml-2 w-full">
-                    <div className="font-semibold leading-5">Name</div>
-                    <div className="overflow-hidden line-clamp-1 text-sm">
-                      Last message preview
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end justify-between">
-                  <div className="text-sm font-semibold whitespace-nowrap">
-                    Time Ago
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          ))} */}
-
           </div>
         ) : null
       }

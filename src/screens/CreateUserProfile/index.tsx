@@ -210,45 +210,45 @@ const CreateUserProfile = (props: Props) => {
     const token = "asdasdasdasdasd";
     // const role = "user";
     console.log("work");
-    
+
     dispatch(setAuthToken(token));
     // dispatch(setRole(role));
 
-  //   try {
-  //     setLoader(true);
-  //     Object.assign(userData, {
-  //       profile: imgUri,
-  //       survey: selectedSurvey,
-  //       tagSelection: selectedTagSelection,
-  //       gender,
-  //     });
-  //     console.log(userData);
-  //     const response = (await handleSignup(userData)) as {
-  //       status: any;
-  //       data: any;
-  //     };
-  //     console.log("ressss ===?", response);
-  //     if (response.status == 201) {
-  //       setLoader(false);
-  //       dispatch(setUser(response?.data?.userData));
-  //       dispatch(setAuthToken(response?.data?.token));
-  //       dispatch(setRole(response?.data?.userData?.role));
-  //       // Toast("success", response?.data?.message, () => {
-  //       //   dispatch(setUser(response?.data?.userData));
-  //       //   dispatch(setAuthToken(response?.data?.token));
-  //       //   dispatch(setRole(response?.data?.userData?.role));
-  //       // });
-  //     } else {
-  //       setLoader(false);
-  //       Toast("error", response?.data?.message);
-  //     }
-  //   } catch (error) {
-  //     setLoader(false);
-  //     Toast("error", "An error occurred");
-  //   }
+    //   try {
+    //     setLoader(true);
+    //     Object.assign(userData, {
+    //       profile: imgUri,
+    //       survey: selectedSurvey,
+    //       tagSelection: selectedTagSelection,
+    //       gender,
+    //     });
+    //     console.log(userData);
+    //     const response = (await handleSignup(userData)) as {
+    //       status: any;
+    //       data: any;
+    //     };
+    //     console.log("ressss ===?", response);
+    //     if (response.status == 201) {
+    //       setLoader(false);
+    //       dispatch(setUser(response?.data?.userData));
+    //       dispatch(setAuthToken(response?.data?.token));
+    //       dispatch(setRole(response?.data?.userData?.role));
+    //       // Toast("success", response?.data?.message, () => {
+    //       //   dispatch(setUser(response?.data?.userData));
+    //       //   dispatch(setAuthToken(response?.data?.token));
+    //       //   dispatch(setRole(response?.data?.userData?.role));
+    //       // });
+    //     } else {
+    //       setLoader(false);
+    //       Toast("error", response?.data?.message);
+    //     }
+    //   } catch (error) {
+    //     setLoader(false);
+    //     Toast("error", "An error occurred");
+    //   }
   };
 
-  const navigateToDashboard = async () => {};
+  const navigateToDashboard = async () => { };
 
   const handleButtonClick = () => {
     fileInputRef?.current?.click(); // Manually trigger file input click
@@ -292,14 +292,14 @@ const CreateUserProfile = (props: Props) => {
               ) : (
                 <img
                   src={images.profileUpload}
-                  className="w-20 mr-4 sm:mr-10"
+                  className="w-20 h-18 mr-4 sm:mr-10"
                 />
               )}
               <SmallButton
                 title={"Upload Photo"}
                 dark={true}
                 image={images.uploadBtn}
-                onClick={handleButtonClick}
+                onClick={() => !imageUploadLoader && handleButtonClick()}
                 imgLoader={imageUploadLoader}
               />
               <input

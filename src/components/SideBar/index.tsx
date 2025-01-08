@@ -12,6 +12,8 @@ import { removePendingAppointment } from "../../Store/PendingAppointment";
 import { motion, AnimatePresence } from "framer-motion";
 import TopToBottomAnimation from "../TopToBottomAnimation";
 import BottomToTopAnimation from "../BottomToTopAnimation";
+import Button from "../Button";
+import { selectRole } from "../../Store/Role";
 
 type Props = {
   showSidebar: boolean;
@@ -25,6 +27,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+  const role = useSelector(selectRole)
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -33,7 +36,9 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
   const [addressLodaer, setAddressLodaer] = useState<boolean>(false)
 
   const handleLogout = async () => {
-    // dispatch(clearAuthToken());
+    setShowLogoutModal(false)
+    dispatch(clearAuthToken());
+    dispatch(clearUser())
   };
 
   useEffect(() => {
@@ -58,9 +63,9 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
 
   const sidebarClass = isSmallScreen
     ? showSidebar
-      ? "fixed w-[70%] xs:w-[50%] sm:w-[40%] md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] left-0 top-0 h-[100vh] bg-black z-50 py-8"
+      ? "fixed w-[70%] xs:w-[50%] sm:w-[40%] md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] left-0 top-0 h-[100vh] bg-black z-50 py-6"
       : "fixed w-[80%] md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] left-0 top-0 h-[100vh] bg-black z-50"
-    : "sticky max-h-screen relative top-0 left-0 w-64 md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] bg-black py-8";
+    : "sticky max-h-screen relative top-0 left-0 w-64 md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] bg-black py-6";
 
   return (
     <AnimatePresence >
@@ -78,11 +83,11 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{
-            delay: 0.2, // Add slight delay for scaling effect
+            delay: 0.2,
             duration: 0.8,
             ease: "easeOut",
           }}
-          className="h-full flex flex-col items-center justify-between "
+          className="h-full flex flex-col items-center justify-between"
         >
 
           <div className="text-white w-full">
@@ -97,7 +102,6 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                 <img
                   src={user?.profile ? user?.profile : user?.gender === 'male' ? images.male : images.female}
                   className="w-[80px] h-[80px] mt-8 mb-5 rounded-full"
-                  alt="Review"
                 />
                 <div>
                   <div className="font-bold text-lg text-white">{user?.name}</div>
@@ -120,6 +124,17 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                       {address || addressLodaer && 'Loading...'}
                     </div>
                   </div>
+                  {
+                    role === 'barber' &&
+                    <div className="text-sm flex flex-row items-start text-white my-2">
+                      <img
+                        src={images.phone}
+                        className="w-3 filter invert brightness-0 mr-2 mt-1"
+                        alt="Location"
+                      />
+                      {user?.phone}
+                    </div>
+                  }
                 </div>
                 <div className="flex flex-row">
                   <div className="text-hoverGray">Gender</div>
@@ -132,29 +147,55 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
             </div>
             <div className=" overflow-y-scroll hide-scrollbar h-[40vh]">
 
-              <ScrollToTopLink
-                to="/"
-                className={`flex justify-between items-center p-3 mx-2 mb-4 rounded-lg ${activePath === "/"
-                  ? "bg-white text-black"
-                  : "text-white hover:bg-hoverGray hover:text-white"
-                  }`}
-              >
-                <div className="text-lg font-semibold flex items-center">
-                  <img
-                    src={images.explore}
-                    className={`w-5 mr-5 ${activePath === "/" ? "filter invert dark-0" : ""
+              {
+                role === 'user' ?
+                  <ScrollToTopLink
+                    to="/"
+                    className={`flex justify-between items-center p-3 mx-2 mb-4 rounded-lg ${activePath === "/"
+                      ? "bg-white text-black"
+                      : "text-white hover:bg-hoverGray hover:text-white"
                       }`}
-                    alt="Explore"
-                  />
-                  Explore
-                </div>
-                <img
-                  src={images.arrowBtn}
-                  className={`w-3 ${activePath === "/" ? "filter invert dark-0" : ""
-                    }`}
-                  alt="Arrow"
-                />
-              </ScrollToTopLink>
+                  >
+                    <div className="text-lg font-semibold flex items-center">
+                      <img
+                        src={images.explore}
+                        className={`w-5 mr-5 ${activePath === "/" ? "filter invert dark-0" : ""
+                          }`}
+                        alt="Explore"
+                      />
+                      Explore
+                    </div>
+                    <img
+                      src={images.arrowBtn}
+                      className={`w-3 ${activePath === "/" ? "filter invert dark-0" : ""
+                        }`}
+                      alt="Arrow"
+                    />
+                  </ScrollToTopLink> :
+                  <ScrollToTopLink
+                    to="/barber-dashboard"
+                    className={`flex justify-between items-center p-3 mx-2 mb-4 rounded-lg ${activePath === "/barber-dashboard"
+                      ? "bg-white text-black"
+                      : "text-white hover:bg-hoverGray hover:text-white"
+                      }`}
+                  >
+                    <div className="text-lg font-semibold flex items-center">
+                      <img
+                        src={images.explore}
+                        className={`w-5 mr-5 ${activePath === "/barber-dashboard" ? "filter invert dark-0" : ""
+                          }`}
+                        alt="Dashboard"
+                      />
+                      Dashboard
+                    </div>
+                    <img
+                      src={images.arrowBtn}
+                      className={`w-3 ${activePath === "/barber-dashboard" ? "filter invert dark-0" : ""
+                        }`}
+                      alt="Arrow"
+                    />
+                  </ScrollToTopLink>
+              }
               <ScrollToTopLink
                 to="/appointment"
                 className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/appointment"
@@ -178,52 +219,81 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                   alt="Arrow"
                 />
               </ScrollToTopLink>
-              <ScrollToTopLink
-                to="/wallet"
-                className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/wallet"
-                  ? "bg-white text-black"
-                  : "text-white hover:bg-hoverGray hover:text-white"
-                  }`}
-              >
-                <div className="text-lg font-semibold flex items-center">
-                  <img
-                    src={images.wallet}
-                    className={`w-5 mr-5 ${activePath === "/wallet" ? "filter invert dark-0" : ""
+              {
+                role === 'user' ?
+                  <ScrollToTopLink
+                    to="/wallet"
+                    className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/wallet"
+                      ? "bg-white text-black"
+                      : "text-white hover:bg-hoverGray hover:text-white"
                       }`}
-                    alt="Wallet"
-                  />
-                  Wallet
-                </div>
-                <img
-                  src={images.arrowBtn}
-                  className={`w-3 ${activePath === "/wallet" ? "filter invert dark-0" : ""
-                    }`}
-                  alt="Arrow"
-                />
-              </ScrollToTopLink>
-              <ScrollToTopLink
-                to="/favourite"
-                className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/favourite"
-                  ? "bg-white text-black"
-                  : "text-white hover:bg-hoverGray hover:text-white"
-                  }`}
-              >
-                <div className="text-lg font-semibold flex items-center">
-                  <img
-                    src={images.bookmarkIcon}
-                    className={`w-5 mr-5 ${activePath === "/favourite" ? "filter invert dark-0" : ""
+                  >
+                    <div className="text-lg font-semibold flex items-center">
+                      <img
+                        src={images.wallet}
+                        className={`w-5 mr-5 ${activePath === "/wallet" ? "filter invert dark-0" : ""
+                          }`}
+                        alt="Wallet"
+                      />
+                      Wallet
+                    </div>
+                    <img
+                      src={images.arrowBtn}
+                      className={`w-3 ${activePath === "/wallet" ? "filter invert dark-0" : ""
+                        }`}
+                      alt="Arrow"
+                    />
+                  </ScrollToTopLink> :
+                  <ScrollToTopLink
+                    to="/catalouge"
+                    className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/catalouge"
+                      ? "bg-white text-black"
+                      : "text-white hover:bg-hoverGray hover:text-white"
                       }`}
-                    alt="favourite"
-                  />
-                  Favourite
-                </div>
-                <img
-                  src={images.arrowBtn}
-                  className={`w-3 ${activePath === "/favourite" ? "filter invert dark-0" : ""
+                  >
+                    <div className="text-lg font-semibold flex items-center">
+                      <img
+                        src={images.catalouge}
+                        className={`w-5 mr-5 ${activePath !== "/catalouge" ? "filter invert dark-0" : ""
+                          }`}
+                        alt="catalouge"
+                      />
+                      Catalogue
+                    </div>
+                    <img
+                      src={images.arrowBtn}
+                      className={`w-3 ${activePath === "/catalouge" ? "filter invert dark-0" : ""
+                        }`}
+                      alt="Arrow"
+                    />
+                  </ScrollToTopLink>
+              }
+              {
+                role === 'user' &&
+                <ScrollToTopLink
+                  to="/favourite"
+                  className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/favourite"
+                    ? "bg-white text-black"
+                    : "text-white hover:bg-hoverGray hover:text-white"
                     }`}
-                  alt="Arrow"
-                />
-              </ScrollToTopLink>
+                >
+                  <div className="text-lg font-semibold flex items-center">
+                    <img
+                      src={images.bookmarkIcon}
+                      className={`w-5 mr-5 ${activePath === "/favourite" ? "filter invert dark-0" : ""
+                        }`}
+                      alt="favourite"
+                    />
+                    Favourite
+                  </div>
+                  <img
+                    src={images.arrowBtn}
+                    className={`w-3 ${activePath === "/favourite" ? "filter invert dark-0" : ""
+                      }`}
+                    alt="Arrow"
+                  />
+                </ScrollToTopLink>
+              }
               <ScrollToTopLink
                 to="/chat"
                 className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/chat"
@@ -292,7 +362,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                       : "text-hoverGray hover:text-white"
                       }`}
                   >
-                    <div className="font-light flex items-center">
+                    <div className="font-light flex items-center font-semibold">
                       <img
                         src={
                           activePath === "/edit-profile"
@@ -312,7 +382,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                       : "text-hoverGray hover:text-white"
                       }`}
                   >
-                    <div className="font-light flex items-center">
+                    <div className="font-light flex items-center font-semibold">
                       <img
                         src={
                           activePath === "/security"
@@ -340,33 +410,16 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
           </div>
           {
             showLogoutModal &&
-            <motion.div
-              initial={{ opacity: 0, y: -50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, y: -50, scale: 0.9 }}
-              transition={{
-                duration: 0.4,
-                ease: "easeInOut",
-                type: 'tween',
-                stiffness: 200,
-              }}
-              className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 max-w-[2800px] mx-auto z-20"
-            >
-              <motion.div
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                transition={{
-                  delay: 0.1,
-                  duration: 0.6,
-                  ease: "easeOut",
-                }}
-                className="w-full h-full flex flex-row items-center justify-center"
-              >
-                <div className="bg-white w-full sm:w-4/5 md:w-2/3 lg:w-1/3 flex flex-col p-2 xs:p-6 rounded-xl shadow-lg">asdassads</div>
-              </motion.div></motion.div>
-            // <BottomToTopAnimation className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 max-w-[2800px] mx-auto z-20">
-            //   <div className="bg-white w-full sm:w-4/5 md:w-2/3 lg:w-1/3 flex flex-col p-2 xs:p-6 rounded-xl shadow-lg">asdassads</div>
-            // </BottomToTopAnimation>
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 max-w-[2800px] mx-auto z-20 select-none">
+              <BottomToTopAnimation className="bg-white w-[90%] sm:w-4/5 md:w-2/3 lg:w-1/3 flex flex-col p-2 xs:p-6 rounded-xl shadow-lg ">
+                <div className="font-semibold text-black text-lg text-center">Are you leaving?</div>
+                <div className="mt-2 text-black text-md text-center">Are you sure you want to logout? You'll need to signin again to access your account.</div>
+                <div className="flex flex-row items-center justify-between gap-2 mt-4">
+                  <Button light title="Cancel" hideImg onClick={() => setShowLogoutModal(false)} />
+                  <Button light={false} title="Logout Anyway" hideImg onClick={handleLogout} />
+                </div>
+              </BottomToTopAnimation>
+            </div>
           }
         </motion.div>
       </motion.div>

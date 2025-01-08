@@ -24,6 +24,7 @@ import { selectUser } from "../../Store/userDataSlice";
 import { socketService } from "./Socket";
 import BookAppointment from "../../screens/BookAppointment";
 import Favourite from "../../screens/Favourite";
+import Catalouge from "../../screens/Catalouge";
 
 
 // Component to set up routing
@@ -70,7 +71,8 @@ const Routing = () => {
                 { path: '/BarberDetails/:_id', element: <BarberDetails /> },
                 { path: '/chat', element: <ProtectedRoute Component={Chat} /> },
                 { path: '/book-appointment' , element:<BookAppointment />},
-                { path: '/favourite' , element:<ProtectedRoute Component={Favourite} />}
+                { path: '/favourite' , element:<ProtectedRoute Component={Favourite} />},
+                { path: '/catalouge' , element:<ProtectedRoute Component={Catalouge} />}
             ]
         }
     ]);
