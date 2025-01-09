@@ -223,7 +223,7 @@ const BarberSection = ({ title, showDes, showBtn }: Props) => {
           </div>
         </div>
       </RightToLeftAnimation>
-      <div className='relative w-[98%] mx-auto h-[420px] rounded-lg shadow-md'>
+      <div className='relative w-[98%] mx-auto h-[440px] rounded-lg shadow-md'>
         <div
           ref={sliderRef}
           onMouseDown={handleMouseDown}
@@ -232,7 +232,6 @@ const BarberSection = ({ title, showDes, showBtn }: Props) => {
           onMouseMove={handleMouseMove}
           className="absolute top-0 left-0 right-0 bottom-0 whitespace-nowrap overflow-x-scroll overflow-y-hidden hide-scrollbar"
         >
-          <AnimatePresence>
             <motion.div
               initial="offscreen"
               whileInView="onscreen"
@@ -250,7 +249,7 @@ const BarberSection = ({ title, showDes, showBtn }: Props) => {
                       delay: index * 0.1,
                       ease: "easeOut",
                     }}
-                    className="flex-none w-[280px] snap-center "
+                    className="w-[280px] snap-center flex-none"
                   >
                     <div className="rounded-xl overflow-hidden relative">
                       <img src={item?.profile ? item?.profile : item?.gender === 'male' ? images.male : images.female}
@@ -282,7 +281,6 @@ const BarberSection = ({ title, showDes, showBtn }: Props) => {
                 )
               })}
             </motion.div>
-          </AnimatePresence>
         </div>
       </div>
     </div>

@@ -226,7 +226,7 @@ const BarberDetails = (props: Props) => {
                 0,
             );
             const averageRating = totalRating / reviews.length;
-            return parseFloat(averageRating.toFixed(1)); // Round to one decimal place
+            return parseFloat(averageRating.toFixed(1));
         } else {
             return 0;
         }
@@ -342,6 +342,8 @@ const BarberDetails = (props: Props) => {
                     barber: item?._id || id,
                 }
                 const response = await createChatRoom(authToken, body) as { status: number; data?: any; message?: string }
+                console.log("chat create response" , response);
+                
                 if (response?.status === 201) {
                     setChatRoomId(response?.data?.newChat?._id)
                 } else {
@@ -372,7 +374,7 @@ const BarberDetails = (props: Props) => {
     const handleNavigateToChat = () => {
         if (authToken) {
             if (chatRoomId) {
-                navigate('/chat')
+                navigate('/chat', { state: { chatRoomId } })
             } else {
                 Toast('error', 'Something wents wrong, try again')
             }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ChatMessage from '../../components/Chat'
-import { useOutletContext } from 'react-router-dom'
+import { useLocation, useOutletContext } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../Store/userDataSlice'
 import moment from 'moment'
@@ -13,7 +13,16 @@ type Props = {}
 const Chat = (props: Props) => {
   const { search, headerFooterHeight, headerHeight } =
     useOutletContext<{ search: string, headerFooterHeight: number, headerHeight: number }>()
+
+  const location = useLocation();
   const userData = useSelector(selectUser)
+  const chatRoomId = location?.state?.chatRoomId ?? null;
+
+  useEffect(() => {
+    if (chatRoomId) {
+      setChatId(chatRoomId)
+    }
+  }, [chatRoomId])
 
   const [chatId, setChatId] = useState<string | null>(null)
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(window.innerWidth < 1024)
@@ -52,7 +61,7 @@ const Chat = (props: Props) => {
     }
   };
 
-  const availableHeightInVH = 100 - headerHeight || 100
+  const availableHeightInVH = 100 - headerHeight || 100  
 
   return (
     <div className={`flex flex-row items-start px-4 flex-1 select-none gap-2 pb-2 `} style={{

@@ -4,6 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectRole } from "../../Store/Role";
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import ProtectedRoute from "./protectedRouting";
+import { selectUser } from "../../Store/userDataSlice";
+import { socketService } from "./Socket";
+import BookAppointment from "../../screens/BookAppointment";
+import Favourite from "../../screens/Favourite";
+import Catalouge from "../../screens/Catalouge";
 import Layout from "../../screens/Layout";
 import Welcome from "../../screens/Welcome";
 import Signin from "../../screens/Signin";
@@ -20,12 +25,6 @@ import BarberDashboard from "../../screens/BarberDashboard";
 import AllBarbers from "../../screens/AllBarbers";
 import BarberDetails from "../../screens/BarberDetails";
 import Chat from "../../screens/Chat";
-import { selectUser } from "../../Store/userDataSlice";
-import { socketService } from "./Socket";
-import BookAppointment from "../../screens/BookAppointment";
-import Favourite from "../../screens/Favourite";
-import Catalouge from "../../screens/Catalouge";
-
 
 // Component to set up routing
 const Routing = () => {

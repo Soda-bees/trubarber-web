@@ -16,6 +16,7 @@ import { selectLocation, setLocation } from "../../Store/LocationSlice";
 import { setUser } from "../../Store/userDataSlice";
 import { setAuthToken } from "../../Store/AuthTokenSlice";
 import { setRole } from "../../Store/Role";
+import useNavigate from "../../components/ScrollToTopNavigate";
 
 type Props = {};
 
@@ -23,6 +24,7 @@ const CreateBarberProfile = (props: Props) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const reduxLocation = useSelector(selectLocation);
+  const navigate = useNavigate()
   // console.log("location from Redux ==========>>", reduxLocation);
 
   const userData = location.state?.userData;
@@ -52,7 +54,7 @@ const CreateBarberProfile = (props: Props) => {
     "Wed",
     "Thu",
     "Fri",
-    "Sat",
+    "Sat",  
   ]);
   const [offDays, setOffDays] = useState<string[]>([]);
   const [servicesData, setserviceData] = useState([
@@ -548,8 +550,6 @@ const CreateBarberProfile = (props: Props) => {
       const formattedStartTime = formatTime(item?.startTime);
       const formattedEndTime = formatTime(item?.endTime);
       const { startTime, endTime, ...rest } = item;
-      console.log("format", formattedStartTime);
-
       return {
         ...rest,
         time: item?.avaiable
@@ -557,7 +557,6 @@ const CreateBarberProfile = (props: Props) => {
           : "",
       };
     });
-    // console.log("updatedScheduled", updatedScheduled);
     try {
       setLoader(true);
       const updatedUserData = {
@@ -571,9 +570,6 @@ const CreateBarberProfile = (props: Props) => {
         businessVerification: imgUri,
         scheduled: updatedScheduled,
       };
-      // console.log("userData", userData);
-      // console.log("updatedUserData", updatedUserData);
-
       const response = (await handleBarberSignup(updatedUserData)) as {
         data: any;
         status: any;
@@ -581,10 +577,10 @@ const CreateBarberProfile = (props: Props) => {
 
       if (response.status == 201) {
         setLoader(false);
-        dispatch(setUser(response?.data?.barber));
         dispatch(setAuthToken(response?.data?.token));
+        dispatch(setUser(response?.data?.barber));
         dispatch(setRole(response?.data?.barber?.role));
-        console.log("signup ka res", response);
+        navigate('/')
       } else {
         setLoader(false);
         Toast("error", response?.data?.message);

@@ -111,7 +111,68 @@ const Appointment = () => {
             </div>
             <div className="mt-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
-                {userData?.appoinment?.map((item: any, index: number) => {
+                {
+                  userData?.appoinment?.length > 0 ? (
+                    userData?.appoinment?.map((item: any, index: number) => {
+                      return (
+                        <div className="border rounded-xl p-4" key={index}>
+                          <div className="flex flex-row justify-between border-b border-black pb-4">
+                            <div className="flex flex-row">
+                              <img
+                                src={
+                                  item.barber?.profile
+                                    ? item.barber.profile
+                                    : item.barber.gender === "male"
+                                      ? images.male
+                                      : images.female
+                                }
+                                className="h-20 object-contain w-16 md:w-20 rounded-xl border"
+                              />
+                              <div className="flex flex-col self-center ml-3">
+                                <div className="text-xl md:text-2xl text-black font-bold">
+                                  {item?.barber?.name}
+                                </div>
+                                <div className="text-black font-light">
+                                  {new Date(item.date).toLocaleDateString("en-GB", {
+                                    day: "2-digit",
+                                    month: "short",
+                                  })}
+                                  /{item.time}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="border rounded-xl text-white bg-black px-3 py-1 flex self-start">
+                              {item.status}
+                            </div>
+                          </div>
+                          <div className="flex justify-between mt-3" key={index}>
+                            <div className="flex">
+                              <div className="text-black font-bold">
+                                {item?.services[0]?.serviceName}
+                              </div>
+                              <div className="text-black font-light ml-1">
+                                {`(${item?.services[0]?.name})`}
+                              </div>
+                            </div>
+                            <div className="border border-black text-black px-3 rounded-lg">
+                              ${item?.services[0]?.price}
+                            </div>
+                          </div>
+                          <div
+                            className="flex items-center justify-between border bg-black rounded-xl py-3 px-4 cursor-pointer mt-4 text-white bottom-0"
+                            onClick={() => handleClick(item)}
+                          >
+                            See Details
+                            <img src={images.arrowBtn} className="w-3" />
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="font-semibold">  You have not booked any appointments yet.</div>
+                  )
+                }
+                {/* {userData?.appoinment?.map((item: any, index: number) => {
                   return (
                     <div className="border rounded-xl p-4" key={index}>
                       <div className="flex flex-row justify-between border-b border-black pb-4">
@@ -165,7 +226,7 @@ const Appointment = () => {
                       </div>
                     </div>
                   );
-                })}
+                })} */}
               </div>
             </div>
             {isModalOpen && (

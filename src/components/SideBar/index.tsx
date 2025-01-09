@@ -145,7 +145,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
               </div>
               <div className="bg-hoverGray w-full mx-auto h-[1px] my-6"></div>
             </div>
-            <div className=" overflow-y-scroll hide-scrollbar h-[40vh]">
+            <div className=" overflow-y-scroll hide-scrollbar h-[50vh]">
 
               {
                 role === 'user' ?

@@ -39,6 +39,8 @@ const socketService = (dispatch: any, authToken: any, userData: any) => {
     };
 
     const handleAddAndUpdateNewChat = async (data: any) => {
+        console.log("socket handleAddAndUpdateNewChat -=-=-=>" , data);
+        
         dispatch(addAndUpdateNewChatInRedux(data));
     };
 

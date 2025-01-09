@@ -329,3 +329,16 @@ export const setSeenTrue = async (token: any, messageIds: any) => {
     return error
   }
 }
+
+export const verifyPassword = async (body: any, token: any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post(`auth/deleteAccount`, body, { headers, });
+    return response
+  } catch (error) {
+    return error
+  }
+}

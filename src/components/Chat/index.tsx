@@ -169,6 +169,8 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId, text, setText, selected
   const handleSetChatName = async () => {
     const chat = userData?.chat?.find((chat: any) => chat?._id === chatId)
     userData?.role === 'user' ? setChatName(chat?.barber?.name) : setChatName(chat?.user?.name);
+    console.log("handleSetChatName", chat);
+
   }
 
   const handleButtonClick = () => {
@@ -271,7 +273,6 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId, text, setText, selected
                 </RightToLeftAnimation>
               </div>
             ) : (
-
               <RightToLeftAnimation className='h-full inset-0 bg-black bg-opacity-85 relative w-full h-full flex items-center justify-center'>
                 <div className='bg-white absolute top-4 left-4 p-2 rounded-full cursor-pointer active:opacity-50 z-10' onClick={() => {
                   setShowImageScreen(false)
@@ -363,8 +364,14 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId, text, setText, selected
 
               <div
                 ref={messageContainerRef}
-                className="flex-1 overflow-auto flex flex-col chatScrollbar p-2"
+                className="flex-1 overflow-auto flex flex-col chatScrollbar p-2 relative"
               >
+                {
+                  messages?.length === 0 &&
+                  <div className='mt-40 text-center text-black font-semibold'>
+                     You're starting a new conversation. Say hi!
+                  </div>
+                }
                 {
                   messages.map((item: any, index: number) => {
                     if (item?.type === 'header') {

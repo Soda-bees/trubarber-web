@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import images from "../../services/config/images";
 import Button from "../../components/Button";
 import SmallButton from "../../components/SmallButton";
-import { updateProfile, uploadProfile } from "../../services/config/Api";
+import { updateProfile, uploadProfile, verifyPassword } from "../../services/config/Api";
 import { Toast } from "../../components/Toast";
 import { useDispatch, useSelector } from "react-redux";
 import { selectRole } from "../../Store/Role";
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import { selectUser, setUser } from "../../Store/userDataSlice";
+import BottomToTopAnimation from "../../components/BottomToTopAnimation";
+import RightToLeftAnimation from "../../components/RightToLeftAnimation";
 
 type Props = {};
 
@@ -16,7 +18,6 @@ const EditProfile = (props: Props) => {
   const dispatch = useDispatch();
   const authToken = useSelector(selectAuthToken);
   const userData = useSelector(selectUser);
-  console.log("userdatata ===>>", userData);
 
   const [selectedGender, setSelectedGender] = useState(null);
   const [serviceImageLoader, setServiceImageLoader] = useState<boolean>(false);
@@ -25,6 +26,11 @@ const EditProfile = (props: Props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [showDeleteAcountModal, setShowDeleteAcountModal] = useState<boolean>(true)
+  const [password, setPassword] = useState<string>('')
+  const [showPass, setShowPass] = useState<boolean>(false)
+  const [verifyDelAccEmailLoader, setVerifyDelAccEmailLoader] = useState<boolean>(false)
+  const [deletePassValid, setDeletePassValid] = useState<boolean>(false)
 
   const handleGenderToggle = (gender: any) => {
     setSelectedGender(selectedGender === gender ? null : gender);
@@ -82,7 +88,6 @@ const EditProfile = (props: Props) => {
         setLoader(false);
         Toast("success", response?.data?.message);
         dispatch(setUser(response?.data?.updatedUser));
-        console.log("response", response);
       } else {
         setLoader(false);
         Toast("error", response?.data?.message);
@@ -109,6 +114,28 @@ const EditProfile = (props: Props) => {
     }
   }, [userData]);
 
+  const handleVerifyPassword = async () => {
+    try {
+      if (!password) {
+        return Toast("error", 'Please enter your password')
+      }
+      setVerifyDelAccEmailLoader(true)
+      const body = { password }
+      const response = await verifyPassword(body, authToken) as { status: any }
+      if (response?.status === 200) {
+        setVerifyDelAccEmailLoader(false)
+        setDeletePassValid(true)
+      } else {
+        setVerifyDelAccEmailLoader(false)
+        Toast("error", 'Invalid password')
+      }
+    } catch (error) {
+      setVerifyDelAccEmailLoader(false)
+      console.log(error);
+      Toast('error', 'Something wents wrong, try again later')
+    }
+  }
+
   return (
     <div className="px-4 md:px-10 mb-5">
       <div className="text-2xl font-bold border-b-2 pb-4">Edit Profile</div>
@@ -119,8 +146,8 @@ const EditProfile = (props: Props) => {
               selectedImage
                 ? selectedImage
                 : userData?.gender === "male"
-                ? images.male
-                : images.female
+                  ? images.male
+                  : images.female
             }
             alt="ProfilePicture"
             className="w-20 h-20 rounded-full border object-cover"
@@ -176,6 +203,7 @@ const EditProfile = (props: Props) => {
               className="w-full bg-transparent h-12 focus:outline-none pl-2"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled
             />
           </div>
           {role === "barber" && (
@@ -191,47 +219,72 @@ const EditProfile = (props: Props) => {
             </div>
           )}
         </div>
-        {/* <div className="text-xl my-5 text-textGray text-center md:text-start">
-          Select Your Gender
-        </div>
-        <div className="flex flex-row justify-between w-full max-w-[250px] mx-auto md:mx-0">
+
+        <div className="flex flex-row gap-2">
           <div
-            className="flex flex-row items-center cursor-pointer"
-            onClick={() => handleGenderToggle("male")}
+            className="bg-black w-full max-w-[160px] flex justify-center items-center rounded-lg h-10 mt-10 mx-auto md:mx-0 cursor-pointer active:opacity-10"
+            onClick={handleUpdateProfile}
           >
-            <img
-              src={
-                selectedGender === "male"
-                  ? images.checkboxMarked
-                  : images.checkbox
-              }
-              className="w-5 mr-2"
-            />
-            <div className="text-textGray text-lg">Male</div>
+            <SmallButton dark title="Save" loader={loader} />
           </div>
           <div
-            className="flex flex-row items-center cursor-pointer"
-            onClick={() => handleGenderToggle("female")}
+            className="bg-red-600 w-full max-w-[160px] flex justify-center items-center rounded-lg h-10 mt-10 mx-auto md:mx-0 cursor-pointer active:opacity-10"
+            onClick={() => setShowDeleteAcountModal(true)}
           >
-            <img
-              src={
-                selectedGender === "female"
-                  ? images.checkboxMarked
-                  : images.checkbox
-              }
-              className="w-5 mr-2"
-            />
-            <div className="text-textGray text-lg">Female</div>
+            <div className="text-white">Delete Account</div>
           </div>
-        </div> */}
-        <div
-          className="bg-black w-full max-w-[160px] flex justify-center items-center rounded-lg h-10 mt-10 mx-auto md:mx-0 cursor-pointer active:opacity-10"
-          onClick={handleUpdateProfile}
-        >
-          {/* <div className="text-white text-lg">Save</div> */}
-          <SmallButton dark title="Save" loader={loader} />
         </div>
+
       </div>
+      {
+        showDeleteAcountModal &&
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 max-w-[2800px] mx-auto z-50 select-none">
+          {
+            deletePassValid ?
+              <RightToLeftAnimation className="bg-white w-[90%] sm:w-4/5 md:w-2/3 lg:w-1/3 flex flex-col p-2 xs:p-6 rounded-xl shadow-lg">
+                <div className="font-semibold text-black text-lg text-center">Delete Account</div>
+                <div className="mt-2 text-black text-md text-center">
+                  You're about to delete all th data in your TruBarber account. Are you absolute positive to delete your account? There is no option to undo.
+                </div>
+
+                <div className="flex flex-row items-center justify-between mt-4">
+                  <div className="bg-red-600 w-[45%] xs:w-[35%] md:w-[40%] flex justify-center items-center rounded-lg h-10 cursor-pointer active:opacity-10">
+                    <div className="text-white">Delete Account</div>
+                  </div>
+                  <div className="w-[30%] sm:w-[20%] self-start">
+                    <SmallButton title="Cancel" dark={false} onClick={() => {
+                      setDeletePassValid(false)
+                      setShowDeleteAcountModal(false)
+                      setPassword('')
+                    }} />
+                  </div>
+                </div>
+              </RightToLeftAnimation> :
+              <BottomToTopAnimation className="bg-white w-[90%] sm:w-4/5 md:w-2/3 lg:w-1/3 flex flex-col p-2 xs:p-6 rounded-xl shadow-lg">
+                <div className="font-semibold text-black text-lg text-center">Delete Account</div>
+                <div className="mt-2 text-black text-md text-center">To confirm your account deletion, please verify you account password.</div>
+                <div className='bg-inputGray flex flex-row items-center justify-start px-4 rounded-lg mt-2 sm:w-[80%] mx-auto mt-4'>
+                  <img src={images.password} className='w-4' />
+                  <input placeholder='Password' value={password} type={showPass ? 'text' : 'password'} className='w-full bg-transparent h-12 focus:outline-none pl-2' onChange={(e) => setPassword(e.target.value)} />
+                  <img src={!showPass ? images.eyeOff : images.eye} className='w-5 cursor-pointer' onClick={() => setShowPass(!showPass)} />
+                </div>
+                <div className="flex flex-row items-center justify-between">
+                  <div className="mt-4 w-[30%] sm:w-[20%] self-end">
+                    <SmallButton title="Continue" dark onClick={handleVerifyPassword} loader={verifyDelAccEmailLoader} />
+                  </div>
+                  <div className="mt-4 w-[30%] sm:w-[20%] self-start">
+                    <SmallButton title="Cancel" dark={false} onClick={() => {
+                      setDeletePassValid(false)
+                      setShowDeleteAcountModal(false)
+                      setPassword('')
+                    }} />
+                  </div>
+                </div>
+              </BottomToTopAnimation>
+          }
+
+        </div>
+      }
     </div>
   );
 };
