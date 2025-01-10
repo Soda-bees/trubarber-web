@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import images from "../../services/config/images";
 import Button from "../../components/Button";
 import SmallButton from "../../components/SmallButton";
-import { updateProfile, uploadProfile, verifyPassword } from "../../services/config/Api";
+import { deleteAccount, updateProfile, uploadProfile, verifyPassword } from "../../services/config/Api";
 import { Toast } from "../../components/Toast";
 import { useDispatch, useSelector } from "react-redux";
 import { selectRole } from "../../Store/Role";
@@ -10,10 +10,13 @@ import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import { selectUser, setUser } from "../../Store/userDataSlice";
 import BottomToTopAnimation from "../../components/BottomToTopAnimation";
 import RightToLeftAnimation from "../../components/RightToLeftAnimation";
+import { handleLogout } from "../../components/SideBar";
+import { useOutletContext } from "react-router-dom";
 
 type Props = {};
 
 const EditProfile = (props: Props) => {
+  const { setShowLogoutModal } = useOutletContext<{ setShowLogoutModal: boolean }>();
   const role = useSelector(selectRole);
   const dispatch = useDispatch();
   const authToken = useSelector(selectAuthToken);
@@ -26,7 +29,7 @@ const EditProfile = (props: Props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [showDeleteAcountModal, setShowDeleteAcountModal] = useState<boolean>(true)
+  const [showDeleteAcountModal, setShowDeleteAcountModal] = useState<boolean>(false)
   const [password, setPassword] = useState<string>('')
   const [showPass, setShowPass] = useState<boolean>(false)
   const [verifyDelAccEmailLoader, setVerifyDelAccEmailLoader] = useState<boolean>(false)
@@ -133,6 +136,25 @@ const EditProfile = (props: Props) => {
       setVerifyDelAccEmailLoader(false)
       console.log(error);
       Toast('error', 'Something wents wrong, try again later')
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    try {
+      setVerifyDelAccEmailLoader(true)
+      const response = await deleteAccount(authToken) as { status: any, data: any }
+      if (response?.status === 200) {
+        setVerifyDelAccEmailLoader(false)
+        Toast("success", 'Your account has been deleted successfully.', () => {
+          handleLogout(dispatch, setShowLogoutModal)
+        })
+      } else {
+        setVerifyDelAccEmailLoader(false)
+        Toast("error", response?.data?.message)
+      }
+    } catch (error) {
+      setVerifyDelAccEmailLoader(false)
+      console.log(error);
     }
   }
 
@@ -248,14 +270,25 @@ const EditProfile = (props: Props) => {
                 </div>
 
                 <div className="flex flex-row items-center justify-between mt-4">
-                  <div className="bg-red-600 w-[45%] xs:w-[35%] md:w-[40%] flex justify-center items-center rounded-lg h-10 cursor-pointer active:opacity-10">
-                    <div className="text-white">Delete Account</div>
+                  <div
+                    onClick={() => !verifyDelAccEmailLoader && handleDeleteAccount()}
+                    className="bg-red-600 w-[45%] xs:w-[35%] md:w-[40%] flex justify-center items-center rounded-lg h-10 cursor-pointer active:opacity-10 flex flex-row items-center">
+                    {
+                      verifyDelAccEmailLoader ?
+                        <div
+                          className={`inline-block h-5 w-5 animate-spin rounded-full border-[2px] border-white border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white`}
+                          role="status">
+                        </div> :
+                        <div className="text-white">Delete Account</div>
+                    }
                   </div>
                   <div className="w-[30%] sm:w-[20%] self-start">
                     <SmallButton title="Cancel" dark={false} onClick={() => {
-                      setDeletePassValid(false)
-                      setShowDeleteAcountModal(false)
-                      setPassword('')
+                      if (!verifyDelAccEmailLoader) {
+                        setDeletePassValid(false)
+                        setShowDeleteAcountModal(false)
+                        setPassword('')
+                      }
                     }} />
                   </div>
                 </div>
@@ -274,9 +307,11 @@ const EditProfile = (props: Props) => {
                   </div>
                   <div className="mt-4 w-[30%] sm:w-[20%] self-start">
                     <SmallButton title="Cancel" dark={false} onClick={() => {
-                      setDeletePassValid(false)
-                      setShowDeleteAcountModal(false)
-                      setPassword('')
+                      if (!verifyDelAccEmailLoader) {
+                        setDeletePassValid(false)
+                        setShowDeleteAcountModal(false)
+                        setPassword('')
+                      }
                     }} />
                   </div>
                 </div>

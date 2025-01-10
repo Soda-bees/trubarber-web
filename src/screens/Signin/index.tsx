@@ -88,7 +88,7 @@ const Signin = (props: Props) => {
                 <img src={images.signinBG} className='w-full h-full absolute top-0 left-0 p-2 rounded-3xl ' />
                 <BackButton light={false} />
                 <div className='z-10 '>
-                    <img src={images.truLogo} className='w-1/6 ' />
+                    <img src={images.truLogo} className='w-1/6 cursor-pointer' onClick={() => navigate('/')}/>
                     <div className='w-[95%] text-white mt-8  text-xs md:text-base lg:text-lg'>Join our community and stay connected. Whether you're here to book your next haircut, check your appointments, or manage your account, we’ve got you covered.</div>
                 </div>
             </div>

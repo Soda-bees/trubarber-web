@@ -342,3 +342,16 @@ export const verifyPassword = async (body: any, token: any) => {
     return error
   }
 }
+
+export const deleteAccount = async (token: any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post(`auth/confirmAndDeleteAccount`, {}, { headers })
+    return response
+  } catch (error) {
+    return error
+  }
+}

@@ -23,6 +23,12 @@ type Props = {
   setShowLogoutModal: any
 };
 
+export const handleLogout = (dispatch: any, setShowLogoutModal: any) => {
+  setShowLogoutModal(false);
+  dispatch(clearAuthToken());
+  dispatch(clearUser());
+};
+
 const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, setShowLogoutModal }: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -35,11 +41,11 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
   const [address, setAddress] = useState<string>('')
   const [addressLodaer, setAddressLodaer] = useState<boolean>(false)
 
-  const handleLogout = async () => {
-    setShowLogoutModal(false)
-    dispatch(clearAuthToken());
-    dispatch(clearUser())
-  };
+  // export const handleLogout = () => {
+  //   setShowLogoutModal(false)
+  //   dispatch(clearAuthToken());
+  //   dispatch(clearUser())
+  // };
 
   useEffect(() => {
     handleGetUserAddress()
@@ -416,7 +422,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                 <div className="mt-2 text-black text-md text-center">Are you sure you want to logout? You'll need to signin again to access your account.</div>
                 <div className="flex flex-row items-center justify-between gap-2 mt-4">
                   <Button light title="Cancel" hideImg onClick={() => setShowLogoutModal(false)} />
-                  <Button light={false} title="Logout Anyway" hideImg onClick={handleLogout} />
+                  <Button light={false} title="Logout Anyway" hideImg onClick={() => handleLogout(dispatch, setShowLogoutModal)} />
                 </div>
               </BottomToTopAnimation>
             </div>
