@@ -9,12 +9,14 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../Store/userDataSlice";
 import { setAuthToken } from "../../Store/AuthTokenSlice";
 import { setRole } from "../../Store/Role";
+import useNavigate from "../../components/ScrollToTopNavigate";
 
 type Props = {};
 
 const CreateUserProfile = (props: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const location = useLocation();
   interface LocationState {
@@ -136,6 +138,7 @@ const CreateUserProfile = (props: Props) => {
   const [imgUri, setImgUri] = useState<string>("");
   const [imageUploadLoader, setImageUploadLoader] = useState<boolean>(false);
 
+
   const handleSetGender = (selected: string) => {
     setGender(selected);
   };
@@ -205,47 +208,42 @@ const CreateUserProfile = (props: Props) => {
     setSelectedSurvey(newSurveyArray);
     setIsModalOpen(true);
   };
+  
 
   const handleConfirm = async () => {
-    const token = "asdasdasdasdasd";
-    // const role = "user";
-    console.log("work");
-    
-    dispatch(setAuthToken(token));
-    // dispatch(setRole(role));
-
-  //   try {
-  //     setLoader(true);
-  //     Object.assign(userData, {
-  //       profile: imgUri,
-  //       survey: selectedSurvey,
-  //       tagSelection: selectedTagSelection,
-  //       gender,
-  //     });
-  //     console.log(userData);
-  //     const response = (await handleSignup(userData)) as {
-  //       status: any;
-  //       data: any;
-  //     };
-  //     console.log("ressss ===?", response);
-  //     if (response.status == 201) {
-  //       setLoader(false);
-  //       dispatch(setUser(response?.data?.userData));
-  //       dispatch(setAuthToken(response?.data?.token));
-  //       dispatch(setRole(response?.data?.userData?.role));
-  //       // Toast("success", response?.data?.message, () => {
-  //       //   dispatch(setUser(response?.data?.userData));
-  //       //   dispatch(setAuthToken(response?.data?.token));
-  //       //   dispatch(setRole(response?.data?.userData?.role));
-  //       // });
-  //     } else {
-  //       setLoader(false);
-  //       Toast("error", response?.data?.message);
-  //     }
-  //   } catch (error) {
-  //     setLoader(false);
-  //     Toast("error", "An error occurred");
-  //   }
+    try {
+      setLoader(true);
+      Object.assign(userData, {
+        profile: imgUri,
+        survey: selectedSurvey,
+        tagSelection: selectedTagSelection,
+        gender,
+      });
+      console.log(userData);
+      const response = (await handleSignup(userData)) as {
+        status: any;
+        data: any;
+      };
+      console.log("ressss ===?", response);
+      if (response.status == 201) {
+        setLoader(false);
+        dispatch(setUser(response?.data?.userData));
+        dispatch(setAuthToken(response?.data?.token));
+        dispatch(setRole(response?.data?.userData?.role));
+        navigate('/')
+        // Toast("success", response?.data?.message, () => {
+        //   dispatch(setUser(response?.data?.userData));
+        //   dispatch(setAuthToken(response?.data?.token));
+        //   dispatch(setRole(response?.data?.userData?.role));
+        // });
+      } else {
+        setLoader(false);
+        Toast("error", response?.data?.message);
+      }
+    } catch (error) {
+      setLoader(false);
+      Toast("error", "An error occurred");
+    }
   };
 
   const navigateToDashboard = async () => {};

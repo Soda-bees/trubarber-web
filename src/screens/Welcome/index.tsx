@@ -19,7 +19,7 @@ const Welcome = (props: Props) => {
   const { showSidebar } = useOutletContext<{ showSidebar: boolean }>();
   const dispatch = useDispatch();
   const barbers = useSelector(selectBarbers);
-  const role = useSelector(selectRole)  
+  const role = useSelector(selectRole);
 
   const location = useSelector<any>((state) => state.location);
   console.log("Location from Redux:", location);
@@ -37,7 +37,6 @@ const Welcome = (props: Props) => {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           };
-
           console.log("Current Position:", newPosition);
           dispatch(setLocation(newPosition));
           const mapPosition = {

@@ -1,7 +1,8 @@
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import React, { useEffect, useState } from "react";
 
-const googleApiKey = process.env.REACT_APP_GOOGLE_API_KEY as string;
+// const googleApiKey = process.env.REACT_APP_GOOGLE_API_KEY as string;
+const googleApiKey = "AIzaSyCixCZ-cZQ0EPTyJhKcbvGeTFwhVZnMWWU";
 
 const Map = () => {
   const containerStyle = {
@@ -16,7 +17,7 @@ const Map = () => {
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: googleApiKey,
+    googleMapsApiKey: "AIzaSyCixCZ-cZQ0EPTyJhKcbvGeTFwhVZnMWWU",
   });
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
