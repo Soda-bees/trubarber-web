@@ -7,6 +7,7 @@ import RightToLeftAnimation from "../RightToLeftAnimation";
 import { useSelector } from "react-redux";
 import { selectBarbers } from "../../Store/BarbersSlice";
 import { useOutletContext } from "react-router-dom";
+import moment from "moment";
 
 type Review = {
   barberData: string | any;
@@ -58,6 +59,8 @@ const CustomerReview = (props: Props) => {
       setCurrentIndex(currentIndex - reviewsPerPage);
     }
   };
+
+  const formatCreatedAt = (date:any) => moment(date).format("DD / MMM / YYYY");
 
   return (
     <div className="p-4 md:p-10 lg:p-20 flex flex-col lg:flex-row gap-4">
@@ -114,7 +117,7 @@ const CustomerReview = (props: Props) => {
                 />
                 <div>
                   <div className="text-lg font-semibold">{review?.userData?.name}</div>
-                  <div className="text-sm">creaed das at</div>
+                  <div className="text-sm">{formatCreatedAt(review?.createdAt)}</div>
                   <div className="flex items-center">
                     <span className="text-md mr-2 mt-1">{review?.rating}</span>
                     <StarRatings
