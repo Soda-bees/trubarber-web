@@ -138,6 +138,7 @@ const CreateUserProfile = (props: Props) => {
   const [imgUri, setImgUri] = useState<string>("");
   const [imageUploadLoader, setImageUploadLoader] = useState<boolean>(false);
 
+
   const handleSetGender = (selected: string) => {
     setGender(selected);
   };
@@ -207,6 +208,7 @@ const CreateUserProfile = (props: Props) => {
     setSelectedSurvey(newSurveyArray);
     setIsModalOpen(true);
   };
+  
 
   const handleConfirm = async () => {
     try {

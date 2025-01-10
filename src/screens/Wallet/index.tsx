@@ -7,7 +7,16 @@ import axios from "axios";
 import { baseURL } from "../../services/config/axiosInstance";
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import { handleIncreaseWallet } from "../../services/config/Api";
-import { Elements } from "@stripe/react-stripe-js";
+import {
+  CardElement,
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+} from "@stripe/react-stripe-js";
 import SmallButton from "../../components/SmallButton";
 import { loadStripe } from "@stripe/stripe-js";
 import WalletButton from "../../components/WalletButton";
@@ -18,131 +27,27 @@ const Wallet = (props: Props) => {
   const userData = useSelector(selectUser);
   const authToken = useSelector(selectAuthToken);
   const dispatch = useDispatch();
+  const stripe = useStripe();
+  const elements = useElements();
   // console.log("userDataWallet", userData);
   const [loader, setLoader] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
   const [wallet, setWallet] = useState(null);
   const [enterPaymentAmount, setEnterPaymentAmount] = useState(false);
   const [amount, setAmount] = useState("");
-  // const stripe = useStripe();
-  // const elements = useElements();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState<any>("");
-  const [stripe, setStripe] = useState<any>(null);
+  // const [stripe, setStripe] = useState<any>(null);
   // const [amount, setLocalAmount] = useState("");
-
-  const stripePromise = loadStripe(
-    // "pk_live_51GQwmHKQE6LZkVRAWEQurGafjjOkpMRCWly7m3O4cNDMZXsgtrzywCw0sk00LFfdeSmL86j1uqpQijtKDhlP77gT00t92A6i4B"
-    "pk_test_51Q0i3SFWqbkEzf6rhMiTwrzirJFjPqfNVrorak6wVpD9GazCAsvC2GHrE2KSpTIdN06l3428lIyS1KmGxzcMvhvu00by6KVvm9"
-  );
 
   const togglePaymentAmount = () => {
     setEnterPaymentAmount(true);
   };
 
-  // const handlePayment = async () => {
-    // try {
-    //   const numberValue = Number(amount);
-
-    //   if (isNaN(numberValue) || numberValue <= 0) {
-    //     Toast("error", "Please enter valid amount");
-    //     setAmount("");
-    //     return;
-    //   }
-
-    //   setBtnLoader(true);
-    //   const response = await axios.post(
-    //     `${baseURL}user/createPaymentIntent`,
-    //     {
-    //       amount: numberValue,
-    //       _id: userData?._id,
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${authToken}`,
-    //       },
-    //     }
-    //   );
-    //   const { clientSecret } = response.data;
-    //   setClientSecret(clientSecret)
-
-    //   if (!clientSecret) {
-    //     setBtnLoader(false);
-    //     setAmount("");
-    //     return Toast("error", "Failed to initialize Payment");
-    //   }
-
-    //   if (!stripe || !elements) {
-    //     setBtnLoader(false);
-    //     return Toast("error", "Stripe has not been initialized");
-    //   }
-
-    //   const cardElement = elements.getElement(CardElement);
-    //   const { error: confirmError } = await stripe.confirmCardPayment(
-    //     clientSecret,
-    //     {
-    //       payment_method: {
-    //         card: cardElement!,
-    //         billing_details: {
-    //           name: userData?.name,
-    //           email: userData?.email,
-    //         },
-    //       },
-    //     }
-    //   );
-
-    //   if (confirmError) {
-    //     setBtnLoader(false);
-    //     setAmount("");
-    //     return Toast(
-    //       "error",
-    //       confirmError.message || "Payment failed. Please try again."
-    //     );
-    //   }
-
-    //   const responseSecond = (await handleIncreaseWallet(
-    //     userData?._id,
-    //     authToken,
-    //     { amount: numberValue }
-    //   )) as { data: any };
-    //   if (responseSecond?.data?.success) {
-    //     setAmount("");
-    //     setWallet(responseSecond?.data?.balance);
-    //     dispatch(updateWalletRedux(responseSecond?.data?.balance));
-    //     setBtnLoader(false);
-    //     Toast("success", "Payment successful!");
-    //   } else {
-    //     setBtnLoader(false);
-    //     setAmount("");
-    //     Toast("error", responseSecond?.data?.message || "Error occurred");
-    //   }
-    // } catch (error) {
-    //   console.error("Payment error:", error);
-    //   setBtnLoader(false);
-    //   setAmount("");
-    //   Toast("error", "Payment failed");
-    // }
-  // };
-
-  const handleButtonPress = () => {
-    if (enterPaymentAmount) {
-      console.log("if");
-
-      setEnterPaymentAmount(false);
-      // handlePayment();
-    } else {
-      console.log("else");
-
-      togglePaymentAmount();
-    }
-  };
-
-  useEffect(() => {
-    const createPaymentIntent = async () => {
-      // const numberValue = Number(amount);
-      const numberValue = 10;
+  const handlePayment = async () => {
+    try {
+      const numberValue = Number(amount);
 
       if (isNaN(numberValue) || numberValue <= 0) {
         Toast("error", "Please enter valid amount");
@@ -165,16 +70,119 @@ const Wallet = (props: Props) => {
         }
       );
       const { clientSecret } = response.data;
-
       setClientSecret(clientSecret);
-      console.log("aaaaaaaaaaaaaaa============>>", clientSecret);
-    };
-    createPaymentIntent();
-  }, []);
 
-  useEffect(() => {
-    setStripe(stripePromise);
-  }, []);
+      if (!clientSecret) {
+        setBtnLoader(false);
+        setAmount("");
+        return Toast("error", "Failed to initialize Payment");
+      }
+
+      if (!stripe || !Elements) {
+        setBtnLoader(false);
+        return Toast("error", "Stripe has not been initialized");
+      }
+
+      const cardElement = elements?.getElement(CardNumberElement);
+      const { error: confirmError } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement!,
+            billing_details: {
+              name: userData?.name,
+              email: userData?.email,
+            },
+          },
+        }
+      );
+
+      if (confirmError) {
+        setBtnLoader(false);
+        setAmount("");
+        return Toast(
+          "error",
+          confirmError.message || "Payment failed. Please try again."
+        );
+      }
+
+      const responseSecond = (await handleIncreaseWallet(
+        userData?._id,
+        authToken,
+        { amount: numberValue }
+      )) as { data: any };
+      if (responseSecond?.data?.success) {
+        setAmount("");
+        setWallet(responseSecond?.data?.balance);
+        dispatch(updateWalletRedux(responseSecond?.data?.balance));
+        setBtnLoader(false);
+        Toast("success", "Payment successful!");
+        setShowModal(false);
+      } else {
+        setBtnLoader(false);
+        setAmount("");
+        Toast("error", responseSecond?.data?.message || "Error occurred");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      setBtnLoader(false);
+      setAmount("");
+      Toast("error", "Payment failed");
+    }
+  };
+
+  const handleButtonPress = () => {
+    if (enterPaymentAmount) {
+      console.log("if");
+
+      setEnterPaymentAmount(false);
+      // handlePayment();
+    } else {
+      console.log("else");
+
+      togglePaymentAmount();
+    }
+  };
+
+  const CARD_ELEMENT_OPTIONS = {
+    style: {
+      base: {
+        iconColor: "#666EE8",
+        color: "#424770",
+        fontWeight: "400",
+        // fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
+        fontSize: "15px",
+        fontSmoothing: "antialiased",
+        "::placeholder": {
+          color: "#aab7c4",
+        },
+      },
+      invalid: {
+        iconColor: "#FFC7EE",
+        color: "#FFC7EE",
+      },
+    },
+    hidePostalCode: true,
+
+    showIcon: true, // Ensure this is included
+  };
+
+  // const CARD_ELEMENT_OPTIONS = {
+  //   style: {
+  //     base: {
+  //       fontSize: "15px",
+  //       color: "#424770",
+  //       "::placeholder": {
+  //         color: "#aab7c4",
+  //       },
+  //     },
+  //     invalid: {
+  //       color: "#9e2146",
+  //     },
+  //   },
+  //   hidePostalCode: true,
+  //   showIcon: true,
+  // };
 
   return (
     <div className="px-4 md:px-10 mb-5">
@@ -223,41 +231,64 @@ const Wallet = (props: Props) => {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 sm:p-6 z-50  max-w-[2800px] mx-auto">
-          <div className="bg-white w-full sm:w-4/5 md:w-2/3 lg:w-1/3 flex flex-col p-2 xs:p-6 rounded-xl shadow-lg">
-            <div className="">
-              <h2>Enter Amount and Card Details</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
+          <div className="bg-white w-full max-w-sm sm:max-w-md p-4 rounded-xl shadow-lg">
+            <div className="flex justify-center font-semibold text-lg mb-4">
+              Enter Amount and Card Details
             </div>
-            <div className="">
-              <div>
-                {clientSecret && (
-                  <Elements stripe={stripe} options={{ clientSecret }} >
-                    <WalletButton />
-                  </Elements>
-                )}
-              </div>
-              <div className="flex justify-center self-center items-center mt-5">
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Enter amount"
-                className="p-3 border rounded-lg"
-              />
+            <div>
+              <form>
+                <div className="mb-4">
+                  <label className="font-semibold ml-2">Card Number</label>
+                  <CardNumberElement
+                    options={CARD_ELEMENT_OPTIONS}
+                    className="border p-2 rounded-lg bg-inputGray mt-1 w-full"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1">
+                    <label className="font-semibold ml-2">Expiry Date</label>
+                    <CardExpiryElement
+                      options={CARD_ELEMENT_OPTIONS}
+                      className="border p-2 rounded-lg bg-inputGray mt-1 w-full"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="font-semibold ml-2">CVC</label>
+                    <CardCvcElement
+                      options={CARD_ELEMENT_OPTIONS}
+                      className="border p-2 rounded-lg bg-inputGray mt-1 w-full"
+                    />
+                  </div>
+                </div>
+              </form>
+              <div className="flex justify-center mt-5">
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  className="p-2 border rounded-lg w-full max-w-xs"
+                />
               </div>
             </div>
-            <div className="modal-footer flex justify-between">
-              {/* <SmallButton
-                disable={btnLoader}
-                // onClick={handlePayment}
-                dark
-                title={btnLoader ? "Processing..." : "Pay Now"}
-              /> */}
-              <SmallButton
-                dark
-                onClick={() => setShowModal(false)}
-                title={"Close"}
-              />
+            <div className="modal-footer flex justify-center mt-6">
+              <div className="w-28">
+                <SmallButton
+                  disable={btnLoader}
+                  onClick={handlePayment}
+                  dark={true}
+                  loader={btnLoader}
+                  title={"Pay Now"}
+                />
+              </div>
+              <div className="ml-4 w-28">
+                <SmallButton
+                  dark
+                  onClick={() => setShowModal(false)}
+                  title={"Close"}
+                />
+              </div>
             </div>
           </div>
         </div>

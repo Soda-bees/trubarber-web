@@ -124,6 +124,7 @@ const Signup = (props: Props) => {
 
   return (
     <div className="w-full lg:h-screen flex flex-col lg:flex-row items-start justify-between max-h-screen">
+      
       <div className="relative lg:h-full bg-white h-[40vh] md:h-[60vh] w-full lg:w-[85%] xl:w-[70%] flex flex-col items-start justify-between pl-4 py-4 lg:pl-10 lg:py-8 bg-cover md:bg-center lg:bg-contain xl:bg-cover bg-no-repeat">
         <img
           src={images.signinBG}
@@ -131,7 +132,7 @@ const Signup = (props: Props) => {
         />
         <BackButton light={false} />
         <div className="z-10 ">
-          <img src={images.truLogo} className="w-1/6 " />
+          <img src={images.truLogo} className="w-1/6 cursor-pointer" onClick={() => navigate('/')} />
           <div className="w-[95%] text-white mt-8  text-xs md:text-base lg:text-lg">
             Join our community and stay connected. Whether you're here to book
             your next haircut, check your appointments, or manage your account,
@@ -143,6 +144,7 @@ const Signup = (props: Props) => {
           </div>
         </div>
       </div>
+      
       <div className="h-full lg:w-1/2 w-full flex flex-col items-center justify-center lg:justify-between py-8 md:py-14 lg:mt-0 ml-0 lg:ml-4 xl-ml-10 overflow-scroll hide-scrollbar">
         <div className="w-full px-4 w-[100%] sm:w-[80%] md:w-[60%] lg:w-[90%]">
           <div className="flex">

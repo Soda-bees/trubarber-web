@@ -38,8 +38,8 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
   const location = useLocation();
   const activePath = location.pathname;
   const [profileDropDown, setProfileDropDown] = useState<boolean>(false);
-  const [address, setAddress] = useState<string>('')
-  const [addressLodaer, setAddressLodaer] = useState<boolean>(false)
+  const [address, setAddress] = useState<string>("");
+  const [addressLodaer, setAddressLodaer] = useState<boolean>(false);
 
   // export const handleLogout = () => {
   //   setShowLogoutModal(false)
@@ -48,24 +48,27 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
   // };
 
   useEffect(() => {
-    handleGetUserAddress()
-  }, [user])
+    handleGetUserAddress();
+  }, [user]);
 
   const handleGetUserAddress = async () => {
     try {
-      setAddressLodaer(true)
-      const fetchedAddress = await getAddressFromCoordinates(user?.location?.latitude, user?.location?.longitude);
+      setAddressLodaer(true);
+      const fetchedAddress = await getAddressFromCoordinates(
+        user?.location?.latitude,
+        user?.location?.longitude
+      );
       if (fetchedAddress) {
-        setAddress(fetchedAddress)
-        setAddressLodaer(false)
+        setAddress(fetchedAddress);
+        setAddressLodaer(false);
       } else {
-        setAddressLodaer(false)
+        setAddressLodaer(false);
       }
     } catch (error) {
       console.log(error);
-      setAddressLodaer(false)
+      setAddressLodaer(false);
     }
-  }
+  };
 
   const sidebarClass = isSmallScreen
     ? showSidebar
@@ -74,7 +77,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
     : "sticky max-h-screen relative top-0 left-0 w-64 md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] bg-black py-6";
 
   return (
-    <AnimatePresence >
+    <AnimatePresence>
       <motion.div
         initial={{ x: -300, opacity: 0, scale: 0.8 }}
         animate={{ x: 0, opacity: 1, scale: 1 }}
@@ -95,7 +98,6 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
           }}
           className="h-full flex flex-col items-center justify-between"
         >
-
           <div className="text-white w-full">
             <div>
               <div className="pl-4 lg:pl-6 flex flex-col justify-between">
@@ -106,28 +108,34 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                   alt="Logo"
                 />
                 <img
-                  src={user?.profile ? user?.profile : user?.gender === 'male' ? images.male : images.female}
+                  src={
+                    user?.profile
+                      ? user?.profile
+                      : user?.gender === "male"
+                      ? images.male
+                      : images.female
+                  }
                   className="w-[80px] h-[80px] mt-8 mb-5 rounded-full"
                 />
                 <div>
-                  <div className="font-bold text-lg text-white">{user?.name}</div>
+                  <div className="font-bold text-lg text-white">
+                    {user?.name}
+                  </div>
                   <div className="text-sm flex flex-row items-start text-white my-2">
-                    {
-                      addressLodaer ?
-                        <div
-                          className="inline-block h-4 w-4 animate-spin rounded-full border-2  border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-                          role="status">
-                        </div>
-                        :
-                        <img
-                          src={images.Location}
-                          className="w-3 filter invert brightness-0 mr-2 mt-1"
-                          alt="Location"
-                        />
-                    }
+                    {addressLodaer ? (
+                      <div
+                        className="inline-block h-4 w-4 animate-spin rounded-full border-2  border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
+                        role="status"
+                      ></div>
+                    ) : (
+                      <img
+                        src={images.Location}
+                        className="w-3 filter invert brightness-0 mr-2 mt-1"
+                        alt="Location"
+                      />
+                    )}
                     <div className="">
-
-                      {address || addressLodaer && 'Loading...'}
+                      {address || (addressLodaer && "Loading...")}
                     </div>
                   </div>
                   {
@@ -145,7 +153,10 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                 <div className="flex flex-row">
                   <div className="text-hoverGray">Gender</div>
                   <div className="text-white ml-4">
-                    {user?.gender ? user?.gender?.charAt(0)?.toUpperCase() + user?.gender?.slice(1) : ""}
+                    {user?.gender
+                      ? user?.gender?.charAt(0)?.toUpperCase() +
+                        user?.gender?.slice(1)
+                      : ""}
                   </div>
                 </div>
               </div>
@@ -204,24 +215,29 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
               }
               <ScrollToTopLink
                 to="/appointment"
-                className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/appointment"
-                  ? "bg-white text-black"
-                  : "text-white hover:bg-hoverGray hover:text-white"
-                  }`}
+                className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${
+                  activePath === "/appointment"
+                    ? "bg-white text-black"
+                    : "text-white hover:bg-hoverGray hover:text-white"
+                }`}
               >
                 <div className="text-lg font-semibold flex items-center">
                   <img
                     src={images.appointment}
-                    className={`w-5 mr-5 ${activePath === "/appointment" ? "filter invert dark-0" : ""
-                      }`}
+                    className={`w-5 mr-5 ${
+                      activePath === "/appointment"
+                        ? "filter invert dark-0"
+                        : ""
+                    }`}
                     alt="Appointment"
                   />
                   Appointment
                 </div>
                 <img
                   src={images.arrowBtn}
-                  className={`w-3 ${activePath === "/appointment" ? "filter invert dark-0" : ""
-                    }`}
+                  className={`w-3 ${
+                    activePath === "/appointment" ? "filter invert dark-0" : ""
+                  }`}
                   alt="Arrow"
                 />
               </ScrollToTopLink>
@@ -302,32 +318,36 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
               }
               <ScrollToTopLink
                 to="/chat"
-                className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/chat"
-                  ? "bg-white text-black"
-                  : "text-white hover:bg-hoverGray hover:text-white"
-                  }`}
+                className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${
+                  activePath === "/chat"
+                    ? "bg-white text-black"
+                    : "text-white hover:bg-hoverGray hover:text-white"
+                }`}
               >
                 <div className="text-lg font-semibold flex items-center">
                   <img
                     src={images.chatIcon}
-                    className={`w-5 mr-5 ${activePath === "/chat" ? "filter invert dark-0" : ""
-                      }`}
+                    className={`w-5 mr-5 ${
+                      activePath === "/chat" ? "filter invert dark-0" : ""
+                    }`}
                     alt="chat"
                   />
                   Inbox
                 </div>
                 <img
                   src={images.arrowBtn}
-                  className={`w-3 ${activePath === "/chat" ? "filter invert dark-0" : ""
-                    }`}
+                  className={`w-3 ${
+                    activePath === "/chat" ? "filter invert dark-0" : ""
+                  }`}
                   alt="Arrow"
                 />
               </ScrollToTopLink>
               <div
-                className={`flex justify-between items-center py-3 px-2 mx-2 mb-2 rounded-lg cursor-pointer ${activePath === "/edit-profile" || activePath === "/security"
-                  ? "bg-white text-black"
-                  : "text-white hover:bg-hoverGray hover:text-white"
-                  }`}
+                className={`flex justify-between items-center py-3 px-2 mx-2 mb-2 rounded-lg cursor-pointer ${
+                  activePath === "/edit-profile" || activePath === "/security"
+                    ? "bg-white text-black"
+                    : "text-white hover:bg-hoverGray hover:text-white"
+                }`}
                 onClick={() => setProfileDropDown(!profileDropDown)}
               >
                 <div className="text-lg font-semibold flex items-center">
@@ -345,16 +365,18 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                   src={images.arrowBtn}
                   className={`w-3 object-contain
             ${profileDropDown ? "rotate-90" : ""}
-            ${profileDropDown &&
-                      (activePath === "/edit-profile" || activePath === "/security")
-                      ? "filter invert dark-0"
-                      : ""
-                    }
-            ${!profileDropDown &&
-                      (activePath === "/edit-profile" || activePath === "/security")
-                      ? "filter invert dark-0"
-                      : ""
-                    }
+            ${
+              profileDropDown &&
+              (activePath === "/edit-profile" || activePath === "/security")
+                ? "filter invert dark-0"
+                : ""
+            }
+            ${
+              !profileDropDown &&
+              (activePath === "/edit-profile" || activePath === "/security")
+                ? "filter invert dark-0"
+                : ""
+            }
           `}
                   alt="Arrow"
                 />
@@ -363,10 +385,11 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                 <div className="ml-6">
                   <ScrollToTopLink
                     to="/edit-profile"
-                    className={`flex justify-between items-center px-2 mx-2 mb-2 w-[70%] self-center ${activePath === "/edit-profile"
-                      ? "text-white font-bold"
-                      : "text-hoverGray hover:text-white"
-                      }`}
+                    className={`flex justify-between items-center px-2 mx-2 mb-2 w-[70%] self-center ${
+                      activePath === "/edit-profile"
+                        ? "text-white font-bold"
+                        : "text-hoverGray hover:text-white"
+                    }`}
                   >
                     <div className="font-light flex items-center font-semibold">
                       <img
@@ -383,10 +406,11 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                   </ScrollToTopLink>
                   <ScrollToTopLink
                     to="/security"
-                    className={`flex items-center px-2 mx-2 mb-2 w-[70%] self-center ${activePath === "/security"
-                      ? "text-white font-bold"
-                      : "text-hoverGray hover:text-white"
-                      }`}
+                    className={`flex items-center px-2 mx-2 mb-2 w-[70%] self-center ${
+                      activePath === "/security"
+                        ? "text-white font-bold"
+                        : "text-hoverGray hover:text-white"
+                    }`}
                   >
                     <div className="font-light flex items-center font-semibold">
                       <img

@@ -1,15 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, useElements, useStripe } from "@stripe/react-stripe-js";
+
+const PUBLISH_KEY = process.env.REACT_APP_STRIPE_PUBLISH_KEY as any
+
+
+const stripePromise = loadStripe(
+  PUBLISH_KEY
+);
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <Elements stripe={stripePromise}>
+      <App />
+    </Elements>
   </React.StrictMode>
 );
 
