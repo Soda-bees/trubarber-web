@@ -19,6 +19,8 @@ const Chat = (props: Props) => {
   const chatRoomId = location?.state?.chatRoomId ?? null;
 
   useEffect(() => {
+    console.log("chat room id", chatRoomId);
+
     if (chatRoomId) {
       setChatId(chatRoomId)
     }
@@ -61,7 +63,7 @@ const Chat = (props: Props) => {
     }
   };
 
-  const availableHeightInVH = 100 - headerHeight || 100  
+  const availableHeightInVH = 100 - headerHeight || 100
 
   return (
     <div className={`flex flex-row items-start px-4 flex-1 select-none gap-2 pb-2 `} style={{
@@ -167,10 +169,7 @@ const Chat = (props: Props) => {
         ) : null
       }
       {
-        (isSmallScreen
-          ? chatId
-          : userData?.chat?.filter((item: any) => item?.messages?.length > 0)?.length > 0
-        ) && (
+        isSmallScreen ? chatId : (
           <div className="w-full lg:w-[75%] h-full">
             <ChatMessage
               chatId={chatId} isSmallScreen={isSmallScreen}
@@ -183,7 +182,6 @@ const Chat = (props: Props) => {
         )
       }
 
-      {/* <div>chat</div> */}
     </div>
   )
 }
