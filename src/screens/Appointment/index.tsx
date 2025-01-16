@@ -8,6 +8,8 @@ import { updateAppointmentStatus } from "../../services/config/Api";
 import { selectAuthToken } from "../../Store/AuthTokenSlice";
 import { Toast } from "../../components/Toast";
 import { selectRole } from "../../Store/Role";
+import { ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, Inject, MonthAgenda, TimelineViews, TimelineMonth } from '@syncfusion/ej2-react-schedule';
+import '../../App.css'
 
 const Appointment = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -20,6 +22,8 @@ const Appointment = () => {
   const [appointmentStatus, setAppointmentStatus] =
     useState<string>("upcoming");
 
+  <Inject services={[Day, Week, WorkWeek, Month, Agenda, MonthAgenda, TimelineViews, TimelineMonth]} />
+
   const [upComingAppointment, setUpComingAppointment] = useState<any>([
     {
       name: "Mike Trim",
@@ -31,6 +35,15 @@ const Appointment = () => {
     },
   ]);
   const [cancelAppointmentLoader, setCancelAppointmentLoader] = useState<boolean>(false)
+
+  const data = [
+    {
+      Id: 1,
+      Subject: 'Meeting',
+      StartTime: new Date(2023, 1, 15, 10, 0),
+      EndTime: new Date(2023, 1, 15, 12, 30),
+    },
+  ];
 
   useEffect(() => {
     const handleBackButton = (event: any) => {
@@ -309,7 +322,16 @@ const Appointment = () => {
             )}
           </div>
         ) : (
-          <div>barber appointments</div>
+          <div>
+            <ScheduleComponent
+              selectedDate={new Date(2023, 1, 15)}
+              eventSettings={{
+                dataSource: data,
+              }}
+            >
+              <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
+            </ScheduleComponent>
+          </div>
         )
       }
     </div>

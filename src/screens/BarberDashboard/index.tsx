@@ -210,19 +210,19 @@ const BarberDashboard = (props: Props) => {
                   }
                 </div>
               </div>
-              <div className='gap-2'>
+              <div className='gap-2 mt-2 grid grid-cols-1'>
                 {
                   barberReview?.map((item: any, index: number) => {
                     return (
-                      <div key={index} className='border'>
-                        <div className='flex flex-row items-center justify-between'>
+                      <div key={index} className='border border-inputGray rounded-lg p-3'>
+                        <div className='flex flex-row items-start justify-between'>
                           <div className='flex flex-row items-center '>
                             <img
-                              className='w-8 h-8 rounded-full '
+                              className='w-12 h-12 rounded-full '
                               src={item?.userData?.profile ? item?.userData?.profile : item?.userData?.gender === "male" ? images.male : images.female} />
-                            <div>
-                              <div>{item?.userData?.name}</div>
-                              <div>{formatCreatedAt(item?.createdAt)}</div>
+                            <div className='ml-3'>
+                              <div className='font-semibold leading-2	'>{item?.userData?.name}</div>
+                              <div className='font-inputGray text-sm'>{formatCreatedAt(item?.createdAt)}</div>
                             </div>
                           </div>
                           <StarRatings
@@ -233,11 +233,12 @@ const BarberDashboard = (props: Props) => {
                             starSpacing="2px"
                           />
                         </div>
-                        <div>{item?.comment}</div>
+                        <div className='mt-2'>{item?.comment}</div>
                       </div>
                     )
                   })
                 }
+                
               </div>
             </div>
           ) : (

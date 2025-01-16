@@ -136,7 +136,7 @@ const Chat = (props: Props) => {
                                           ? images.male
                                           : images.female
                                   }
-                                  className="w-12 h-12 rounded-full object-contain"
+                                   className='w-12 h-12 rounded-full'
                                 />
                                 <div className="ml-2 w-full">
                                   <div className="font-semibold leading-5">
