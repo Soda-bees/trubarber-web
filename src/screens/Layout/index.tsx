@@ -114,8 +114,6 @@ const Layout = (props: Props) => {
         sessionStorage.removeItem('redirectAfterLogin');
         navigate(redirectPath);
       } else if (activePath === '/signin' || activePath === '/signup') {
-        console.log("lay out use effect-==--==-=-=-");
-
         navigate('/');
       }
     }
