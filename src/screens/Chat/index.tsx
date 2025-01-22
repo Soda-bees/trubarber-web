@@ -136,7 +136,7 @@ const Chat = (props: Props) => {
                                           ? images.male
                                           : images.female
                                   }
-                                   className='w-12 h-12 rounded-full'
+                                  className='w-12 h-12 rounded-full'
                                 />
                                 <div className="ml-2 w-full">
                                   <div className="font-semibold leading-5">
@@ -168,15 +168,34 @@ const Chat = (props: Props) => {
           </div>
         ) : null
       }
+      {/* {
+          isSmallScreen ? chatId : (
+            <div className="w-full lg:w-[75%] h-full">
+              <ChatMessage
+                chatId={chatId} isSmallScreen={isSmallScreen}
+                setChatId={setChatId}
+                text={text} setText={setText}
+                selectedImage={selectedImage} setSelectedImage={setSelectedImage}
+                showImageScreen={showImageScreen} setShowImageScreen={setShowImageScreen} isDeleted={isDeleted}
+              />
+            </div>
+          )
+        } */}
+
       {
-        isSmallScreen ? chatId : (
-          <div className="w-full lg:w-[75%] h-full">
+        (!isSmallScreen || chatId) && (
+          <div className={isSmallScreen ? 'w-full h-full' : 'w-full lg:w-[75%] h-full'}>
             <ChatMessage
-              chatId={chatId} isSmallScreen={isSmallScreen}
+              chatId={chatId}
+              isSmallScreen={isSmallScreen}
               setChatId={setChatId}
-              text={text} setText={setText}
-              selectedImage={selectedImage} setSelectedImage={setSelectedImage}
-              showImageScreen={showImageScreen} setShowImageScreen={setShowImageScreen} isDeleted={isDeleted}
+              text={text}
+              setText={setText}
+              selectedImage={selectedImage}
+              setSelectedImage={setSelectedImage}
+              showImageScreen={showImageScreen}
+              setShowImageScreen={setShowImageScreen}
+              isDeleted={isDeleted}
             />
           </div>
         )

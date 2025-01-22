@@ -169,7 +169,6 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId, text, setText, selected
   const handleSetChatName = async () => {
     const chat = userData?.chat?.find((chat: any) => chat?._id === chatId)
     userData?.role === 'user' ? setChatName(chat?.barber?.name) : setChatName(chat?.user?.name);
-    console.log("handleSetChatName", chat);
 
   }
 
@@ -259,7 +258,7 @@ const ChatMessage = ({ chatId, isSmallScreen, setChatId, text, setText, selected
 
 
   return (
-    <div className='h-full select-none'>
+    <div className='h-full select-none h-full'>
       {
         chatId ?
           showImageScreen ? (

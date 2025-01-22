@@ -124,6 +124,7 @@ const Appointment = () => {
         )
         mapBackendDataToAppointmentTimeline(filteredAppointment);
       }
+      setNextAppointmentData();
     }
   }, [userData])
 
@@ -234,6 +235,84 @@ const Appointment = () => {
       </div>
     );
   };
+
+  const formatDateShort = (dateString: any) => {
+    if (!dateString) return '';
+
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return '';
+
+    const day = parseInt(parts[1], 10);
+    const month = parseInt(parts[0], 10) - 1;
+    const year = parseInt(parts[2], 10);
+
+    const dateObj = new Date(year, month, day);
+
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    };
+
+    return dateObj.toLocaleDateString('en-US', options);
+  };
+
+  const setNextAppointmentData = async () => {
+    const currentDate = moment();
+    let allAppointments = userData?.appoinment ? [...userData.appoinment] : [];
+    let appointments = allAppointments.filter(
+      item => item.status !== 'Pending' && item.status !== 'Rejected',
+    );
+    const sortedAppointments = appointments.sort((a, b) => {
+      const aDateTime = moment(
+        `${a.date || ''} ${a.time || ''}`,
+        'MM-DD-YYYY h:mm A',
+      );
+      const bDateTime = moment(
+        `${b.date || ''} ${b.time || ''}`,
+        'MM-DD-YYYY h:mm A',
+      );
+      return aDateTime.diff(bDateTime);
+    });
+    const nextAppointment = sortedAppointments.find(appointment => {
+      const appointmentDateTime = moment(
+        `${appointment?.date} ${appointment?.time}`,
+        'MM-DD-YYYY h:mm A',
+      );
+      return appointmentDateTime?.isAfter(currentDate);
+    });
+    if (nextAppointment) {
+      const allServices = nextAppointment?.services
+        ?.map((service: any) => service?.name)
+        .join(' & ');
+      const allStyles = nextAppointment?.services
+        ?.map((service: any) => service?.serviceName)
+        .join(' & ');
+      const data = {
+        name: nextAppointment?.user?.name,
+        date: formatDateShort(nextAppointment?.date),
+        time: nextAppointment?.time,
+        style: allServices,
+        services: allStyles
+      }
+      // setClientName(nextAppointment?.user?.name);
+      // setClientDate(formatDateShort(nextAppointment?.date));
+      // setClientTime(nextAppointment?.time);
+      // const allServices = nextAppointment?.services
+      //   ?.map(service => service?.name)
+      //   .join(' & ');
+      // setStyle(allServices);
+
+      // const allStyles = nextAppointment?.services
+      //   ?.map(service => service?.serviceName)
+      //   .join(' & ');
+      // setService(allStyles);
+      console.log("next appointment ==>", data);
+
+    } else {
+      console.log('No future appointments found.');
+    }
+  }
 
   const availableHeightInVH = 100 - headerHeight || 100
 
@@ -524,7 +603,7 @@ const Appointment = () => {
                   </div>
                   <div className="mt-14">
                     <div className="text-lg font-semibold">My Schedule</div>
-                    <div className="w-[90%] text-sm text-inputGray">Your Schedule Overview: Keep track of upcoming and completed appointments here.</div>
+                    <div className="w-[90%] text-sm text-textGray">Your Schedule Overview: Keep track of upcoming and completed appointments here.</div>
                   </div>
                 </div>
                 <div className="bg-inputGray h-full w-[2px]"></div>
