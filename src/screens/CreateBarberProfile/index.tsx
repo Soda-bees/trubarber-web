@@ -24,7 +24,7 @@ const CreateBarberProfile = (props: Props) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const reduxLocation = useSelector(selectLocation);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   // console.log("location from Redux ==========>>", reduxLocation);
 
   const userData = location.state?.userData;
@@ -54,7 +54,7 @@ const CreateBarberProfile = (props: Props) => {
     "Wed",
     "Thu",
     "Fri",
-    "Sat",  
+    "Sat",
   ]);
   const [offDays, setOffDays] = useState<string[]>([]);
   const [servicesData, setserviceData] = useState([
@@ -246,53 +246,55 @@ const CreateBarberProfile = (props: Props) => {
 
   const [scheduleTiming, setScheduleTiming] = useState<any[]>([
     {
-      avaiable: true,
+      available: true,
       day: "Monday",
       startTime: new Date(),
       endTime: new Date(),
     },
     {
-      avaiable: true,
+      available: true,
       day: "Tueday",
       startTime: new Date(),
       endTime: new Date(),
     },
     {
-      avaiable: true,
+      available: true,
       day: "Wednesday",
       startTime: new Date(),
       endTime: new Date(),
     },
     {
-      avaiable: true,
+      available: true,
       day: "Thursday",
       startTime: new Date(),
       endTime: new Date(),
     },
     {
-      avaiable: true,
+      available: true,
       day: "Friday",
       startTime: new Date(),
       endTime: new Date(),
     },
     {
-      avaiable: true,
+      available: true,
       day: "Saturday",
       startTime: new Date(),
       endTime: new Date(),
     },
     {
-      avaiable: true,
+      available: true,
       day: "Sunday",
       startTime: new Date(),
       endTime: new Date(),
     },
   ]);
 
+  console.log("scheduled", scheduleTiming);
+
   const handleAvailabilityToggle = (index: number) => {
     setScheduleTiming((prevSchedule) =>
       prevSchedule.map((item, i) =>
-        i === index ? { ...item, avaiable: !item.avaiable } : item
+        i === index ? { ...item, available: !item.available } : item
       )
     );
   };
@@ -552,7 +554,7 @@ const CreateBarberProfile = (props: Props) => {
       const { startTime, endTime, ...rest } = item;
       return {
         ...rest,
-        time: item?.avaiable
+        time: item?.available
           ? `${formattedStartTime} - ${formattedEndTime}`
           : "",
       };
@@ -580,7 +582,7 @@ const CreateBarberProfile = (props: Props) => {
         dispatch(setAuthToken(response?.data?.token));
         dispatch(setUser(response?.data?.barber));
         dispatch(setRole(response?.data?.barber?.role));
-        navigate('/')
+        navigate("/");
       } else {
         setLoader(false);
         Toast("error", response?.data?.message);
@@ -674,24 +676,24 @@ const CreateBarberProfile = (props: Props) => {
                     <div key={index} className="flex flex-row items-center">
                       <div
                         className={`w-12 h-10 rounded-md flex flex-row items-center justify-center mr-2 cursor-pointer ${
-                          item?.avaiable ? "bg-inputGray" : "bg-disable"
+                          item?.available ? "bg-inputGray" : "bg-disable"
                         }`}
                         onClick={() => handleAvailabilityToggle(index)}
                       >
                         <div
                           className={`w-[15px] h-[15px] rounded-sm ${
-                            item?.avaiable ? "bg-green" : "bg-red-500"
+                            item?.available ? "bg-green" : "bg-red-500"
                           }`}
                         ></div>
                       </div>
                       <div
                         className={`h-10 w-full flex flex-row items-center justify-between rounded-md px-2 ${
-                          item?.avaiable ? "bg-inputGray" : "bg-disable"
+                          item?.available ? "bg-inputGray" : "bg-disable"
                         }`}
                       >
                         <div>{item?.day}</div>
                         <div className="flex flex-row items-center">
-                          {!item?.avaiable ? (
+                          {!item?.available ? (
                             <div className="text-sm text-black font-semibold">
                               Closed
                             </div>

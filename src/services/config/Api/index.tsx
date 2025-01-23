@@ -355,3 +355,50 @@ export const deleteAccount = async (token: any) => {
     return error
   }
 }
+
+export const deleteService = async (token:any, id:any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post(
+      `barber/deleteService/${id}`,
+      {},
+      {headers},
+    );
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updateService = async (body: any, token: any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post('barber/updateService', body, {
+      headers,
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const addServices = async (body: any , token: any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const response = await axiosInstance.post('barber/addService', body, {
+      headers,
+    });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
