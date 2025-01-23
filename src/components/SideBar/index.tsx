@@ -20,7 +20,7 @@ type Props = {
   isSmallScreen: boolean;
   setShowSidebar: any;
   showLogoutModal: boolean;
-  setShowLogoutModal: any
+  setShowLogoutModal: any;
 };
 
 export const handleLogout = (dispatch: any, setShowLogoutModal: any) => {
@@ -29,11 +29,17 @@ export const handleLogout = (dispatch: any, setShowLogoutModal: any) => {
   dispatch(clearUser());
 };
 
-const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, setShowLogoutModal }: Props) => {
+const SideBar = ({
+  showSidebar,
+  isSmallScreen,
+  setShowSidebar,
+  showLogoutModal,
+  setShowLogoutModal,
+}: Props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
-  const role = useSelector(selectRole)
+  const role = useSelector(selectRole);
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -138,8 +144,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                       {address || (addressLodaer && "Loading...")}
                     </div>
                   </div>
-                  {
-                    role === 'barber' &&
+                  {role === "barber" && (
                     <div className="text-sm flex flex-row items-start text-white my-2">
                       <img
                         src={images.phone}
@@ -148,7 +153,7 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                       />
                       {user?.phone}
                     </div>
-                  }
+                  )}
                 </div>
                 <div className="flex flex-row">
                   <div className="text-hoverGray">Gender</div>
@@ -163,56 +168,65 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
               <div className="bg-hoverGray w-full mx-auto h-[1px] my-6"></div>
             </div>
             <div className=" overflow-y-scroll hide-scrollbar h-[50vh]">
-
-              {
-                role === 'user' ?
-                  <ScrollToTopLink
-                    to="/"
-                    className={`flex justify-between items-center p-3 mx-2 mb-4 rounded-lg ${activePath === "/"
+              {role === "user" ? (
+                <ScrollToTopLink
+                  to="/"
+                  className={`flex justify-between items-center p-3 mx-2 mb-4 rounded-lg ${
+                    activePath === "/"
                       ? "bg-white text-black"
                       : "text-white hover:bg-hoverGray hover:text-white"
-                      }`}
-                  >
-                    <div className="text-lg font-semibold flex items-center">
-                      <img
-                        src={images.explore}
-                        className={`w-5 mr-5 ${activePath === "/" ? "filter invert dark-0" : ""
-                          }`}
-                        alt="Explore"
-                      />
-                      Explore
-                    </div>
+                  }`}
+                >
+                  <div className="text-lg font-semibold flex items-center">
                     <img
-                      src={images.arrowBtn}
-                      className={`w-3 ${activePath === "/" ? "filter invert dark-0" : ""
-                        }`}
-                      alt="Arrow"
+                      src={images.explore}
+                      className={`w-5 mr-5 ${
+                        activePath === "/" ? "filter invert dark-0" : ""
+                      }`}
+                      alt="Explore"
                     />
-                  </ScrollToTopLink> :
-                  <ScrollToTopLink
-                    to="/barber-dashboard"
-                    className={`flex justify-between items-center p-3 mx-2 mb-4 rounded-lg ${activePath === "/barber-dashboard"
+                    Explore
+                  </div>
+                  <img
+                    src={images.arrowBtn}
+                    className={`w-3 ${
+                      activePath === "/" ? "filter invert dark-0" : ""
+                    }`}
+                    alt="Arrow"
+                  />
+                </ScrollToTopLink>
+              ) : (
+                <ScrollToTopLink
+                  to="/barber-dashboard"
+                  className={`flex justify-between items-center p-3 mx-2 mb-4 rounded-lg ${
+                    activePath === "/barber-dashboard"
                       ? "bg-white text-black"
                       : "text-white hover:bg-hoverGray hover:text-white"
-                      }`}
-                  >
-                    <div className="text-lg font-semibold flex items-center">
-                      <img
-                        src={images.explore}
-                        className={`w-5 mr-5 ${activePath === "/barber-dashboard" ? "filter invert dark-0" : ""
-                          }`}
-                        alt="Dashboard"
-                      />
-                      Dashboard
-                    </div>
+                  }`}
+                >
+                  <div className="text-lg font-semibold flex items-center">
                     <img
-                      src={images.arrowBtn}
-                      className={`w-3 ${activePath === "/barber-dashboard" ? "filter invert dark-0" : ""
-                        }`}
-                      alt="Arrow"
+                      src={images.explore}
+                      className={`w-5 mr-5 ${
+                        activePath === "/barber-dashboard"
+                          ? "filter invert dark-0"
+                          : ""
+                      }`}
+                      alt="Dashboard"
                     />
-                  </ScrollToTopLink>
-              }
+                    Dashboard
+                  </div>
+                  <img
+                    src={images.arrowBtn}
+                    className={`w-3 ${
+                      activePath === "/barber-dashboard"
+                        ? "filter invert dark-0"
+                        : ""
+                    }`}
+                    alt="Arrow"
+                  />
+                </ScrollToTopLink>
+              )}
               <ScrollToTopLink
                 to="/appointment"
                 className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${
@@ -241,81 +255,93 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                   alt="Arrow"
                 />
               </ScrollToTopLink>
-              {
-                role === 'user' ?
-                  <ScrollToTopLink
-                    to="/wallet"
-                    className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/wallet"
+              {role === "user" ? (
+                <ScrollToTopLink
+                  to="/wallet"
+                  className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${
+                    activePath === "/wallet"
                       ? "bg-white text-black"
                       : "text-white hover:bg-hoverGray hover:text-white"
-                      }`}
-                  >
-                    <div className="text-lg font-semibold flex items-center">
-                      <img
-                        src={images.wallet}
-                        className={`w-5 mr-5 ${activePath === "/wallet" ? "filter invert dark-0" : ""
-                          }`}
-                        alt="Wallet"
-                      />
-                      Wallet
-                    </div>
+                  }`}
+                >
+                  <div className="text-lg font-semibold flex items-center">
                     <img
-                      src={images.arrowBtn}
-                      className={`w-3 ${activePath === "/wallet" ? "filter invert dark-0" : ""
-                        }`}
-                      alt="Arrow"
+                      src={images.wallet}
+                      className={`w-5 mr-5 ${
+                        activePath === "/wallet" ? "filter invert dark-0" : ""
+                      }`}
+                      alt="Wallet"
                     />
-                  </ScrollToTopLink> :
-                  <ScrollToTopLink
-                    to="/catalouge"
-                    className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/catalouge"
+                    Wallet
+                  </div>
+                  <img
+                    src={images.arrowBtn}
+                    className={`w-3 ${
+                      activePath === "/wallet" ? "filter invert dark-0" : ""
+                    }`}
+                    alt="Arrow"
+                  />
+                </ScrollToTopLink>
+              ) : (
+                <ScrollToTopLink
+                  to="/catalouge"
+                  className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${
+                    activePath === "/catalouge"
                       ? "bg-white text-black"
                       : "text-white hover:bg-hoverGray hover:text-white"
-                      }`}
-                  >
-                    <div className="text-lg font-semibold flex items-center">
-                      <img
-                        src={images.catalouge}
-                        className={`w-5 mr-5 ${activePath !== "/catalouge" ? "filter invert dark-0" : ""
-                          }`}
-                        alt="catalouge"
-                      />
-                      Catalogue
-                    </div>
+                  }`}
+                >
+                  <div className="text-lg font-semibold flex items-center">
                     <img
-                      src={images.arrowBtn}
-                      className={`w-3 ${activePath === "/catalouge" ? "filter invert dark-0" : ""
-                        }`}
-                      alt="Arrow"
+                      src={images.catalouge}
+                      className={`w-5 mr-5 ${
+                        activePath !== "/catalouge"
+                          ? "filter invert dark-0"
+                          : ""
+                      }`}
+                      alt="catalouge"
                     />
-                  </ScrollToTopLink>
-              }
-              {
-                role === 'user' &&
+                    Catalogue
+                  </div>
+                  <img
+                    src={images.arrowBtn}
+                    className={`w-3 ${
+                      activePath === "/catalouge" ? "filter invert dark-0" : ""
+                    }`}
+                    alt="Arrow"
+                  />
+                </ScrollToTopLink>
+              )}
+              {role === "user" && (
                 <ScrollToTopLink
                   to="/favourite"
-                  className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${activePath === "/favourite"
-                    ? "bg-white text-black"
-                    : "text-white hover:bg-hoverGray hover:text-white"
-                    }`}
+                  className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${
+                    activePath === "/favourite"
+                      ? "bg-white text-black"
+                      : "text-white hover:bg-hoverGray hover:text-white"
+                  }`}
                 >
                   <div className="text-lg font-semibold flex items-center">
                     <img
                       src={images.bookmarkIcon}
-                      className={`w-5 mr-5 ${activePath === "/favourite" ? "filter invert dark-0" : ""
-                        }`}
+                      className={`w-5 mr-5 ${
+                        activePath === "/favourite"
+                          ? "filter invert dark-0"
+                          : ""
+                      }`}
                       alt="favourite"
                     />
                     Favourite
                   </div>
                   <img
                     src={images.arrowBtn}
-                    className={`w-3 ${activePath === "/favourite" ? "filter invert dark-0" : ""
-                      }`}
+                    className={`w-3 ${
+                      activePath === "/favourite" ? "filter invert dark-0" : ""
+                    }`}
                     alt="Arrow"
                   />
                 </ScrollToTopLink>
-              }
+              )}
               <ScrollToTopLink
                 to="/chat"
                 className={`flex justify-between items-center py-3 px-2 mx-2 mb-4 rounded-lg ${
@@ -353,10 +379,12 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                 <div className="text-lg font-semibold flex items-center">
                   <img
                     src={user?.profile ? user?.profile : images.profile}
-                    className={`w-6 h-6 mr-4 rounded-full ${activePath === "/edit-profile" || activePath === "/security"
-                      ? ""
-                      : ""
-                      }`}
+                    className={`w-6 h-6 mr-4 rounded-full ${
+                      activePath === "/edit-profile" ||
+                      activePath === "/security"
+                        ? ""
+                        : ""
+                    }`}
                     alt="Profile"
                   />
                   Profile
@@ -404,6 +432,29 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
                       Edit Profile
                     </div>
                   </ScrollToTopLink>
+                  {role == "barber" && (
+                    <ScrollToTopLink
+                      to="/edit-business-profile"
+                      className={`flex justify-between items-center px-2 mx-2 mb-2 w-[80%] self-center ${
+                        activePath === "/edit-business-profile"
+                          ? "text-white font-bold"
+                          : "text-hoverGray hover:text-white"
+                      }`}
+                    >
+                      <div className="font-light flex items-center font-semibold">
+                        <img
+                          src={
+                            activePath === "/edit-business-profile"
+                              ? images.businessAfter
+                              : images.businessBefore
+                          }
+                          className="w-4 mr-5 invert brightness-0"
+                          alt="Edit Business Profile"
+                        />
+                        Edit Business Profile
+                      </div>
+                    </ScrollToTopLink>
+                  )}
                   <ScrollToTopLink
                     to="/security"
                     className={`flex items-center px-2 mx-2 mb-2 w-[70%] self-center ${
@@ -438,19 +489,33 @@ const SideBar = ({ showSidebar, isSmallScreen, setShowSidebar, showLogoutModal, 
               onClick={() => setShowLogoutModal(true)}
             />
           </div>
-          {
-            showLogoutModal &&
+          {showLogoutModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 max-w-[2800px] mx-auto z-20 select-none">
               <BottomToTopAnimation className="bg-white w-[90%] sm:w-4/5 md:w-2/3 lg:w-1/3 flex flex-col p-2 xs:p-6 rounded-xl shadow-lg ">
-                <div className="font-semibold text-black text-lg text-center">Are you leaving?</div>
-                <div className="mt-2 text-black text-md text-center">Are you sure you want to logout? You'll need to signin again to access your account.</div>
+                <div className="font-semibold text-black text-lg text-center">
+                  Are you leaving?
+                </div>
+                <div className="mt-2 text-black text-md text-center">
+                  Are you sure you want to logout? You'll need to signin again
+                  to access your account.
+                </div>
                 <div className="flex flex-row items-center justify-between gap-2 mt-4">
-                  <Button light title="Cancel" hideImg onClick={() => setShowLogoutModal(false)} />
-                  <Button light={false} title="Logout Anyway" hideImg onClick={() => handleLogout(dispatch, setShowLogoutModal)} />
+                  <Button
+                    light
+                    title="Cancel"
+                    hideImg
+                    onClick={() => setShowLogoutModal(false)}
+                  />
+                  <Button
+                    light={false}
+                    title="Logout Anyway"
+                    hideImg
+                    onClick={() => handleLogout(dispatch, setShowLogoutModal)}
+                  />
                 </div>
               </BottomToTopAnimation>
             </div>
-          }
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>

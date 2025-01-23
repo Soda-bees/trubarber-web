@@ -77,6 +77,10 @@ import appointmentConfirm from "../../assets/Images/appointmentConfirm.png";
 import arrowBlackIcon from "../../assets/Images/arrowBlackIcon.png";
 import chatImg from "../../assets/Images/chatImg.png";
 import catalouge from "../../assets/Images/catalouge.png";
+import haircutIcon from "../../assets/Images/haircutIcon.png";
+import beardIcon from "../../assets/Images/beardIcon.png";
+import businessBefore from "../../assets/Images/businessBefore.png";
+import businessAfter from "../../assets/Images/businessAfter.png";
 
 const images = {
   catalouge,
@@ -158,6 +162,10 @@ const images = {
   checkboxMarked,
   checkbox,
   businessImage,
+  haircutIcon,
+  beardIcon,
+  businessBefore,
+  businessAfter
 };
 
 export default images;
