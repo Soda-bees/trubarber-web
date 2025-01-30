@@ -114,7 +114,7 @@ const Signin = (props: Props) => {
                             <img src={!showPass ? images.eyeOff : images.eye} className='w-5 cursor-pointer' onClick={() => setShowPass(!showPass)} />
                         </div>
                     </div>
-                    <div className='text-sm font-bold mt-4 text-right cursor-pointer'>Forgot password?</div>
+                    <div className='text-sm font-bold mt-4 text-right cursor-pointer hover:underline' onClick={() => navigate('/forgot-password')}>Forgot password?</div>
                     <Button title='Sign In' onClick={handleConfirm} mt={"50px"} loader={loader} light={false} />
                 </div>
                 <div className='w-full px-4 w-[100%] sm:w-[80%] md:w-[60%] lg:w-[90%] mt-16 md-mt-0'>

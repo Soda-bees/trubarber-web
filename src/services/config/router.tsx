@@ -31,6 +31,7 @@ import BookAppointment from "../../screens/BookAppointment";
 import Favourite from "../../screens/Favourite";
 import Catalouge from "../../screens/Catalouge";
 import EditBusinessProfile from "../../screens/EditBusinessProfile";
+import ForgotPassword from "../../screens/ForgotPassword";
 
 
 // Component to set up routing
@@ -103,6 +104,10 @@ const Routing = () => {
         {
           path: "/edit-business-profile",
           element: <ProtectedRoute Component={EditBusinessProfile} />,
+        },
+        {
+          path: "/forgot-password",
+          element: <ForgotPassword />,
         },
       ],
     },
