@@ -356,7 +356,7 @@ export const deleteAccount = async (token: any) => {
   }
 }
 
-export const deleteService = async (token:any, id:any) => {
+export const deleteService = async (token: any, id: any) => {
   try {
     const headers = {
       'Content-Type': 'application/json',
@@ -365,7 +365,7 @@ export const deleteService = async (token:any, id:any) => {
     const response = await axiosInstance.post(
       `barber/deleteService/${id}`,
       {},
-      {headers},
+      { headers },
     );
     return response;
   } catch (error) {
@@ -388,7 +388,7 @@ export const updateService = async (body: any, token: any) => {
   }
 };
 
-export const addServices = async (body: any , token: any) => {
+export const addServices = async (body: any, token: any) => {
   try {
     const headers = {
       'Content-Type': 'application/json',
@@ -397,6 +397,18 @@ export const addServices = async (body: any , token: any) => {
     const response = await axiosInstance.post('barber/addService', body, {
       headers,
     });
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const handleForgotPass = async (body: any) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    const response = await axiosInstance.post('auth/forgotPassword', body, { headers, });
     return response;
   } catch (error) {
     return error;

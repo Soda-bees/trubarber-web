@@ -28,7 +28,7 @@ const Layout = (props: Props) => {
   const [headerHeight, setHeaderHeight] = useState<number>(0)
   const [footerHeight, setfooterHeight] = useState<number>(0)
   const [headerFooterHeight, setheaderFooterHeight] = useState<number>(0)
-  const [showLogoutModal , setShowLogoutModal] = useState<boolean>(false)
+  const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false)
 
   const location = useLocation();
   const activePath = location.pathname;
@@ -40,14 +40,16 @@ const Layout = (props: Props) => {
     "/create-barber-profile",
     "/about",
     "/privacy-policy",
+    "/forgot-password"
   ];
   const noSidebarPaths = [
     "/signin",
     "/signup",
     "/create-user-profile",
     "/create-barber-profile",
+    "/forgot-password"
   ];
-  const showWhiteHeaderPaths = ['/BarberDetails', '/book-appointment', '/wallet', '/appointment', '/chat' , '/edit-profile' , '/security' , '/barber-dashboard' , '/catalouge']
+  const showWhiteHeaderPaths = ['/BarberDetails', '/book-appointment', '/wallet', '/appointment', '/chat', '/edit-profile', '/security', '/barber-dashboard', '/catalouge']
   const shouldShowWhiteHeader = showWhiteHeaderPaths.some(
     (path) => location.pathname === path || location.pathname.startsWith(path)
   );
@@ -104,7 +106,7 @@ const Layout = (props: Props) => {
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [showSidebar, isSmallScreen, showNotification , showLogoutModal]);
+  }, [showSidebar, isSmallScreen, showNotification, showLogoutModal]);
 
 
   useEffect(() => {
@@ -152,7 +154,7 @@ const Layout = (props: Props) => {
     >
       {
         showSidebar &&
-        <SideBar showSidebar={showSidebar} isSmallScreen={isSmallScreen} setShowSidebar={setShowSidebar} showLogoutModal={showLogoutModal}  setShowLogoutModal={setShowLogoutModal} />
+        <SideBar showSidebar={showSidebar} isSmallScreen={isSmallScreen} setShowSidebar={setShowSidebar} showLogoutModal={showLogoutModal} setShowLogoutModal={setShowLogoutModal} />
       }
 
       {
@@ -174,7 +176,7 @@ const Layout = (props: Props) => {
             setSearch={setSearch}
           />
         }
-        <Outlet context={{ showSidebar, isSmallScreen, search, headerFooterHeight, headerHeight , setShowLogoutModal}} />
+        <Outlet context={{ showSidebar, isSmallScreen, search, headerFooterHeight, headerHeight, setShowLogoutModal }} />
         <ToastContainer />
         <Footer ref={footerRef} />
         <ScrollTopButton />
