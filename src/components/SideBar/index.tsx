@@ -78,7 +78,8 @@ const SideBar = ({
 
   const sidebarClass = isSmallScreen
     ? showSidebar
-      ? "fixed w-[70%] xs:w-[50%] sm:w-[40%] md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] left-0 top-0 h-[100vh] bg-black z-50 py-6"
+      // ? "fixed w-[70%] xs:w-[50%] sm:w-[40%] md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] left-0 top-0 h-[100vh] bg-black z-50 py-6"
+      ? "fixed w-[70%] xs:w-[50%] sm:w-[40%] md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] left-0 top-0 h-full bg-black z-50 py-6 overflow-y-scroll"
       : "fixed w-[80%] md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] left-0 top-0 h-[100vh] bg-black z-50"
     : "sticky max-h-screen relative top-0 left-0 w-64 md:w-[37%] lg:w-[28%] xl:w-[25%] 2xl:w-[17%] bg-black py-6";
 
@@ -155,7 +156,7 @@ const SideBar = ({
                     </div>
                   )}
                 </div>
-                <div className="flex flex-row">
+                {/* <div className="flex flex-row">
                   <div className="text-hoverGray">Gender</div>
                   <div className="text-white ml-4">
                     {user?.gender
@@ -163,7 +164,7 @@ const SideBar = ({
                         user?.gender?.slice(1)
                       : ""}
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="bg-hoverGray w-full mx-auto h-[1px] my-6"></div>
             </div>

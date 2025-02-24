@@ -140,7 +140,7 @@ const Chat = (props: Props) => {
                                 />
                                 <div className="ml-2 w-full">
                                   <div className="font-semibold leading-5">
-                                    {userData?.role == "user" ? item?.barber.name : item?.user?.name}
+                                    {userData?.role == "user" ? item?.barber?.name : item?.user?.name}
                                   </div>
                                   <div className={`overflow-hidden line-clamp-1 text-sm`}>
                                     {lastMessage?.image?.length > 0 ? "Photo" : lastMessage?.text}
